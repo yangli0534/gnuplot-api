@@ -1,0 +1,265 @@
+(saveFormat "7.0")
+(date "Mon 04/Dec/2017 14:19:38 ")
+(veerev "9.32.17704.1")
+(platform "PC")
+(execMode v6)
+(prefExecMode v9)
+(filterNAN 0)
+(workspaceStackingOrder M F0)
+(sysconfig
+(iodevice "RU"
+(type Serial)
+(gateway "This host")
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(model "")
+(baudRate 9600)
+(charSize 8)
+(stopBits 1)
+(parity off)
+(handshake off)
+(recvBufferSize 4096))
+(iodevice "NetAna"
+(type GPIB)
+(gateway "This host")
+(channel 0)
+(subchannel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "PSU1"
+(type GPIB)
+(gateway "This host")
+(channel 7)
+(subchannel 8)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(eoiEnabled 1)
+(model ""
+(standard 488))))
+(SaveCF no)
+(device 0 ROOTCONTEXT
+(assemblyRefs
+(assemblyRef 1
+(displayName
+"DriverLibrary, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null")
+(desc "")
+(filename "C:\\repo\\ruxtest\\Drivers\\DriverLibrary.dll"))
+(selectedNamespaces ""))
+(properties
+(variableName Main)
+(variableScope glob)
+(trigMode deg)
+(nextID 13)
+(popupTitleText "Untitled")
+(popupMoveable 1)
+(deleteGlobals 0))
+(deviceList
+(UserFunctions
+(nextID 2)
+(context 0
+(properties
+(name "LoadDriver")
+(variableName LoadDriver)
+(variableScope glob)
+(trigMode deg)
+(nextID 8)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "A")
+(optional yes)))
+(deviceList
+(device 5 FORMULA
+(properties
+(name "Ericsson.RUX.Drivers.Instrument.OSC.Creator(Address, Tout);")
+(variableScope cont)
+(expr 1 "Ericsson.RUX.Drivers.Instrument.OSC.Creator(Address, 2000);"))
+(interface
+(input 1
+(name "Address")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 6 DECLVAR
+(properties
+(name "Declare OSC")
+(scope glob)
+(globalName "OSC"))
+(implementation
+(value Object
+(data  ".NET OFF DriverLibrary,Ericsson.RUX.Drivers.Instrument.OSC"))))
+(device 7 TOGLOBAL
+(properties
+(name "Set OSC")
+(variableScope cont)
+(globalName "OSC"))
+(interface
+(input 1
+(name "Data")
+(tag "Data")
+(lock name))))
+(configuration
+(connect I1:1 D0:1)
+(connect D0:1 D2:1)))
+(contextCarrier
+(wndRestoredOrigin 2 2)
+(wndRestoredExtent 970 423)
+(wndState max)
+(active detail)
+(detail
+(extent 1856 1039)
+(anchorPt 553 169)
+(configuration
+(devCarrierFor 5
+(active open)
+(icon
+(extent 374 0))
+(open
+(extent 464 76))
+(terminals on)
+(pinCenter 245 350))
+(devCarrierFor 6
+(active open)
+(icon
+(extent 79 0))
+(open
+(extent 348 124))
+(pinCenter 540 190))
+(devCarrierFor 7
+(active open)
+(icon
+(extent 51 0))
+(open
+(extent 73 51))
+(terminals on)
+(pinCenter 645 350))
+(connect I1:1 D0:1
+(points 4 -553 350 -100 350 -100 350 -50 350))
+(connect D0:1 D2:1
+(points 2 529 350 566 350)))
+(stackingOrder 2 1 0)))))
+(device 2 CALL
+(properties
+(name "Call LoadDriver")
+(variableScope cont)
+(callFunc "LoadDriver")
+(parmMode rev30))
+(interface
+(input 1
+(name "A")
+(optional yes))))
+(device 7 START25
+(properties
+(variableScope cont)))
+(device 8 LITERALCONSTANT
+(properties
+(name "Text")
+(variableScope cont)
+(enableEditing 1))
+(interface
+(output 1
+(name "Text")
+(lock name constraints)))
+(implementation
+(value Text
+(data  "TCPIP::169.254.246.233::INSTR"))
+(initValue Text
+(data  ""))))
+(device 9 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "OSC.ReadWORDChannelData(4)"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 10 START25
+(properties
+(variableScope cont)))
+(configuration
+(connect D1:0 D0:0)
+(connect D2:1 D0:1)
+(connect D4:0 D3:0)))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 1149 679)
+(anchorPt 393 44)
+(configuration
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 93 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 150 170))
+(devCarrierFor 7
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 150 100))
+(devCarrierFor 8
+(active open)
+(icon)
+(open
+(extent 234 36))
+(pinCenter -100 170))
+(devCarrierFor 9
+(active open)
+(icon)
+(open
+(extent 444 76))
+(terminals on)
+(pinCenter 300 450))
+(devCarrierFor 10
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 310 340))
+(connect D1:0 D0:0
+(points 2 150 113 150 160))
+(connect D2:1 D0:1
+(points 2 19 170 101 170))
+(connect D4:0 D3:0
+(points 2 310 353 310 391)))
+(stackingOrder 1 4 3 0 2))
+(numberFormats
+(realFormat standard)
+(realSigDigits 4)
+(realRadixSpec 4)
+(integerBase decimal))))

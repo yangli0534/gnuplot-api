@@ -1,0 +1,1009 @@
+(saveFormat "7.0")
+(date "Mon 04/Dec/2017 14:19:02 ")
+(veerev "9.32.17704.1")
+(platform "PC")
+(execMode v6)
+(prefExecMode v9)
+(filterNAN 0)
+(workspaceStackingOrder M F0)
+(sysconfig
+(iodevice "PwrMeter"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "RU"
+(type Serial)
+(gateway "This host")
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(model "")
+(baudRate 9600)
+(charSize 8)
+(stopBits 1)
+(parity off)
+(handshake off)
+(recvBufferSize 4096))
+(iodevice "SpecAnaLSB"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "Gen1"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "SpecAna"
+(type GPIB-VISA)
+(channel 130)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(ppAddr "GPIB0::20::INSTR")
+(model "")
+(eoiEnabled 1)
+(VISAddr "GPIB0::20::INSTR")
+(model ""
+(standard 488)))
+(iodevice "PSU1"
+(type GPIB)
+(gateway "This host")
+(channel 7)
+(subchannel 8)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(eoiEnabled 1)
+(model ""
+(standard 488))))
+(SaveCF no)
+(watchvariableslist
+(windowname Watch1
+(varname "radioSystem")))
+(device 0 ROOTCONTEXT
+(assemblyRefs
+(assemblyRef 1
+(displayName
+"DriverLibrary, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null")
+(desc "")
+(filename "C:\\repo\\ruxtest\\Drivers\\DriverLibrary.dll"))
+(selectedNamespaces ""))
+(properties
+(variableName Main)
+(variableScope glob)
+(trigMode deg)
+(nextID 66)
+(popupTitleText "Untitled")
+(popupMoveable 1)
+(deleteGlobals 0))
+(deviceList
+(UserFunctions
+(nextID 14)
+(context 13
+(properties
+(name "CalibrateS11")
+(variableName CalibrateS11)
+(variableScope glob)
+(trigMode deg)
+(nextID 10)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "Calkit")
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "NWA.CalibrateS11_calkit(Calkit);")
+(variableScope cont)
+(expr 1 "NWA.CalibrateS11_calkit(Calkit);"))
+(interface
+(input 1
+(name "Calkit")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(name "NWA.CalibrateS11_open();")
+(variableScope cont)
+(expr 1 "NWA.CalibrateS11_open();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 MESSAGEBOX
+(properties
+(variableScope cont)
+(message "Connect Short to Port 1")
+(symbol Information))
+(interface
+(output 1
+(name "OK")
+(lock name constraints)))
+(implementation
+(customButtons 0)
+(displayMode 0)
+(buttons "OK")
+(buttonLabel1 "OK")
+(buttonLabel2 "")
+(buttonLabel3 "")
+(bdefault "OK")))
+(device 3 MESSAGEBOX
+(properties
+(variableScope cont)
+(message "Connect Open to Port 1")
+(symbol Information))
+(interface
+(output 1
+(name "OK")
+(lock name constraints)))
+(implementation
+(customButtons 0)
+(displayMode 0)
+(buttons "OK")
+(buttonLabel1 "OK")
+(buttonLabel2 "")
+(buttonLabel3 "")
+(bdefault "OK")))
+(device 4 START25
+(properties
+(variableScope cont)))
+(device 5 FORMULA
+(properties
+(name "NWA.CalibrateS11_short();")
+(variableScope cont)
+(expr 1 "NWA.CalibrateS11_short();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 6 MESSAGEBOX
+(properties
+(variableScope cont)
+(message "Connect Load to Port 1")
+(symbol Information))
+(interface
+(output 1
+(name "OK")
+(lock name constraints)))
+(implementation
+(customButtons 0)
+(displayMode 0)
+(buttons "OK")
+(buttonLabel1 "OK")
+(buttonLabel2 "")
+(buttonLabel3 "")
+(bdefault "OK")))
+(device 7 FORMULA
+(properties
+(name "NWA.CalibrateS11_load();")
+(variableScope cont)
+(expr 1 "NWA.CalibrateS11_load();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 8 MESSAGEBOX
+(properties
+(variableScope cont)
+(message "Connect through calble, then press OK")
+(symbol Information))
+(interface
+(output 1
+(name "OK")
+(lock name constraints)))
+(implementation
+(customButtons 0)
+(displayMode 0)
+(buttons "OK")
+(buttonLabel1 "OK")
+(buttonLabel2 "")
+(buttonLabel3 "")
+(bdefault "OK")))
+(device 9 FORMULA
+(properties
+(name "NWA.CalibrateS11_through();")
+(variableScope cont)
+(expr 1 "NWA.CalibrateS11_through();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D4:0 D0:0)
+(connect I1:1 D0:1)
+(connect D3:0 D1:0)
+(connect D1:0 D2:0)
+(connect D0:0 D3:0)
+(connect D2:0 D5:0)
+(connect D5:0 D6:0)
+(connect D6:0 D7:0)
+(connect D7:0 D8:0)
+(connect D8:0 D9:0)))
+(contextCarrier
+(active detail)
+(detail
+(extent 321 526)
+(anchorPt 526 358)
+(configuration
+(devCarrierFor 0
+(active icon)
+(icon
+(extent 195 14))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 160 130))
+(devCarrierFor 1
+(active icon)
+(icon
+(extent 154 14))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 160 210))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 92 25))
+(open
+(extent 236 129))
+(terminals on)
+(pinCenter 160 250))
+(devCarrierFor 3
+(active icon)
+(icon
+(extent 92 25))
+(open
+(extent 236 129))
+(terminals on)
+(pinCenter 160 170))
+(devCarrierFor 4
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 160 70))
+(devCarrierFor 5
+(active icon)
+(icon
+(extent 161 14))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 160 290))
+(devCarrierFor 6
+(active icon)
+(icon
+(extent 92 25))
+(open
+(extent 236 129))
+(terminals on)
+(pinCenter 160 330))
+(devCarrierFor 7
+(active icon)
+(icon
+(extent 157 14))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 160 370))
+(devCarrierFor 8
+(active icon)
+(icon
+(extent 92 25))
+(open
+(extent 384 129))
+(terminals on)
+(pinCenter 160 410))
+(devCarrierFor 9
+(active icon)
+(icon
+(extent 177 14))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 160 450))
+(connect D4:0 D0:0
+(points 2 160 83 160 120))
+(connect I1:1 D0:1
+(points 4 -526 -96 -440 -96 -440 130 60 130))
+(connect D3:0 D1:0
+(points 2 160 185 160 200))
+(connect D1:0 D2:0
+(points 2 160 219 160 235))
+(connect D0:0 D3:0
+(points 2 160 139 160 155))
+(connect D2:0 D5:0
+(points 2 160 265 160 280))
+(connect D5:0 D6:0
+(points 2 160 299 160 315))
+(connect D6:0 D7:0
+(points 2 160 345 160 360))
+(connect D7:0 D8:0
+(points 2 160 379 160 395))
+(connect D8:0 D9:0
+(points 2 160 425 160 440)))
+(stackingOrder 4 8 0 3 1 2 5 7 6 9))))
+(context 0
+(properties
+(name "LoadDriver")
+(variableName LoadDriver)
+(variableScope glob)
+(trigMode deg)
+(nextID 15)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "Address")
+(optional yes)))
+(deviceList
+(device 2 TOGLOBAL
+(properties
+(name "Set NWA")
+(variableScope cont)
+(globalName "NWA"))
+(interface
+(input 1
+(name "Data")
+(tag "Data")
+(lock name))))
+(device 13 FORMULA
+(properties
+(name "Ericsson.RUX.Drivers.Instrument.OSC.Creator(Address, Tout);")
+(variableScope cont)
+(expr 1 "Ericsson.RUX.Drivers.Instrument.NWA.Creator(Address, 2000);"))
+(interface
+(input 1
+(name "Address")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 14 DECLVAR
+(properties
+(name "Declare NWA")
+(scope glob)
+(globalName "NWA"))
+(implementation
+(value Object
+(data  ".NET OFF DriverLibrary,Ericsson.RUX.Drivers.Instrument.NWA"))))
+(configuration
+(connect D1:1 D0:1)
+(connect I1:1 D1:1)))
+(contextCarrier
+(wndRestoredOrigin 176 308)
+(wndRestoredExtent 975 500)
+(wndState max)
+(active detail)
+(detail
+(extent 1220 1039)
+(anchorPt 275 217)
+(configuration
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 52 15))
+(open
+(extent 73 51))
+(terminals on)
+(pinCenter 710 310))
+(devCarrierFor 13
+(active open)
+(icon
+(extent 374 0))
+(open
+(extent 464 76))
+(terminals on)
+(pinCenter 315 310))
+(devCarrierFor 14
+(active open)
+(icon
+(extent 80 0))
+(open
+(extent 474 126))
+(pinCenter 310 130))
+(connect D1:1 D0:1
+(points 2 599 310 681 310))
+(connect I1:1 D1:1
+(points 4 -275 302 -80 302 -80 310 20 310)))
+(stackingOrder 0 2 1))))
+(context 12
+(properties
+(name "ReadMappedTrace")
+(variableName ReadMappedTrace)
+(variableScope glob)
+(trigMode deg)
+(nextID 15)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "Mag")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Phase")
+(lock constraints)
+(optional yes))
+(output 3
+(type data)
+(name "Cmplx")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "NWA.ReadMappedTrace()")
+(variableScope cont)
+(expr 1 "NWA.ReadMappedTrace()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(name "A.NwaTraceRe")
+(variableScope cont)
+(expr 1 "A.NwaTraceRe"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 FORMULA
+(properties
+(name "A.StopFreq")
+(variableScope cont)
+(expr 1 "A.StopFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 3 FORMULA
+(properties
+(name "A.StartFreq")
+(variableScope cont)
+(expr 1 "A.StartFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 4 FORMULA
+(properties
+(name "A.NwaTraceIm")
+(variableScope cont)
+(expr 1 "A.NwaTraceIm"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 5 FORMULA
+(properties
+(name "A.NwaTraceMag")
+(variableScope cont)
+(expr 1 "A.NwaTraceMag"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 6 FORMULA
+(properties
+(name "A.NwaTracePhase")
+(variableScope cont)
+(expr 1 "A.NwaTracePhase"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 7 TOCOMPLEX
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "Real64")
+(requires
+(datatype Real64))
+(lock name constraints))
+(input 2
+(name "Imag")
+(requires
+(datatype Real64))
+(lock name constraints))
+(output 1
+(name "Complex")
+(lock name constraints))))
+(device 8 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "100000")
+(mapTos "8500000000")))
+(device 9 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "100000")
+(mapTos "8500000000")))
+(device 10 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "100000")
+(mapTos "8500000000")))
+(device 14 START25
+(properties
+(variableScope cont)))
+(configuration
+(connect D11:0 D0:0)
+(connect D0:1 D1:1)
+(connect D0:1 D2:1)
+(connect D0:1 D3:1)
+(connect D0:1 D4:1)
+(connect D0:1 D5:1)
+(connect D0:1 D6:1)
+(connect D1:1 D7:1)
+(connect D4:1 D7:2)
+(connect D7:1 D8:1)
+(connect D3:1 D8:2)
+(connect D2:1 D8:3)
+(connect D5:1 D9:1)
+(connect D3:1 D9:2)
+(connect D2:1 D9:3)
+(connect D6:1 D10:1)
+(connect D3:1 D10:2)
+(connect D2:1 D10:3)
+(connect D9:1 O1:1)
+(connect D10:1 O2:1)
+(connect D8:1 O3:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 1066 360)
+(anchorPt 256 260)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 157 15))
+(open
+(extent 204 56))
+(terminals on)
+(pinCenter 200 90))
+(devCarrierFor 1
+(active icon)
+(icon
+(extent 90 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 500 300))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 66 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 500 140))
+(devCarrierFor 3
+(active icon)
+(icon
+(extent 66 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 500 120))
+(devCarrierFor 4
+(active icon)
+(icon
+(extent 88 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 500 320))
+(devCarrierFor 5
+(active icon)
+(icon
+(extent 97 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 510 90))
+(devCarrierFor 6
+(active icon)
+(icon
+(extent 112 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 530 200))
+(devCarrierFor 7
+(active icon)
+(icon
+(extent 88 51)
+(iconImage "build.icn"))
+(open
+(extent 12 50))
+(terminals on)
+(pinCenter 620 310))
+(devCarrierFor 8
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 92))
+(terminals on)
+(pinCenter 760 320))
+(devCarrierFor 9
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 92))
+(terminals on)
+(pinCenter 760 120))
+(devCarrierFor 10
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 92))
+(terminals on)
+(pinCenter 760 210))
+(devCarrierFor 14
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 210 10))
+(connect D11:0 D0:0
+(points 4 210 23 210 51 210 51 210 41))
+(connect D0:1 D1:1
+(points 8 354 90 430 90 430 140 440 140 440 200 430 200 430 300 452 300))
+(connect D0:1 D2:1
+(points 4 354 90 430 90 430 140 464 140))
+(connect D0:1 D3:1
+(points 4 354 90 430 90 430 120 464 120))
+(connect D0:1 D4:1
+(points 8 354 90 430 90 430 140 440 140 440 200 430 200 430 320 453 320))
+(connect D0:1 D5:1
+(points 4 354 90 375 90 375 90 459 90))
+(connect D0:1 D6:1
+(points 6 354 90 430 90 430 140 440 140 440 200 471 200))
+(connect D1:1 D7:1
+(points 2 547 300 573 300))
+(connect D4:1 D7:2
+(points 2 546 320 573 320))
+(connect D7:1 D8:1
+(points 2 666 310 716 310))
+(connect D3:1 D8:2
+(points 6 535 120 690 120 690 210 700 210 700 320 716 320))
+(connect D2:1 D8:3
+(points 8 535 140 560 140 560 130 680 130 680 220 690 220 690 330 716 330))
+(connect D5:1 D9:1
+(points 4 561 90 580 90 580 110 716 110))
+(connect D3:1 D9:2
+(points 2 535 120 716 120))
+(connect D2:1 D9:3
+(points 4 535 140 560 140 560 130 716 130))
+(connect D6:1 D10:1
+(points 2 588 200 716 200))
+(connect D3:1 D10:2
+(points 4 535 120 690 120 690 210 716 210))
+(connect D2:1 D10:3
+(points 6 535 140 560 140 560 130 680 130 680 220 716 220))
+(connect D9:1 O1:1
+(points 4 803 120 820 120 820 -201 809 -201))
+(connect D10:1 O2:1
+(points 4 803 210 820 210 820 -81 809 -81))
+(connect D8:1 O3:1
+(points 6 803 320 810 320 810 340 820 340 820 39 809 39)))
+(stackingOrder 1 7 11 10 8 3 4 2 5 9 6 0)))))
+(device 12 CALL
+(properties
+(name "Call LoadDriver")
+(variableScope cont)
+(callFunc "LoadDriver")
+(parmMode rev30))
+(interface
+(input 1
+(name "Address")
+(optional yes))))
+(device 14 CALL
+(properties
+(name "Call GetSettings")
+(variableScope cont)
+(callFunc "GetSettings")
+(parmMode rev30))
+(interface
+(output 1
+(name "X")
+(lock name constraints)
+(optional yes))))
+(device 53 CALL
+(properties
+(name "Call ReadMappedTrace")
+(variableScope cont)
+(callFunc "ReadMappedTrace")
+(parmMode rev30))
+(interface
+(output 1
+(name "Mag")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Phase")
+(lock name constraints)
+(optional yes))
+(output 3
+(name "Cmplx")
+(lock name constraints)
+(optional yes))))
+(device 64 LITERALCONSTANT
+(properties
+(name "Text")
+(variableScope cont)
+(enableEditing 1))
+(interface
+(output 1
+(name "Text")
+(lock name constraints)))
+(implementation
+(value Text
+(data  "N"))
+(initValue Text
+(data  ""))))
+(device 65 CALL
+(properties
+(name "Call CalibrateS11")
+(variableScope cont)
+(callFunc "CalibrateS11")
+(parmMode rev30))
+(interface
+(input 1
+(name "Calkit")
+(optional yes))))
+(configuration
+(connect D3:1 D4:1)))
+(contextCarrier
+(wndOrigin 11 4)
+(wndState res)
+(active detail)
+(detail
+(extent 816 348)
+(anchorPt -406 75)
+(configuration
+(devCarrierFor 12
+(active icon)
+(icon
+(extent 93 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 880 50))
+(devCarrierFor 14
+(active icon)
+(icon
+(extent 97 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 880 10))
+(devCarrierFor 53
+(active icon)
+(icon
+(extent 143 34))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 880 110))
+(devCarrierFor 64
+(active open)
+(icon)
+(open
+(extent 74 26))
+(pinCenter 770 180))
+(devCarrierFor 65
+(active icon)
+(icon
+(extent 105 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 900 170))
+(connect D3:1 D4:1
+(points 4 809 180 830 180 830 170 845 170)))
+(stackingOrder 3 0 4 1 2))
+(numberFormats
+(realFormat standard)
+(realSigDigits 5)
+(realRadixSpec 4)
+(integerBase decimal))))

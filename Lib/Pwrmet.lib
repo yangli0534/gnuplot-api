@@ -1,0 +1,229 @@
+(saveFormat "7.0")
+(date "Mon 04/Dec/2017 14:20:20 ")
+(veerev "9.32.17704.1")
+(platform "PC")
+(execMode v6)
+(prefExecMode v9)
+(filterNAN 0)
+(workspaceStackingOrder M F0)
+(sysconfig
+(iodevice "PwrMeter"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "RU"
+(type Serial)
+(gateway "This host")
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(model "")
+(baudRate 9600)
+(charSize 8)
+(stopBits 1)
+(parity off)
+(handshake off)
+(recvBufferSize 4096))
+(iodevice "SpecAnaLSB"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "Gen1"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "SpecAna"
+(type GPIB-VISA)
+(channel 130)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(ppAddr "GPIB0::20::INSTR")
+(model "")
+(eoiEnabled 1)
+(VISAddr "GPIB0::20::INSTR")
+(model ""
+(standard 488)))
+(iodevice "PSU1"
+(type GPIB)
+(gateway "This host")
+(channel 7)
+(subchannel 8)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(eoiEnabled 1)
+(model ""
+(standard 488))))
+(SaveCF no)
+(watchvariableslist
+(windowname Watch1
+(varname "radioSystem")))
+(device 0 ROOTCONTEXT
+(assemblyRefs
+(assemblyRef 1
+(displayName
+"DriverLibrary, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null")
+(desc "")
+(filename "C:\\repo\\ruxtest\\Drivers\\DriverLibrary.dll"))
+(selectedNamespaces ""))
+(properties
+(variableName Main)
+(variableScope glob)
+(trigMode deg)
+(nextID 39)
+(popupTitleText "Untitled")
+(popupMoveable 1)
+(deleteGlobals 0))
+(deviceList
+(UserFunctions
+(nextID 12)
+(context 0
+(properties
+(name "LoadDriver")
+(variableName LoadDriver)
+(variableScope glob)
+(trigMode deg)
+(nextID 13)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "Address")
+(optional yes)))
+(deviceList
+(device 2 TOGLOBAL
+(properties
+(name "Set PwrMet")
+(variableScope cont)
+(globalName "PwrMet"))
+(interface
+(input 1
+(name "Data")
+(tag "Data")
+(lock name))))
+(device 10 DECLVAR
+(properties
+(name "Declare PwrMet")
+(scope glob)
+(globalName "PwrMet"))
+(implementation
+(value Object
+(data  ".NET OFF DriverLibrary,Ericsson.RUX.Drivers.Instrument.PwrMet"))))
+(device 12 FORMULA
+(properties
+(name "Ericsson.RUX.Drivers.Instrument.PwrMet.Creator(Address, Tout);")
+(variableScope cont)
+(expr 1 "Ericsson.RUX.Drivers.Instrument.PwrMet.Creator(Address, 5000);"))
+(interface
+(input 1
+(name "Address")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D2:1 D0:1)
+(connect I1:1 D2:1)))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 1429 928)
+(anchorPt 49 101)
+(configuration
+(devCarrierFor 2
+(active open)
+(icon
+(extent 67 15))
+(open
+(extent 73 51))
+(terminals on)
+(pinCenter 1065 340))
+(devCarrierFor 10
+(active open)
+(icon
+(extent 94 0))
+(open
+(extent 348 124))
+(pinCenter 410 120))
+(devCarrierFor 12
+(active open)
+(icon
+(extent 389 0))
+(open
+(extent 442 70))
+(terminals on)
+(pinCenter 535 360))
+(connect D2:1 D0:1
+(points 4 808 360 830 360 830 340 986 340))
+(connect I1:1 D2:1
+(points 4 -49 362 101 362 101 360 251 360)))
+(stackingOrder 0 1 2)))))
+(configuration))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 816 348)
+(anchorPt -470 -117)
+(configuration))
+(numberFormats
+(realFormat standard)
+(realSigDigits 5)
+(realRadixSpec 4)
+(integerBase decimal))))

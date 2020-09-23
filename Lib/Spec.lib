@@ -1,0 +1,1853 @@
+(saveFormat "7.0")
+(date "Mon 04/Dec/2017 14:20:48 ")
+(veerev "9.32.17704.1")
+(platform "PC")
+(execMode v6)
+(prefExecMode v9)
+(filterNAN 0)
+(workspaceStackingOrder M F9 F0)
+(sysconfig
+(iodevice "PwrMeter"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "RU"
+(type Serial)
+(gateway "This host")
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(model "")
+(baudRate 9600)
+(charSize 8)
+(stopBits 1)
+(parity off)
+(handshake off)
+(recvBufferSize 4096))
+(iodevice "SpecAnaLSB"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "Gen1"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "SpecAna"
+(type GPIB-VISA)
+(channel 130)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(ppAddr "GPIB0::20::INSTR")
+(model "")
+(eoiEnabled 1)
+(VISAddr "GPIB0::20::INSTR")
+(model ""
+(standard 488)))
+(iodevice "PSU1"
+(type GPIB)
+(gateway "This host")
+(channel 7)
+(subchannel 8)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(eoiEnabled 1)
+(model ""
+(standard 488))))
+(SaveCF no)
+(device 0 ROOTCONTEXT
+(assemblyRefs
+(assemblyRef 1
+(displayName
+"DriverLibrary, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null")
+(desc "")
+(filename "C:\\repo\\ruxtest\\Drivers\\DriverLibrary.dll"))
+(selectedNamespaces ""))
+(properties
+(variableName Main)
+(variableScope glob)
+(trigMode deg)
+(nextID 39)
+(popupTitleText "Untitled")
+(popupMoveable 1)
+(deleteGlobals 0))
+(deviceList
+(UserFunctions
+(nextID 12)
+(context 7
+(properties
+(name "GetACPTrace")
+(variableName GetACPTrace)
+(variableScope glob)
+(trigMode deg)
+(nextID 6)
+(popupTitleText "UserFunction1")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "X")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "SpecAn.GetACPTrace();")
+(variableScope cont)
+(expr 1 "SpecAn.GetACPTrace();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(variableScope cont)
+(expr 3 "trace=A.SpecTrace;" "start=A.StartFreq;" "stop=A.StopFreq;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "trace")
+(optional yes))
+(output 2
+(name "start")
+(optional yes))
+(output 3
+(name "stop")
+(optional yes))))
+(device 2 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "0")
+(mapTos "9")))
+(configuration
+(connect D0:1 D1:1)
+(connect D1:1 D2:1)
+(connect D1:2 D2:2)
+(connect D1:3 D2:3)
+(connect D2:1 O1:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 1271 840)
+(anchorPt -86 -20)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 143 15))
+(open
+(extent 214 56))
+(terminals on)
+(pinCenter 310 430))
+(devCarrierFor 1
+(active open)
+(icon)
+(open
+(extent 214 126))
+(terminals on)
+(pinCenter 635 430))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 96))
+(terminals on)
+(pinCenter 1070 460))
+(connect D0:1 D1:1
+(points 2 469 430 495 430))
+(connect D1:1 D2:1
+(points 4 784 390 810 390 810 450 1026 450))
+(connect D1:2 D2:2
+(points 4 784 430 800 430 800 460 1026 460))
+(connect D1:3 D2:3
+(points 2 784 470 1026 470))
+(connect D2:1 O1:1
+(points 4 1113 460 1130 460 1130 439 1356 439)))
+(stackingOrder 1 2 0))))
+(context 5
+(properties
+(name "GetCCDFTrace")
+(variableName GetCCDFTrace)
+(variableScope glob)
+(trigMode deg)
+(nextID 5)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "points")
+(optional yes))
+(output 1
+(type data)
+(name "Trace")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Max")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "SpecAn.GetCCDFTrace();")
+(variableScope cont)
+(expr 1 "SpecAn.GetCCDFTrace(A);"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(name "max(A)")
+(variableScope cont)
+(expr 1 "max(A)"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 4 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "asInt32(A)"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D2:1 D0:1)
+(connect D0:1 D1:1)
+(connect I1:1 D2:1)
+(connect D0:1 O1:1)
+(connect D1:1 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 675 222)
+(anchorPt 8 17)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 154 15))
+(open
+(extent 234 76))
+(terminals on)
+(pinCenter 210 120))
+(devCarrierFor 1
+(active icon)
+(icon
+(extent 42 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 580 120))
+(devCarrierFor 4
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 120 260))
+(connect D2:1 D0:1
+(points 6 245 260 270 260 270 190 40 190 40 120 60 120))
+(connect D0:1 D1:1
+(points 2 379 120 556 120))
+(connect I1:1 D2:1
+(points 4 -8 93 -70 93 -70 260 15 260))
+(connect D0:1 O1:1
+(points 6 379 120 540 120 540 90 630 90 630 33 666 33))
+(connect D1:1 O2:1
+(points 4 603 120 620 120 620 153 666 153)))
+(stackingOrder 1 0 2))))
+(context 3
+(properties
+(name "GetMappedTrace")
+(variableName GetMappedTrace)
+(variableScope glob)
+(trigMode deg)
+(nextID 8)
+(popupTitleText "UserFunction1")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "Trace")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Max")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 1 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "2080000000")
+(mapTos "2200000000")))
+(device 2 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.StopFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 3 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.StartFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 4 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.SpecTrace"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 6 FORMULA
+(properties
+(name "SpecA.GetMappedTrace()")
+(variableScope cont)
+(expr 1 "SpecAn.GetMappedTrace()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 7 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "max(A)"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D3:1 D0:1)
+(connect D2:1 D0:2)
+(connect D1:1 D0:3)
+(connect D4:1 D1:1)
+(connect D4:1 D2:1)
+(connect D4:1 D3:1)
+(connect D3:1 D5:1)
+(connect D0:1 O1:1)
+(connect D5:1 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 1261 840)
+(anchorPt -268 -29)
+(configuration
+(devCarrierFor 1
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 96))
+(terminals on)
+(pinCenter 1080 250))
+(devCarrierFor 2
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 370))
+(devCarrierFor 3
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 290))
+(devCarrierFor 4
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 200))
+(devCarrierFor 6
+(active open)
+(icon
+(extent 154 15))
+(open
+(extent 204 56))
+(terminals on)
+(pinCenter 450 250))
+(devCarrierFor 7
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 1120 510))
+(connect D3:1 D0:1
+(points 4 935 200 960 200 960 240 1036 240))
+(connect D2:1 D0:2
+(points 4 935 290 970 290 970 250 1036 250))
+(connect D1:1 D0:3
+(points 4 935 370 990 370 990 260 1036 260))
+(connect D4:1 D1:1
+(points 6 604 250 620 250 620 290 680 290 680 370 705 370))
+(connect D4:1 D2:1
+(points 4 604 250 620 250 620 290 705 290))
+(connect D4:1 D3:1
+(points 4 604 250 630 250 630 200 705 200))
+(connect D3:1 D5:1
+(points 6 935 200 960 200 960 240 1000 240 1000 510 1015 510))
+(connect D0:1 O1:1
+(points 4 1123 250 1195 250 1195 238 1528 238))
+(connect D5:1 O2:1
+(points 4 1245 510 1270 510 1270 658 1528 658)))
+(stackingOrder 1 2 3 0 5 4))))
+(context 2
+(properties
+(name "GetMappedTrace_32")
+(variableName GetMappedTrace_32)
+(variableScope glob)
+(trigMode deg)
+(nextID 8)
+(popupTitleText "UserFunction1")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "Trace")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Max")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 1 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "2080000000")
+(mapTos "2200000000")))
+(device 2 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.StopFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 3 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.StartFreq"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 4 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "a.SpecTrace"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 6 FORMULA
+(properties
+(name "SpecA.GetMappedTrace_32()")
+(variableScope cont)
+(expr 1 "SpecAn.GetMappedTrace_32()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 7 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "max(A)"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D3:1 D0:1)
+(connect D2:1 D0:2)
+(connect D1:1 D0:3)
+(connect D4:1 D1:1)
+(connect D4:1 D2:1)
+(connect D4:1 D3:1)
+(connect D3:1 D5:1)
+(connect D0:1 O1:1)
+(connect D5:1 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 756 348)
+(anchorPt -322 -64)
+(configuration
+(devCarrierFor 1
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 96))
+(terminals on)
+(pinCenter 1080 250))
+(devCarrierFor 2
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 370))
+(devCarrierFor 3
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 290))
+(devCarrierFor 4
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 810 200))
+(devCarrierFor 6
+(active open)
+(icon
+(extent 177 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 440 250))
+(devCarrierFor 7
+(active open)
+(icon)
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 1120 510))
+(connect D3:1 D0:1
+(points 4 935 200 960 200 960 240 1036 240))
+(connect D2:1 D0:2
+(points 4 935 290 970 290 970 250 1036 250))
+(connect D1:1 D0:3
+(points 4 935 370 990 370 990 260 1036 260))
+(connect D4:1 D1:1
+(points 6 565 250 590 250 590 290 680 290 680 370 705 370))
+(connect D4:1 D2:1
+(points 4 565 250 590 250 590 290 705 290))
+(connect D4:1 D3:1
+(points 4 565 250 600 250 600 200 705 200))
+(connect D3:1 D5:1
+(points 6 935 200 960 200 960 240 1000 240 1000 510 1015 510))
+(connect D0:1 O1:1
+(points 4 1123 250 1195 250 1195 147 1077 147))
+(connect D5:1 O2:1
+(points 4 1245 510 1270 510 1270 327 1077 327)))
+(stackingOrder 1 2 3 0 5 4))))
+(context 6
+(properties
+(name "GetOBWidthTrace")
+(variableName GetOBWidthTrace)
+(variableScope glob)
+(trigMode deg)
+(nextID 4)
+(popupTitleText "UserFunction1")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "obw")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "trace")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "SpecAn.GetOBWidthTrace();")
+(variableScope cont)
+(expr 1 "SpecAn.GetOBWidthTrace();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(variableScope cont)
+(expr 3 "trace=A.SpecTrace;" "start=A.StartFreq;" "stop=A.StopFreq;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "trace")
+(optional yes))
+(output 2
+(name "start")
+(optional yes))
+(output 3
+(name "stop")
+(optional yes))))
+(device 2 TOFUNCTION
+(properties
+(variableScope cont))
+(interface
+(input 1
+(name "InArray")
+(tag "InArray")
+(lock constraints))
+(input 2
+(name "Map From 1")
+(tag "Map From 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(input 3
+(name "Map To 1")
+(tag "Map To 1")
+(requires
+(datatype Real64)
+(shape "Scalar"))
+(lock constraints)
+(optional yes)
+(buffer YES))
+(output 1
+(name "OutFunc")
+(tag "OutFunc")))
+(implementation
+(numDims 1)
+(xMappings "Linear")
+(mapFroms "0")
+(mapTos "9")))
+(device 3 FORMULA
+(properties
+(name "SpecAn.GetOBWidth();")
+(variableScope cont)
+(expr 1 "SpecAn.GetOBWidth();"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D3:0 D0:0)
+(connect D0:1 D1:1)
+(connect D1:1 D2:1)
+(connect D1:2 D2:2)
+(connect D1:3 D2:3)
+(connect D3:1 O1:1)
+(connect D2:1 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 1053 612)
+(anchorPt -86 -20)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 169 15))
+(open
+(extent 214 56))
+(terminals on)
+(pinCenter 310 430))
+(devCarrierFor 1
+(active open)
+(icon)
+(open
+(extent 214 126))
+(terminals on)
+(pinCenter 635 430))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 82 51)
+(iconImage "build.icn"))
+(open
+(extent 207 96))
+(terminals on)
+(pinCenter 1070 460))
+(devCarrierFor 3
+(active open)
+(icon
+(extent 135 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 310 190))
+(connect D3:0 D0:0
+(points 2 320 217 320 381))
+(connect D0:1 D1:1
+(points 2 469 430 495 430))
+(connect D1:1 D2:1
+(points 4 784 390 810 390 810 450 1026 450))
+(connect D1:2 D2:2
+(points 4 784 430 800 430 800 460 1026 460))
+(connect D1:3 D2:3
+(points 2 784 470 1026 470))
+(connect D3:1 O1:1
+(points 4 435 190 460 190 460 165 1138 165))
+(connect D2:1 O2:1
+(points 4 1113 460 1130 460 1130 485 1138 485)))
+(stackingOrder 1 2 0 3))))
+(context 1
+(properties
+(name "GetSettings")
+(variableName GetSettings)
+(variableScope glob)
+(trigMode deg)
+(nextID 4)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "X")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "SpecA.GetSettings()")
+(variableScope cont)
+(expr 1 "SpecAn.GetSettings()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 TORECORD
+(properties
+(variableScope cont)
+(outputType scalar))
+(interface
+(input 1
+(name "at")
+(optional yes))
+(input 2
+(name "cf")
+(optional yes))
+(input 3
+(name "det")
+(optional yes))
+(input 4
+(name "rbw")
+(optional yes))
+(input 5
+(name "rl")
+(optional yes))
+(input 6
+(name "sp")
+(optional yes))
+(input 7
+(name "st")
+(optional yes))
+(input 8
+(name "startF")
+(optional yes))
+(input 9
+(name "stopF")
+(optional yes))
+(input 10
+(name "va")
+(optional yes))
+(input 11
+(name "vbw")
+(optional yes))
+(output 1
+(name "Record"))))
+(device 3 FORMULA
+(properties
+(name "unpack struct")
+(variableScope cont)
+(expr 11 "cf=a.cf;" "at=a.at;" "det=a.det;" "rbw=a.rbw;" "rl=a.rl;" "sp=a.sp;"
+"st=a.st;" "startF=a.startF;" "stopF=a.stopF;" "va=a.va;" "vbw=a.vbw;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "at")
+(optional yes))
+(output 2
+(name "cf")
+(optional yes))
+(output 3
+(name "det")
+(optional yes))
+(output 4
+(name "rbw")
+(optional yes))
+(output 5
+(name "rl")
+(optional yes))
+(output 6
+(name "sp")
+(optional yes))
+(output 7
+(name "st")
+(optional yes))
+(output 8
+(name "startF")
+(optional yes))
+(output 9
+(name "stopF")
+(optional yes))
+(output 10
+(name "va")
+(optional yes))
+(output 11
+(name "vbw")
+(optional yes))))
+(configuration
+(connect D2:1 D1:1)
+(connect D2:2 D1:2)
+(connect D2:3 D1:3)
+(connect D2:4 D1:4)
+(connect D2:5 D1:5)
+(connect D2:6 D1:6)
+(connect D2:7 D1:7)
+(connect D2:8 D1:8)
+(connect D2:9 D1:9)
+(connect D2:10 D1:10)
+(connect D2:11 D1:11)
+(connect D0:1 D2:1)
+(connect D1:1 O1:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 265 143)
+(anchorPt 33 144)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 121 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 120 70))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 78 114)
+(iconImage "build.icn"))
+(open
+(extent 97 222))
+(terminals on)
+(pinCenter 560 70))
+(devCarrierFor 3
+(active icon)
+(icon
+(extent 80 114))
+(open
+(extent 194 246))
+(terminals on)
+(pinCenter 360 70))
+(connect D2:1 D1:1
+(points 2 402 20 518 20))
+(connect D2:2 D1:2
+(points 2 402 30 518 30))
+(connect D2:3 D1:3
+(points 2 402 40 518 40))
+(connect D2:4 D1:4
+(points 2 402 50 518 50))
+(connect D2:5 D1:5
+(points 2 402 60 518 60))
+(connect D2:6 D1:6
+(points 2 402 70 518 70))
+(connect D2:7 D1:7
+(points 2 402 80 518 80))
+(connect D2:8 D1:8
+(points 2 402 90 518 90))
+(connect D2:9 D1:9
+(points 2 402 100 518 100))
+(connect D2:10 D1:10
+(points 2 402 110 518 110))
+(connect D2:11 D1:11
+(points 2 402 120 518 120))
+(connect D0:1 D2:1
+(points 4 245 70 253 70 253 70 317 70))
+(connect D1:1 O1:1
+(points 4 601 70 620 70 620 -73 231 -73)))
+(stackingOrder 1 2 0))))
+(context 9
+(properties
+(name "GetTD_ACLR")
+(variableName GetTD_ACLR)
+(variableScope glob)
+(trigMode deg)
+(nextID 6)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "calData")
+(optional yes))
+(input 2
+(name "noCarr")
+(optional yes))
+(input 3
+(name "refCar")
+(optional yes))
+(output 1
+(type data)
+(name "trace")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "aclr")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(name "SpecAn.GetTD_ACLR(caldata,nocarr,refcarr);")
+(variableScope cont)
+(expr 1 "SpecAn.GetTD_ACLR(caldata,nocarr,refcarr);"))
+(interface
+(input 1
+(name "caldata")
+(optional yes))
+(input 2
+(name "nocarr")
+(optional yes))
+(input 3
+(name "refcarr")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(variableScope cont)
+(expr 4 "trace=A.SpecTrace;" "start=A.StartFreq;" "stop=A.StopFreq;"
+"aclr=a.ACLR;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "trace")
+(optional yes))
+(output 2
+(name "start")
+(optional yes))
+(output 3
+(name "stop")
+(optional yes))
+(output 4
+(name "aclr")
+(optional yes))))
+(configuration
+(connect I1:1 D0:1)
+(connect I2:1 D0:2)
+(connect I3:1 D0:3)
+(connect D0:1 D1:1)
+(connect D1:1 O1:1)
+(connect D1:4 O2:1)))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 816 272)
+(anchorPt 33 131)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon
+(extent 269 15))
+(open
+(extent 264 86))
+(terminals on)
+(pinCenter 255 120))
+(devCarrierFor 1
+(active open)
+(icon)
+(open
+(extent 214 126))
+(terminals on)
+(pinCenter 595 120))
+(connect I1:1 D0:1
+(points 4 -33 -86 -20 -86 -20 90 60 90))
+(connect I2:1 D0:2
+(points 4 -33 4 -20 4 -20 120 60 120))
+(connect I3:1 D0:3
+(points 4 -33 94 -10 94 -10 150 60 150))
+(connect D0:1 D1:1
+(points 2 439 120 455 120))
+(connect D1:1 O1:1
+(points 4 744 70 760 70 760 -66 782 -66))
+(connect D1:4 O2:1
+(points 4 744 160 760 160 760 74 782 74)))
+(stackingOrder 0 1))))
+(context 10
+(properties
+(name "GSM_MeasSpectrum")
+(variableName GSM_MeasSpectrum)
+(variableScope glob)
+(trigMode deg)
+(nextID 3)
+(popupTitleText "UserFunction1")
+(popupMoveable 1))
+(interface
+(input 1
+(name "sdm/sdt")
+(optional yes))
+(output 1
+(type data)
+(name "fq")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "mag")
+(lock constraints)
+(optional yes))
+(output 3
+(type data)
+(name "limit")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 1 FORMULA
+(properties
+(name "SpecAn.GSM_MeasSpectrum(A);")
+(variableScope cont)
+(expr 1 "SpecAn.GSM_MeasSpectrum(A);"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 FORMULA
+(properties
+(variableScope cont)
+(expr 3 "fq=a.FQ;" "lim=a.Limit;" "ma=a.Mag;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "fq")
+(optional yes))
+(output 2
+(name "ma")
+(optional yes))
+(output 3
+(name "lim")
+(optional yes))))
+(configuration
+(connect I1:1 D0:1)
+(connect D0:1 D1:1)
+(connect D1:1 O1:1)
+(connect D1:2 O2:1)
+(connect D1:3 O3:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 737 348)
+(anchorPt 0 0)
+(configuration
+(devCarrierFor 1
+(active open)
+(icon
+(extent 196 15))
+(open
+(extent 152 50))
+(terminals on)
+(pinCenter 310 380))
+(devCarrierFor 2
+(active open)
+(icon)
+(open
+(extent 214 126))
+(terminals on)
+(pinCenter 650 380))
+(connect I1:1 D0:1
+(points 4 0 173 10 173 10 380 201 380))
+(connect D0:1 D1:1
+(points 2 438 380 510 380))
+(connect D1:1 O1:1
+(points 4 789 340 810 340 810 63 736 63))
+(connect D1:2 O2:1
+(points 4 789 380 810 380 810 173 736 173))
+(connect D1:3 O3:1
+(points 6 789 420 800 420 800 430 810 430 810 283 736 283)))
+(stackingOrder 1 0))))
+(context 0
+(properties
+(name "LoadDriver")
+(variableName LoadDriver)
+(variableScope glob)
+(trigMode deg)
+(nextID 5)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "Address")
+(optional yes)))
+(deviceList
+(device 1 FORMULA
+(properties
+(name "Ericsson.RUX.Drivers.Instrument.Spec.Creator(Address, 5000, \"\");")
+(variableScope cont)
+(expr 1 "Ericsson.RUX.Drivers.Instrument.Spec.Creator(Address, 5000, \"\");"))
+(interface
+(input 1
+(name "Address")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 TOGLOBAL
+(properties
+(name "Set SpecAn")
+(variableScope cont)
+(globalName "SpecAn"))
+(interface
+(input 1
+(name "Data")
+(tag "Data")
+(lock name))))
+(device 4 DECLVAR
+(properties
+(name "Declare SpecAn")
+(scope glob)
+(globalName "SpecAn"))
+(implementation
+(value Object
+(data  ".NET OFF DriverLibrary,Ericsson.RUX.Drivers.Instrument.Spec"))))
+(configuration
+(connect I1:1 D0:1)
+(connect D0:1 D1:1)))
+(contextCarrier
+(wndRestoredOrigin 2 2)
+(wndRestoredExtent 839 406)
+(wndState max)
+(active detail)
+(detail
+(extent 838 1039)
+(anchorPt -41 21)
+(configuration
+(devCarrierFor 1
+(active open)
+(icon
+(extent 397 14))
+(open
+(extent 924 66))
+(terminals on)
+(pinCenter 645 470))
+(devCarrierFor 2
+(active open)
+(icon
+(extent 69 15))
+(open
+(extent 73 51))
+(terminals on)
+(pinCenter 735 330))
+(devCarrierFor 4
+(active open)
+(icon
+(extent 96 15))
+(open
+(extent 348 124))
+(pinCenter 490 150))
+(connect I1:1 D0:1
+(points 4 41 498 40 498 40 470 120 470))
+(connect D0:1 D1:1
+(points 6 1159 470 1180 470 1180 400 640 400 640 330 656 330)))
+(stackingOrder 1 2 0))))
+(context 4
+(properties
+(name "SetAndGetMarker")
+(variableName SetAndGetMarker)
+(variableScope glob)
+(trigMode deg)
+(nextID 3)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "level")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Freq")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 START25
+(properties
+(variableScope cont)))
+(device 1 FORMULA
+(properties
+(name "SpecAn.SetAndGetMarker()")
+(variableScope cont)
+(expr 1 "SpecAn.SetAndGetMarker()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 FORMULA
+(properties
+(variableScope cont)
+(expr 2 "Lev=a.Level;" "Freq=a.Freq;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Lev")
+(optional yes))
+(output 2
+(name "Freq")
+(optional yes))))
+(configuration
+(connect D0:0 D1:0)
+(connect D1:1 D2:1)
+(connect D2:1 O1:1)
+(connect D2:2 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 599 252)
+(anchorPt -20 152)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 160 70))
+(devCarrierFor 1
+(active open)
+(icon
+(extent 162 15))
+(open
+(extent 145 50))
+(terminals on)
+(pinCenter 150 150))
+(devCarrierFor 2
+(active open)
+(icon)
+(open
+(extent 145 65))
+(terminals on)
+(pinCenter 415 150))
+(connect D0:0 D1:0
+(points 2 160 83 160 104))
+(connect D1:1 D2:1
+(points 2 275 150 310 150))
+(connect D2:1 O1:1
+(points 4 530 130 560 130 560 -97 618 -97))
+(connect D2:2 O2:1
+(points 4 530 170 550 170 550 43 618 43)))
+(stackingOrder 0 2 1))))
+(context 8
+(properties
+(name "SetMarkerFreq")
+(variableName SetMarkerFreq)
+(variableScope glob)
+(trigMode deg)
+(nextID 3)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "f")
+(optional yes))
+(output 1
+(type data)
+(name "Level")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Freq")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 START25
+(properties
+(variableScope cont)))
+(device 1 FORMULA
+(properties
+(name "SpecAn.SetMarkerFreq(A);")
+(variableScope cont)
+(expr 1 "SpecAn.SetMarkerFreq(A);"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 2 FORMULA
+(properties
+(variableScope cont)
+(expr 2 "Lev=a.Level;" "Freq=a.Freq;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "Lev")
+(optional yes))
+(output 2
+(name "Freq")
+(optional yes))))
+(configuration
+(connect D0:0 D1:0)
+(connect I1:1 D1:1)
+(connect D1:1 D2:1)
+(connect D2:1 O1:1)
+(connect D2:2 O2:1)))
+(contextCarrier
+(active detail)
+(detail
+(extent 955 558)
+(anchorPt 132 112)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon)
+(open
+(extent 47 22))
+(title off)
+(pinCenter 160 70))
+(devCarrierFor 1
+(active open)
+(icon
+(extent 157 15))
+(open
+(extent 224 56))
+(terminals on)
+(pinCenter 90 160))
+(devCarrierFor 2
+(active open)
+(icon)
+(open
+(extent 145 65))
+(terminals on)
+(pinCenter 415 150))
+(connect D0:0 D1:0
+(points 4 160 83 160 90 100 90 100 111))
+(connect I1:1 D1:1
+(points 4 -132 166 -120 166 -120 160 -55 160))
+(connect D1:1 D2:1
+(points 4 254 160 270 160 270 150 310 150))
+(connect D2:1 O1:1
+(points 4 530 130 560 130 560 26 822 26))
+(connect D2:2 O2:1
+(points 4 530 170 550 170 550 306 822 306)))
+(stackingOrder 0 2 1)))))
+(device 12 CALL
+(properties
+(name "Call LoadDriver")
+(variableScope cont)
+(callFunc "LoadDriver")
+(parmMode rev30))
+(interface
+(input 1
+(name "Address")
+(optional yes))))
+(device 14 CALL
+(properties
+(name "Call GetSettings")
+(variableScope cont)
+(callFunc "GetSettings")
+(parmMode rev30))
+(interface
+(output 1
+(name "X")
+(lock name constraints)
+(optional yes))))
+(device 15 CALL
+(properties
+(name "Call GetMappedTrace_32")
+(variableScope cont)
+(callFunc "GetMappedTrace_32")
+(parmMode rev30))
+(interface
+(output 1
+(name "Trace")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Max")
+(lock name constraints)
+(optional yes))))
+(device 19 CALL
+(properties
+(name "Call SetAndGetMarker")
+(variableScope cont)
+(callFunc "SetAndGetMarker")
+(parmMode rev30))
+(interface
+(output 1
+(name "level")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Freq")
+(lock name constraints)
+(optional yes))))
+(device 22 CALL
+(properties
+(name "Call GetCCDFTrace")
+(variableScope cont)
+(callFunc "GetCCDFTrace")
+(parmMode rev30))
+(interface
+(input 1
+(name "pomts")
+(optional yes))
+(output 1
+(name "Trace")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Max")
+(lock name constraints)
+(optional yes))))
+(device 23 CALL
+(properties
+(name "Call GetOBWidthTrace")
+(variableScope cont)
+(callFunc "GetOBWidthTrace")
+(parmMode rev30))
+(interface
+(output 1
+(name "obw")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "trace")
+(lock name constraints)
+(optional yes))))
+(device 26 CALL
+(properties
+(name "Call GetACPTrace")
+(variableScope cont)
+(callFunc "GetACPTrace")
+(parmMode rev30))
+(interface
+(output 1
+(name "trace")
+(lock name constraints)
+(optional yes))))
+(device 28 CALL
+(properties
+(name "Call SetMarkerFreq")
+(variableScope cont)
+(callFunc "SetMarkerFreq")
+(parmMode rev30))
+(interface
+(input 1
+(name "f")
+(optional yes))
+(output 1
+(name "Level")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Freq")
+(lock name constraints)
+(optional yes))))
+(device 31 CALL
+(properties
+(name "Call GetTD_ACLR")
+(variableScope cont)
+(callFunc "GetTD_ACLR")
+(parmMode rev30))
+(interface
+(input 1
+(name "calData")
+(optional yes))
+(input 2
+(name "noCarr")
+(optional yes))
+(input 3
+(name "refCar")
+(optional yes))
+(output 1
+(name "trace")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "aclr")
+(lock name constraints)
+(optional yes))))
+(device 33 CALL
+(properties
+(name "Call GSM_MeasSpectrum")
+(variableScope cont)
+(callFunc "GSM_MeasSpectrum")
+(parmMode rev30))
+(interface
+(input 1
+(name "sdm/sdt")
+(optional yes))
+(output 1
+(name "fq")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "mag")
+(lock name constraints)
+(optional yes))
+(output 3
+(name "limit")
+(lock name constraints)
+(optional yes))))
+(device 35 CALL
+(properties
+(name "Call PrintScreen")
+(variableScope cont)
+(callFunc "PrintScreen")
+(parmMode rev30)))
+(configuration))
+(contextCarrier
+(wndOrigin 22 22)
+(wndState res)
+(active detail)
+(detail
+(extent 816 348)
+(anchorPt -675 -37)
+(configuration
+(devCarrierFor 12
+(active icon)
+(icon
+(extent 93 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 100))
+(devCarrierFor 14
+(active icon)
+(icon
+(extent 97 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 130))
+(devCarrierFor 15
+(active icon)
+(icon
+(extent 154 25))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 170))
+(devCarrierFor 19
+(active icon)
+(icon
+(extent 132 25))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 220))
+(devCarrierFor 22
+(active icon)
+(icon
+(extent 119 25))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 270))
+(devCarrierFor 23
+(active icon)
+(icon
+(extent 135 25))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 870 330))
+(devCarrierFor 26
+(active icon)
+(icon
+(extent 108 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 880 380))
+(devCarrierFor 28
+(active icon)
+(icon
+(extent 115 25))
+(open
+(extent 174 51))
+(terminals on)
+(pinCenter 870 420))
+(devCarrierFor 31
+(active icon)
+(icon
+(extent 108 34))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 1100 130))
+(devCarrierFor 33
+(active icon)
+(icon
+(extent 155 34))
+(open
+(extent 176 70))
+(terminals on)
+(pinCenter 1080 230))
+(devCarrierFor 35
+(active icon)
+(icon
+(extent 97 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 1080 180)))
+(stackingOrder 1 6 7 8 4 3 2 5 10 0 9))
+(numberFormats
+(realFormat standard)
+(realSigDigits 5)
+(realRadixSpec 4)
+(integerBase decimal))))

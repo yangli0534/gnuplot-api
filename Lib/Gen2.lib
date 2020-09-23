@@ -1,0 +1,492 @@
+(saveFormat "7.0")
+(date "Mon 04/Dec/2017 14:18:42 ")
+(veerev "9.32.17704.1")
+(platform "PC")
+(execMode v6)
+(prefExecMode v9)
+(filterNAN 0)
+(workspaceStackingOrder M F1 F2 F0)
+(sysconfig
+(iodevice "PwrMeter"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "RU"
+(type Serial)
+(gateway "This host")
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(model "")
+(baudRate 9600)
+(charSize 8)
+(stopBits 1)
+(parity off)
+(handshake off)
+(recvBufferSize 4096))
+(iodevice "SpecAnaLSB"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "Gen1"
+(type GPIB-VISA)
+(channel 0)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(isLive 0)
+(ppAddr "")
+(model "")
+(eoiEnabled 1)
+(model ""
+(standard 488)))
+(iodevice "SpecAna"
+(type GPIB-VISA)
+(channel 130)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(ppAddr "GPIB0::20::INSTR")
+(model "")
+(eoiEnabled 1)
+(VISAddr "GPIB0::20::INSTR")
+(model ""
+(standard 488)))
+(iodevice "PSU1"
+(type GPIB)
+(gateway "This host")
+(channel 7)
+(subchannel 8)
+(readTerm "\n")
+(fs ",")
+(eol "\n")
+(multiField dataOnly)
+(arrayFormat linear)
+(timeout 5)
+(byteOrder 0)
+(eoiEnabled 1)
+(model ""
+(standard 488))))
+(SaveCF no)
+(device 0 ROOTCONTEXT
+(assemblyRefs
+(assemblyRef 1
+(displayName
+"DriverLibrary, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null")
+(desc "")
+(filename "C:\\repo\\ruxtest\\Drivers\\DriverLibrary.dll"))
+(selectedNamespaces ""))
+(properties
+(variableName Main)
+(variableScope glob)
+(trigMode deg)
+(nextID 5)
+(popupTitleText "Untitled")
+(popupMoveable 1)
+(deleteGlobals 0))
+(deviceList
+(UserFunctions
+(nextID 3)
+(context 1
+(properties
+(name "GetArbMemoryInfo")
+(variableName GetArbMemoryInfo)
+(variableScope glob)
+(trigMode deg)
+(nextID 2)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "Used")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Free")
+(lock constraints)
+(optional yes))
+(output 3
+(type data)
+(name "Info")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "SigGen2.GetArbMemoryInfo()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(name "A.Free;")
+(variableScope cont)
+(expr 3 "f=A.Free;" "u=A.Used;" "i=A.Info;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "u")
+(optional yes))
+(output 2
+(name "f")
+(optional yes))
+(output 3
+(name "i")
+(optional yes))
+(output 4
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D0:1 D1:1)
+(connect D1:1 O1:1)
+(connect D1:2 O2:1)
+(connect D1:3 O3:1)))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 511 212)
+(anchorPt -4 -10)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon)
+(open
+(extent 294 66))
+(terminals on)
+(pinCenter 310 280))
+(devCarrierFor 1
+(active open)
+(icon
+(extent 42 0))
+(open
+(extent 145 82))
+(terminals on)
+(pinCenter 770 280))
+(connect D0:1 D1:1
+(points 2 509 280 665 280))
+(connect D1:1 O1:1
+(points 4 895 250 920 250 920 45 514 45))
+(connect D1:2 O2:1
+(points 4 895 270 920 270 920 115 514 115))
+(connect D1:3 O3:1
+(points 4 895 290 910 290 910 185 514 185)))
+(stackingOrder 1 0))))
+(context 2
+(properties
+(name "GetNVArbMemoryInfo")
+(variableName GetNVArbMemoryInfo)
+(variableScope glob)
+(trigMode deg)
+(nextID 2)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(output 1
+(type data)
+(name "Used")
+(lock constraints)
+(optional yes))
+(output 2
+(type data)
+(name "Free")
+(lock constraints)
+(optional yes))
+(output 3
+(type data)
+(name "Info")
+(lock constraints)
+(optional yes)))
+(deviceList
+(device 0 FORMULA
+(properties
+(variableScope cont)
+(expr 1 "SigGen2.GetNVArbMemoryInfo()"))
+(interface
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 1 FORMULA
+(properties
+(name "A.Free;")
+(variableScope cont)
+(expr 3 "f=A.Free;" "u=A.Used;" "i=A.Info;"))
+(interface
+(input 1
+(name "A")
+(optional yes))
+(output 1
+(name "u")
+(optional yes))
+(output 2
+(name "f")
+(optional yes))
+(output 3
+(name "i")
+(optional yes))
+(output 4
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(configuration
+(connect D0:1 D1:1)
+(connect D1:1 O1:1)
+(connect D1:2 O2:1)
+(connect D1:3 O3:1)))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 1284 840)
+(anchorPt 0 0)
+(configuration
+(devCarrierFor 0
+(active open)
+(icon)
+(open
+(extent 294 66))
+(terminals on)
+(pinCenter 310 280))
+(devCarrierFor 1
+(active open)
+(icon
+(extent 42 0))
+(open
+(extent 145 82))
+(terminals on)
+(pinCenter 770 280))
+(connect D0:1 D1:1
+(points 2 509 280 665 280))
+(connect D1:1 O1:1
+(points 4 895 250 920 250 920 139 1283 139))
+(connect D1:2 O2:1
+(points 4 895 270 920 270 920 419 1283 419))
+(connect D1:3 O3:1
+(points 4 895 290 910 290 910 699 1283 699)))
+(stackingOrder 1 0))))
+(context 0
+(properties
+(name "LoadDriver")
+(variableName LoadDriver)
+(variableScope glob)
+(trigMode deg)
+(nextID 8)
+(popupTitleText "UserFunction")
+(popupMoveable 1))
+(interface
+(input 1
+(name "Address")
+(optional yes)))
+(deviceList
+(device 2 TOGLOBAL
+(properties
+(name "Set SigGen2")
+(variableScope cont)
+(globalName "SigGen2"))
+(interface
+(input 1
+(name "Data")
+(tag "Data")
+(lock name))))
+(device 6 FORMULA
+(properties
+(name "Ericsson.RUX.Drivers.Instrument.Gen.Creator(Address, Tout);")
+(variableScope cont)
+(expr 1 "Ericsson.RUX.Drivers.Instrument.Gen.Creator(Address, 5000);"))
+(interface
+(input 1
+(name "Address")
+(optional yes))
+(output 1
+(name "Result")
+(tag "Result")
+(lock name constraints)
+(optional yes))))
+(device 7 DECLVAR
+(properties
+(name "Declare SigGen2")
+(scope glob)
+(globalName "SigGen2"))
+(implementation
+(value Object
+(data  ".NET OFF DriverLibrary,Ericsson.RUX.Drivers.Instrument.Gen"))))
+(configuration
+(connect D1:1 D0:1)
+(connect I1:1 D1:1)))
+(contextCarrier
+(wndRestoredOrigin 2 2)
+(wndRestoredExtent 1274 840)
+(wndState max)
+(active detail)
+(detail
+(extent 1220 1039)
+(anchorPt 297 95)
+(configuration
+(devCarrierFor 2
+(active open)
+(icon
+(extent 75 15))
+(open
+(extent 73 51))
+(terminals on)
+(pinCenter 975 440))
+(devCarrierFor 6
+(active open)
+(icon
+(extent 370 0))
+(open
+(extent 425 70))
+(terminals on)
+(pinCenter 615 440))
+(devCarrierFor 7
+(active open)
+(icon
+(extent 103 15))
+(open
+(extent 348 124))
+(pinCenter 630 220))
+(connect D1:1 D0:1
+(points 4 880 440 905 440 905 440 896 440))
+(connect I1:1 D1:1
+(points 4 -297 424 160 424 160 440 340 440)))
+(stackingOrder 0 2 1)))))
+(device 0 CALL
+(properties
+(name "Call LoadDriver")
+(variableScope cont)
+(callFunc "LoadDriver")
+(parmMode rev30))
+(interface
+(input 1
+(name "Address")
+(optional yes))))
+(device 2 CALL
+(properties
+(name "Call GetArbMemoryInfo")
+(variableScope cont)
+(callFunc "GetArbMemoryInfo")
+(parmMode rev30))
+(interface
+(output 1
+(name "Used")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Free")
+(lock name constraints)
+(optional yes))
+(output 3
+(name "Info")
+(lock name constraints)
+(optional yes))))
+(device 4 CALL
+(properties
+(name "Call GetNVArbMemoryInfo")
+(variableScope cont)
+(callFunc "GetNVArbMemoryInfo")
+(parmMode rev30))
+(interface
+(output 1
+(name "Used")
+(lock name constraints)
+(optional yes))
+(output 2
+(name "Free")
+(lock name constraints)
+(optional yes))
+(output 3
+(name "Info")
+(lock name constraints)
+(optional yes))))
+(configuration))
+(contextCarrier
+(wndOrigin 2 2)
+(wndState res)
+(active detail)
+(detail
+(extent 1136 612)
+(anchorPt 2 0)
+(configuration
+(devCarrierFor 0
+(active icon)
+(icon
+(extent 93 15))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 290 160))
+(devCarrierFor 2
+(active icon)
+(icon
+(extent 137 34))
+(open
+(extent 176 51))
+(terminals on)
+(pinCenter 300 220))
+(devCarrierFor 4
+(active icon)
+(icon
+(extent 154 34))
+(open
+(extent 176 70))
+(terminals on)
+(pinCenter 310 280)))
+(stackingOrder 1 2 0))
+(numberFormats
+(realFormat standard)
+(realSigDigits 5)
+(realRadixSpec 4)
+(integerBase decimal))))
