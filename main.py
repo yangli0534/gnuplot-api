@@ -9,5 +9,6 @@ import sys
 sys.path.append('./RecordFile')
 from GetRecordFileFolderPath import *
 
+#Test Record File Module
 path = GetRecordFileFolderPath()
 print(path)
