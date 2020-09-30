@@ -7,7 +7,7 @@
 """
 from pathlib import Path
 
-def GetRecordFileFolderPath():
+def get_folder_path():
     #filename = os.getcwd()
     #os.path.abspath(filename)
     path = Path().absolute()

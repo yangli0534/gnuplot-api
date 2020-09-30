@@ -5,8 +5,11 @@
 @time: 2020-09-20
 
 """
+import sys
+sys.path.append('../RecordFile')
+from GetRecordFileFolderPath import *
 
-def InstrumentRemoteCtrl(RecordName, ActionName, par, cmd, read, ctrlmode, ip, gpib):
+def instru_remote_ctrl(RecordName, ActionName, par, cmd, read, ctrlmode, ip, gpib):
     """
     
     :param RecordName: 
@@ -20,3 +23,4 @@ def InstrumentRemoteCtrl(RecordName, ActionName, par, cmd, read, ctrlmode, ip, g
     :param gpib: 
     :return: 
     """
+    record_folder_path = get_folder_path()
