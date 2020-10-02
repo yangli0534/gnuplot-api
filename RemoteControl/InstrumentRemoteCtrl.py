@@ -7,9 +7,10 @@
 """
 import sys
 sys.path.append('../RecordFile')
+sys.path.append('../Station')
 from GetRecordFileFolderPath import *
-
-def instru_remote_ctrl(RecordName, ActionName, par, cmd, read, ctrlmode, ip, gpib):
+from InstrumentAddrConfig import *
+def instru_remote_ctrl(record_name, action_name, par, cmd, read, ctrl_mode, ip, gpib):
     """
     
     :param RecordName: 
@@ -24,3 +25,5 @@ def instru_remote_ctrl(RecordName, ActionName, par, cmd, read, ctrlmode, ip, gpi
     :return: 
     """
     record_folder_path = get_folder_path()
+
+    if( action_name and not (action_name = '*')):
