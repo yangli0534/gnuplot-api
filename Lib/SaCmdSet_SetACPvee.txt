@@ -1,0 +1,7 @@
+"SetAcpMeas":{           "Cmd": "CALC:MARK:FUNC:POW:PRES",       "CmdPar": "NONE",                  "RdWrFlag": "0"}, 
+"SetAcpSpace":{          "Cmd": "POW:ACH:SPAC",                  "CmdPar": "5MHz",                  "RdWrFlag": "0"}, 
+"SetAcpBwid":{           "Cmd": "POW:ACH:BWID",                  "CmdPar": "5MHz",                  "RdWrFlag": "0"}, 
+"SetAcpBwidAch":{        "Cmd": "POW:ACH:BWID:ACH",              "CmdPar": "5MHZ",                  "RdWrFlag": "0"}, 
+"SetAcpMode":{           "Cmd": "POW:ACH:MODE",                  "CmdPar": "REL",                   "RdWrFlag": "0"}, 
+"SetAcpAch":{            "Cmd": "POW:ACH:ACP",                   "CmdPar": "2",                     "RdWrFlag": "0"}, 
+"SetSpan":{              "Cmd": "FREQ:SPAN",                     "CmdPar": "70MHz",                 "RdWrFlag": "0"}, 

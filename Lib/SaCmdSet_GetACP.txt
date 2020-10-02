@@ -1,0 +1,4 @@
+"-":{                    "Cmd": "INIT;*WAI",                "CmdPar": "-",                     "RdWrFlag": "1"}, 
+"-":{                    "Cmd": "CALC:LIM:ACP:ACH:RES?",    "CmdPar": "-",                     "RdWrFlag": "1"}, 
+"-":{                    "Cmd": "CALC:LIM:ACP:ALT1:RES?",   "CmdPar": "-",                     "RdWrFlag": "1"}, 
+"-":{                    "Cmd": "CALC:MARK:FUNC:POW:RES?",  "CmdPar": "ACP",                   "RdWrFlag": "1"}, 

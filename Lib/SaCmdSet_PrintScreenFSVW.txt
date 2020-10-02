@@ -1,0 +1,6 @@
+"SetDest":{              "Cmd": "HCOP:DEST",                "CmdPar": "'MMEM'",                "RdWrFlag": "0"}, 
+"SetFileFormat":{        "Cmd": "HCOP:DEV:LANG",            "CmdPar": "PNG",                   "RdWrFlag": "0"}, 
+"SetFileNameAndPath":{   "Cmd": "MMEM:NAME",                "CmdPar": "'C:\Screenshot.png'",   "RdWrFlag": "0"}, 
+"SetFileItem":{          "Cmd": "HCOP:ITEM:ALL",            "CmdPar": "-",                     "RdWrFlag": "0"}, 
+"SetFileComment":{       "Cmd": "HCOP:ITEM:WIND:TEXT",      "CmdPar": "'comments'",            "RdWrFlag": "0"}, 
+"StoreFile":{            "Cmd": "HCOP:IMM",                 "CmdPar": "-",                     "RdWrFlag": "0"}, 
