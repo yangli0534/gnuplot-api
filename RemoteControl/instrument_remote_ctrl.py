@@ -10,6 +10,7 @@ sys.path.append('../RecordFile')
 sys.path.append('../Station')
 from get_record_file_folder_path import *
 from instrument_addr_config import *
+
 def instr_remote_ctrl(record_name, action_name, par, cmd, read, ctrl_mode, ip, gpib):
     """
     
@@ -25,6 +26,7 @@ def instr_remote_ctrl(record_name, action_name, par, cmd, read, ctrl_mode, ip, g
     :return: 
     """
     record_folder_path = get_folder_path()
+
 
     # action_name == '*' means other parameter will be used as input
     if( ('action_name' in locals().keys()) and not (action_name = '*')):

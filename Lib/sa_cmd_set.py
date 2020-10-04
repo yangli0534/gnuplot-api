@@ -276,7 +276,74 @@ SA_CMD_SET_LTE_EVM_FDD_5M_TM3P1 = {
     "S17":{                  "Cmd": "DL:FORM:PSCD",                  "CmdPar": "PHYDET",                "RdWrFlag": "0"},
     "S18":{                  "Cmd": "SUBFrame:SELect",               "CmdPar": "ALL",                   "RdWrFlag": "0"}
 }
-for item in SaCmdSet.keys():
+
+DEFAULT_INSTRUMENT_CONFIG = {
+    "SA_SetSpan": "70",
+    "SA_SweepType": "AUTO",
+    "SA_SetSweepTime": "1",
+    "SA_SweepCnt": "3",
+    "SA_SetRefLev": "5",
+    "SA_SetRefAtt": "5",
+    "SA_SetRBW": "0.03",
+    "SA_SetVBW": "0.3",
+    "PS_PowerCableResistance": "0.1778"
+}
+
+FREQ_BAND_INFO = {
+"B0":{         "ULfreqMin": "890M",     "ULfreqMax": "915M",     "DLfreqMin": "935M",     "DLfreqMax": "960M",     "DuplexDist": "45M"},
+"B1":{         "ULfreqMin": "1920M",    "ULfreqMax": "1980M",    "DLfreqMin": "2110M",    "DLfreqMax": "2170M",    "DuplexDist": "190M"},
+"B2":{         "ULfreqMin": "1850M",    "ULfreqMax": "1910M",    "DLfreqMin": "1930M",    "DLfreqMax": "1990M",    "DuplexDist": "80M"},
+"B3":{         "ULfreqMin": "1710M",    "ULfreqMax": "1785M",    "DLfreqMin": "1805M",    "DLfreqMax": "1880M",    "DuplexDist": "95M"},
+"B3B":{        "ULfreqMin": "1710M",    "ULfreqMax": "1765M",    "DLfreqMin": "1805M",    "DLfreqMax": "1860M",    "DuplexDist": "95M"},
+"B3C":{        "ULfreqMin": "1745M",    "ULfreqMax": "1785M",    "DLfreqMin": "1840M",    "DLfreqMax": "1880M",    "DuplexDist": "95M"},
+"B4":{         "ULfreqMin": "1710M",    "ULfreqMax": "1755M",    "DLfreqMin": "2110M",    "DLfreqMax": "2155M",    "DuplexDist": "400M"},
+"B4ext":{      "ULfreqMin": "1710M",    "ULfreqMax": "1780M",    "DLfreqMin": "2110M",    "DLfreqMax": "2180M",    "DuplexDist": "400M"},
+"B5":{         "ULfreqMin": "824M",     "ULfreqMax": "849M",     "DLfreqMin": "869M",     "DLfreqMax": "894M",     "DuplexDist": "45M"},
+"B6":{         "ULfreqMin": "830M",     "ULfreqMax": "840M",     "DLfreqMin": "875M",     "DLfreqMax": "885M",     "DuplexDist": "45M"},
+"B7":{         "ULfreqMin": "2500M",    "ULfreqMax": "2570M",    "DLfreqMin": "2620M",    "DLfreqMax": "2690M",    "DuplexDist": "120M"},
+"B7A":{        "ULfreqMin": "2500M",    "ULfreqMax": "2560M",    "DLfreqMin": "2620M",    "DLfreqMax": "2680M",    "DuplexDist": "120M"},
+"B8":{         "ULfreqMin": "880M",     "ULfreqMax": "915M",     "DLfreqMin": "925M",     "DLfreqMax": "960M",     "DuplexDist": "45M"},
+"B9":{         "ULfreqMin": "1749.9M",  "ULfreqMax": "1784.9M",  "DLfreqMin": "1844.9M",  "DLfreqMax": "1879.9M",  "DuplexDist": "95M"},
+"B10":{        "ULfreqMin": "1710M",    "ULfreqMax": "1770M",    "DLfreqMin": "2110M",    "DLfreqMax": "2170M",    "DuplexDist": "400M"},
+"B11":{        "ULfreqMin": "1427.9M",  "ULfreqMax": "1447.9M",  "DLfreqMin": "1475.9M",  "DLfreqMax": "1495.9M",  "DuplexDist": "48M"},
+"B12":{        "ULfreqMin": "698M",     "ULfreqMax": "716M",     "DLfreqMin": "728M",     "DLfreqMax": "746M",     "DuplexDist": "30M"},
+"B12A":{       "ULfreqMin": "699M",     "ULfreqMax": "715M",     "DLfreqMin": "729M",     "DLfreqMax": "745M",     "DuplexDist": "30M"},
+"B13":{        "ULfreqMin": "777M",     "ULfreqMax": "787M",     "DLfreqMin": "746M",     "DLfreqMax": "756M",     "DuplexDist": "-31M"},
+"B14":{        "ULfreqMin": "788M",     "ULfreqMax": "798M",     "DLfreqMin": "758M",     "DLfreqMax": "768M",     "DuplexDist": "-30M"},
+"B17":{        "ULfreqMin": "704M",     "ULfreqMax": "716M",     "DLfreqMin": "734M",     "DLfreqMax": "746M",     "DuplexDist": "30M"},
+"B17A":{       "ULfreqMin": "704M",     "ULfreqMax": "715M",     "DLfreqMin": "734M",     "DLfreqMax": "745M",     "DuplexDist": "30M"},
+"B19":{        "ULfreqMin": "830M",     "ULfreqMax": "845M",     "DLfreqMin": "875M",     "DLfreqMax": "890M",     "DuplexDist": "30M"},
+"B20":{        "ULfreqMin": "832M",     "ULfreqMax": "862M",     "DLfreqMin": "791M",     "DLfreqMax": "821M",     "DuplexDist": "-41M"},
+"B21":{        "ULfreqMin": "1447.9M",  "ULfreqMax": "1462.9M",  "DLfreqMin": "1495.9M",  "DLfreqMax": "1510.9M",  "DuplexDist": "48M"},
+"B25":{        "ULfreqMin": "1850M",    "ULfreqMax": "1915M",    "DLfreqMin": "1930M",    "DLfreqMax": "1995M",    "DuplexDist": "80M"},
+"B26A":{       "ULfreqMin": "817M",     "ULfreqMax": "824M",     "DLfreqMin": "862M",     "DLfreqMax": "869M",     "DuplexDist": "45M"},
+"B28A":{       "ULfreqMin": "718M",     "ULfreqMax": "748M",     "DLfreqMin": "773M",     "DLfreqMax": "803M",     "DuplexDist": "55M"},
+"B28B":{       "ULfreqMin": "703M",     "ULfreqMax": "733M",     "DLfreqMin": "758M",     "DLfreqMax": "788M",     "DuplexDist": "55M"},
+"B28C":{       "ULfreqMin": "713M",     "ULfreqMax": "743M",     "DLfreqMin": "768M",     "DLfreqMax": "798M",     "DuplexDist": "55M"},
+"B29":{        "ULfreqMin": "0M",       "ULfreqMax": "0M",       "DLfreqMin": "717M",     "DLfreqMax": "728M",     "DuplexDist": "0M"},
+"B30":{        "ULfreqMin": "2305M",    "ULfreqMax": "2315M",    "DLfreqMin": "2350M",    "DLfreqMax": "2360M",    "DuplexDist": "45M"},
+"B31":{        "ULfreqMin": "452.5M",   "ULfreqMax": "457.5M",   "DLfreqMin": "462.5M",   "DLfreqMax": "467.5M",   "DuplexDist": "10M"},
+"B38":{        "ULfreqMin": "2570M",    "ULfreqMax": "2620M",    "DLfreqMin": "2570M",    "DLfreqMax": "2620M",    "DuplexDist": "0M"},
+"B38A":{       "ULfreqMin": "2575M",    "ULfreqMax": "2615M",    "DLfreqMin": "2575M",    "DLfreqMax": "2615M",    "DuplexDist": "0M"},
+"B39":{        "ULfreqMin": "1880M",    "ULfreqMax": "1915M",    "DLfreqMin": "1880M",    "DLfreqMax": "1915M",    "DuplexDist": "0M"},
+"B40":{        "ULfreqMin": "2300M",    "ULfreqMax": "2400M",    "DLfreqMin": "2300M",    "DLfreqMax": "2400M",    "DuplexDist": "0M"},
+"B40A":{       "ULfreqMin": "2300M",    "ULfreqMax": "2400M",    "DLfreqMin": "2300M",    "DLfreqMax": "2400M",    "DuplexDist": "0M"},
+"B40B":{       "ULfreqMin": "2302.5M",  "ULfreqMax": "2322.5M",  "DLfreqMin": "2302.5M",  "DLfreqMax": "2322.5M",  "DuplexDist": "0M"},
+"B40C":{       "ULfreqMin": "2305M",    "ULfreqMax": "2325M",    "DLfreqMin": "2305M",    "DLfreqMax": "2325M",    "DuplexDist": "0M"},
+"B40D":{       "ULfreqMin": "2320M",    "ULfreqMax": "2340M",    "DLfreqMin": "2320M",    "DLfreqMax": "2340M",    "DuplexDist": "0M"},
+"B40E":{       "ULfreqMin": "2327.5M",  "ULfreqMax": "2347.5M",  "DLfreqMin": "2327.5M",  "DLfreqMax": "2347.5M",  "DuplexDist": "0M"},
+"B40F":{       "ULfreqMin": "2357.5M",  "ULfreqMax": "2377.5M",  "DLfreqMin": "2357.5M",  "DLfreqMax": "2377.5M",  "DuplexDist": "0M"},
+"B40G":{       "ULfreqMin": "2325M",    "ULfreqMax": "2345M",    "DLfreqMin": "2325M",    "DLfreqMax": "2345M",    "DuplexDist": "0M"},
+"B40M":{       "ULfreqMin": "2335M",    "ULfreqMax": "2355M",    "DLfreqMin": "2335M",    "DLfreqMax": "2355M",    "DuplexDist": "0M"},
+"B40T":{       "ULfreqMin": "2300M",    "ULfreqMax": "2395M",    "DLfreqMin": "2300M",    "DLfreqMax": "2395M",    "DuplexDist": "0M"},
+"B41":{        "ULfreqMin": "2496M",    "ULfreqMax": "2690M",    "DLfreqMin": "2496M",    "DLfreqMax": "2690M",    "DuplexDist": "0M"},
+"B41B":{       "ULfreqMin": "2595M",    "ULfreqMax": "2645M",    "DLfreqMin": "2595M",    "DLfreqMax": "2645M",    "DuplexDist": "0M"},
+"B41E":{       "ULfreqMin": "2575M",    "ULfreqMax": "2635M",    "DLfreqMin": "2575M",    "DLfreqMax": "2635M",    "DuplexDist": "0M"},
+"B66A":{       "ULfreqMin": "1710M",    "ULfreqMax": "1780M",    "DLfreqMin": "2110M",    "DLfreqMax": "2180M",    "DuplexDist": "400M"}
+}
+
+
+for item in SA_CMD_SET.keys():
      #str = ""
      str = SaCmdSet[item].values()
      print(str)
