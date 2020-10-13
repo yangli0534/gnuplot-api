@@ -427,10 +427,12 @@ if __name__ == '__main__':
     # chp2 = mysa.test_chp(3800, 10, 1, 0, 100, 5)
     # print(chp2)
     # print(type(chp2))
-    mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw = 300, rlev =10, offs=41.2, cbw=100, obw=98.2)
-    # for i in range(1):
-    #     dt = datetime.datetime.now()
-    #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
-    #     filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
-    #     mysa.get_scr(filename)
+    for i in range(1):
+        dt = datetime.datetime.now()
+        #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
+        mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=41.7, cbw=100,
+                  obw=98.2)
+        mysa.take_one_sweep()
+        filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
+        mysa.get_scr(filename)
     mysa.set_close()
