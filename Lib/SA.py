@@ -6,20 +6,53 @@ Created on Wed Jan  8 14:22:56 2020
 """
 import pyvisa
 import time
+import datetime
 
-
-class sa:
+class SA:
     def __init__(self, address):
         rm = pyvisa.ResourceManager()
         # instr = rm.open_resource('GPIB0::18::INSTR')
-        self.instr = rm.open_resource(address)
+        self._instr = rm.open_resource(address)
+        self._instr.timeout = 10000
+        self._instr.chunk_size = 102400
+        #self.name = self.instr.query('*IDN?')[:-1]
+        self.set_init()
+
 
     def write_value(self, cmd):
-        self.instr.write(cmd)
+        self._instr.write(cmd)
 
     def read_value(self, cmd):
         self.write_value(cmd)
-        return self.instr.read_ascii_values()
+        return self._instr.read_ascii_values()
+
+    def set_cal(self):
+        self.write_value(f':CAL')
+
+    def set_cls(self):
+        self.write_value(f'*CLS')
+
+    def set_rst(self):
+        self.write_value(f'*RST')
+
+    def get_stb(self):
+        return self.read_value(f'*STB?')
+
+    def set_init(self):
+        self.set_rst()
+
+        #self.set_cal()
+        #self.take_one_sweep()
+        self.set_cls()
+        self.set_unit()
+
+    def set_close(self):
+        self._instr.close()
+
+    #set default unit to dBm
+    def set_unit(self):
+        cmd = 'UNIT:POW dBm'
+        self.write_value(cmd)
 
     def set_span(self, target):
         cmd = f'FREQ:SPAN {target} MHz'
@@ -106,6 +139,10 @@ class sa:
         cmd = f'POW:ATT {target} dB'
         self.write_value(cmd)
 
+    def set_pow_gain(self):
+        cmd = f'POW:GAIN OFF'
+        self.write_value(cmd)
+
     def get_att(self):
         cmd = f'POW:ATT?'
         return self.read_value(cmd)
@@ -144,6 +181,16 @@ class sa:
         self.set_gate_stat('ON')
 
     def set_mode(self, mode):
+        # 'SA': sweep analyzer
+        # 'BASIC': IQ analyzer
+        # 'PNOISE': phase noise
+        # 'LTE': LTE module
+        cmd = f'INST {mode}'
+        self.write_value(cmd)
+
+
+    def set_meas(self, meas):
+        self.set_mode('SA')
         # 'SAN': Swept SA measurement
         # 'CHP': Channel power measurement
         # 'OBW': Occupied bandwidth measurement
@@ -155,7 +202,13 @@ class sa:
         # 'TOI': TOI measurement
         # 'HARM': Harmonics measurement
         # 'LIST': List sweep measurement
-        cmd = f'CONF:{mode}'
+        cmd = f'CONF:{meas}'
+        self.write_value(cmd)
+
+    def set_cont(self, target):
+        # target = 1, continuos meas/sweep enable
+        # target = 0, continuos meas/sweep disable
+        cmd = f'INIT:CONT {target}'
         self.write_value(cmd)
 
     def set_chp_span(self, target):
@@ -183,6 +236,105 @@ class sa:
         cmd = f'CHP:BAND:INT {target} MHz'
         self.write_value(cmd)
 
+    # target unit dBm
+    # set reference level
+    def set_acp_rlev(self, target):
+        cmd = f':DISP:ACP:VIEW:WIND:TRAC:Y:RLEV {target} '
+        self.write_value(cmd)
+
+    # target  unit db
+    # set amplitude offset
+    def set_acp_rlev_offs(self, target):
+        cmd = f'DISP:WIND:TRAC:Y:RLEV:OFFS {target}'
+        self.write_value(cmd)
+
+    #
+    def set_acp_band_rbw(self, target):
+        cmd = f':ACP:BAND {target} KHz'
+        self.write_value(cmd)
+
+    def set_acp_band_vbw(self, target):
+        cmd = f':ACP:BAND:VID {target} KHz '
+        self.write_value(cmd)
+
+    def set_acp_aver(self, target):
+        #
+        if target == 0:
+            cmd = f':ACP:AVER:STAT 0'
+        else:
+            cmd = f':ACP:AVER:COUN {target}'
+        self.write_value(cmd)
+
+    def set_acp_carr_num(self, target):
+        #target is carrier number,
+        cmd = f':ACP:CARR:COUN {target} '
+        self.write_value(cmd)
+
+    def set_acp_carr_freq(self, target):
+        #target is carrier center frequency,
+        cmd = f':ACP:CARR:RCFR {target} MHz'
+        self.write_value(cmd)
+
+    def set_acp_carr_list_widt(self, target):
+        #target is integration bandwidth,
+        cmd = f':ACP:CARR:LIST:WIDT {target} MHz'
+        self.write_value(cmd)
+
+    def set_acp_carr_list_band(self, target):
+        #target is carrier bandwidth,
+        cmd = f':ACP:CARR:LIST:BAND {target} MHz'
+        self.write_value(cmd)
+
+    def set_acp_offs_list_stat(self):
+        #
+        cmd = f':ACP:OFFS:LIST:STAT 1, 1, 0, 0, 0, 0'
+        self.write_value(cmd)
+
+    def set_acp_offs_list_freq(self, target1, target2):
+        #target is aclr offset frequency
+        cmd = f':ACP:OFFS:LIST:FREQ {target1} MHz, {target2} MHz'
+        self.write_value(cmd)
+
+    def set_acp_offs_list_band(self, target1, target2):
+        #target is aclr integration frequency
+        cmd = f':ACP:OFFS:LIST:BAND {target1} MHz, {target2} MHz'
+        self.write_value(cmd)
+
+    def set_acp_offs_list_limit(self):
+        #
+        cmd = f':ACP:OFFS:LIST:RCAR -45, -60, 0, 0, 0, 0'
+        self.write_value(cmd)
+        cmd = f':ACP:OFFS:LIST:TEST REL, REL, REL, REL, REL, REL'
+        self.write_value(cmd)
+    def set_acp_calc_stat(self):
+        cmd = f':CALC:ACP:LIM:STAT ON'
+        self.write_value(cmd)
+
+    def set_acp_meth(self):
+        #
+        cmd = f':ACP:METH IBW'
+        self.write_value(cmd)
+
+    def set_acp_psd_unit(self):
+        cmd = f'UNIT:ACP:POW:PSD DBMHZ'
+        self.write_value(cmd)
+
+    def set_acp_lim_stat(self):
+        cmd = f':CALC:ACP:LIM:STAT ON'
+        self.write_value(cmd)
+
+    def set_acp_span(self, target):
+        cmd = f':ACP:FREQ:SPAN {target} MHz'
+        self.write_value(cmd)
+
+    def set_acp_sweep_time(self, target):
+        #target unit is ms
+        cmd = f':ACP:SWE:TIME {target}ms'
+        self.write_value(cmd)
+    def set_acp_det(self):
+        cmd = f':ACP:DET AVER'
+        self.write_value(cmd)
+
     def set_data_form(self, target):
         # 'ASC': ASCii
         # 'REAL,32': real
@@ -199,8 +351,32 @@ class sa:
         cmd = 'FETCh:CHPower:CHPower?'
         return self.read_value(cmd)
 
+    def set_cd(self, cd):
+        cmd = f'MMEM:CDIR {cd}'
+        self.write_value(cmd)
+
+    def get_scr(self, filename):
+        cmd = ':MMEM:CDIR "D:\\User_My_Documents\\Administrator\\My Documents\\SA\\screen"'
+        self.write_value(cmd)
+
+        cmd = f'MMEM:STOR:SCR "{filename}"'
+        self.write_value(cmd)
+
+        cmd = f'MMEM:DATA? "{filename}"'
+        capture = self._instr.query_binary_values(message = cmd, container = list, datatype ='c')
+        with open(filename, 'wb') as fp:
+            for byte in capture:
+                fp.write(byte)
+        # Delete the file from memory
+        fp.close()
+        cmd = f'MMEM:DEL "{filename}"'
+        self.write_value(cmd)
+
+        print(f'{filename} has been saved on PC')
+
     def test_chp(self, center, span, sweep_time, sweep_count, rbw, int_bw):
-        self.set_mode('CHP')
+        self.set_init()
+        self.set_meas('CHP')
         self.set_center(center)
         self.set_chp_span(span)
         self.set_chp_sweep_time(sweep_time)
@@ -218,11 +394,43 @@ class sa:
         return self.get_chp()
 
 
+    def test_acp(self, center, span, sweep_time, sweep_count, rbw, vbw, rlev, offs,cbw,obw):
+        self.set_init()
+        #self.set_acp_init()
+        self.set_meas('ACP')
+        self.set_att(16)
+        self.set_pow_gain()
+        self.set_cont(1)
+        self.set_center(center)
+        self.set_acp_span(span)
+        self.set_acp_rlev(rlev)
+        self.set_acp_rlev_offs(offs)
+        self.set_acp_aver(sweep_count)
+        self.set_acp_sweep_time(sweep_time)
+        self.set_acp_band_rbw(rbw)
+        self.set_acp_band_vbw(vbw)
+        self.set_acp_carr_num(1)
+        self.set_acp_carr_freq(center)
+        self.set_acp_carr_list_band(obw)
+        self.set_acp_carr_list_widt(obw)
+        self.set_acp_offs_list_stat()
+        self.set_acp_offs_list_freq(cbw, cbw*2)
+        self.set_acp_offs_list_band(obw, obw)
+        self.set_acp_offs_list_limit()
+        self.set_acp_calc_stat()
+
 if __name__ == '__main__':
-    mysa = sa('GPIB0::25::INSTR')
-    chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
-    print(chp1)
-    print(type(chp1))
-    chp2 = mysa.test_chp(3800, 10, 1, 5, 100, 5)
-    print(chp2)
-    print(type(chp2))
+    mysa = SA('GPIB0::25::INSTR')
+    #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
+    #print(chp1)
+    # print(type(chp1))
+    # chp2 = mysa.test_chp(3800, 10, 1, 0, 100, 5)
+    # print(chp2)
+    # print(type(chp2))
+    mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw = 300, rlev =10, offs=41.2, cbw=100, obw=98.2)
+    # for i in range(1):
+    #     dt = datetime.datetime.now()
+    #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
+    #     filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
+    #     mysa.get_scr(filename)
+    mysa.set_close()
