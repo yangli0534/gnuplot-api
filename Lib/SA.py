@@ -355,6 +355,21 @@ class SA:
         cmd = f'MMEM:CDIR {cd}'
         self.write_value(cmd)
 
+    def set_acp_title(self, title):
+        #cmd = f':DISP:ANN:TITL:DATA "{title}"'
+        #self.write_value(cmd)
+        cmd = f':DISP:ACP:ANN:TITL:DATA "{title}"'
+        self.write_value(cmd)
+        #cmd = f':DISP:WIND1:TITL ON'
+        #self.write_value(cmd)
+
+    def set_chp_title(self, title):
+        #cmd = f':DISP:ANN:TITL:DATA "{title}"'
+        #self.write_value(cmd)
+        cmd = f':DISP:CHP:ANN:TITL:DATA "{title}"'
+        self.write_value(cmd)
+        #cmd = f':DISP:WIND1:TITL ON'
+        #self.write_value(cmd)
     def get_scr(self, filename):
         cmd = ':MMEM:CDIR "D:\\User_My_Documents\\Administrator\\My Documents\\SA\\screen"'
         self.write_value(cmd)
@@ -391,6 +406,7 @@ class SA:
         self.take_one_sweep()
         # need to add wait time if average mode
         time.sleep(sweep_time*sweep_count)
+        self.set_chp_title('O-RU ACP Measurement')
         return self.get_chp()
 
 
@@ -418,6 +434,10 @@ class SA:
         self.set_acp_offs_list_band(obw, obw)
         self.set_acp_offs_list_limit()
         self.set_acp_calc_stat()
+        self.set_acp_title('O-RU ACLR Measurement')
+
+    def test(self):
+        self.set_title('O-RU ACLR measurement')
 
 if __name__ == '__main__':
     mysa = SA('GPIB0::25::INSTR')
@@ -430,9 +450,11 @@ if __name__ == '__main__':
     for i in range(1):
         dt = datetime.datetime.now()
         #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
-        mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=41.7, cbw=100,
-                  obw=98.2)
+        mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=41.7, cbw=100, obw=98.2)
+        #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
+        #print(chp1)
         mysa.take_one_sweep()
         filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
         mysa.get_scr(filename)
+    #mysa.test()
     mysa.set_close()
