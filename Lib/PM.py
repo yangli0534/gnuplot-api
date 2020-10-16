@@ -57,9 +57,13 @@ class PM:
         cmd = f'CAL:ZERO:AUTO ONCE'
         self.write_value(cmd)
 
-    def get_power(self):
-        cmd = f'MEAS?'
-        return self.read_value(cmd)
+    def get_power(self, channel = None):
+        if  channel == 2:
+            cmd = f'MEAS2?'
+            return self.read_value(cmd)
+        else:
+            cmd = f'MEAS?'
+            return self.read_value(cmd)
 
 if __name__ == '__main__':
     mypm = PM('GPIB0::13::INSTR')
@@ -67,7 +71,10 @@ if __name__ == '__main__':
     #mypm.set_zero()
     power = mypm.get_power()
     print(power)
-    print(f'The power is {power} dBm')
+    print(f'The power of channel 1 is {power} dBm')
+    power = mypm.get_power(2)
+    print(power)
+    print(f'The power of channel 2 is {power} dBm')
     if(mypm.get_staus() == [1]):
         print('Job finished')
     else:
