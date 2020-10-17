@@ -8,6 +8,9 @@ import pyvisa
 import time
 import datetime
 import threading
+import numpy as np
+import matplotlib.pyplot as plt
+import cmath
 
 class SG:
     def __init__(self, address):
@@ -114,12 +117,25 @@ class SG:
         self.turn_off()
         print('SG is turning off')
 
+    #def gen_wv(self):
+
+
+
 if __name__ == '__main__':
     mysg = SG('GPIB0::20::INSTR')
     print(mysg.name)
     #mysg.set_sg(freq = 3720, amp = -20)
     mysg.set_sg_list(3680, 3720, 10, 0.5, -5)
-    timer = threading.Timer(10, mysg.tmp)
-
+    #timer = threading.Timer(10, mysg.tmp)
+    fs = 40e6
+    T = 1.0 / fs
+    t = np.linspace(1,10000,100001)*T
+    f1 = 1e6
+    f2 = 3e6
+    #IQData = exp(j * 2 * pi * f1 * t) + exp(j * 2 * pi * f2 * t)
+    IQData = cmath.exp( t.dot(2j * np.pi * f1)) + cmath.exp( t.dot(2j * np.pi * f2)
+    plt.plot(t, IQData.real())
+    plt.title('waveform')
+    plt.show()
     mysg.set_close()
 
