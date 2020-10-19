@@ -327,12 +327,67 @@ class SA:
         cmd = f':ACP:FREQ:SPAN {target} MHz'
         self.write_value(cmd)
 
+
     def set_acp_sweep_time(self, target):
         #target unit is ms
         cmd = f':ACP:SWE:TIME {target}ms'
         self.write_value(cmd)
+
     def set_acp_det(self):
         cmd = f':ACP:DET AVER'
+        self.write_value(cmd)
+
+    # sa parameter define
+    # target unit dBm
+    # set reference level
+    def set_rlev(self, target):
+        cmd = f':DISP:WIND:TRAC:Y:RLEV {target} '
+        self.write_value(cmd)
+
+        # target  unit db
+        # set amplitude offset
+
+    def set_rlev_offs(self, target):
+        cmd = f'DISP:WIND:TRAC:Y:RLEV:OFFS {target}'
+        self.write_value(cmd)
+
+        #
+
+    def set_rbw(self, target):
+        cmd = f':BAND {target} KHz'
+        self.write_value(cmd)
+
+    def set_vbw(self, target):
+        cmd = f':BAND:VID {target} KHz '
+        self.write_value(cmd)
+
+    def set_aver(self, target):
+        #
+        if target == 0:
+            cmd = f':AVER:STAT 0'
+        else:
+            cmd = f':AVER:COUN {target}'
+        self.write_value(cmd)
+
+
+
+
+    def set_san_meth(self):
+        #
+        cmd = f':SA:METH IBW'
+        self.write_value(cmd)
+
+    # def set_sa_span(self, target):
+    #     cmd = f':SA:FREQ:SPAN {target} MHz'
+    #     self.write_value(cmd)
+
+    # def set_sa_sweep_time(self, target):
+    #     # target unit is ms
+    #     cmd = f':sa:SWE:TIME {target}ms'
+    #     self.write_value(cmd)
+
+    def set_san_det(self):
+        cmd = f':sa:DET AVER'
         self.write_value(cmd)
 
     def set_data_form(self, target):
@@ -370,6 +425,12 @@ class SA:
         self.write_value(cmd)
         #cmd = f':DISP:WIND1:TITL ON'
         #self.write_value(cmd)
+
+
+    def set_title(self, title):
+        cmd = f':DISP:ANN:TITL:DATA "{title}"'
+        self.write_value(cmd)
+
     def get_scr(self, filename):
         cmd = ':MMEM:CDIR "D:\\User_My_Documents\\Administrator\\My Documents\\SA\\screen"'
         self.write_value(cmd)
@@ -436,6 +497,24 @@ class SA:
         self.set_acp_calc_stat()
         self.set_acp_title('O-RU ACLR Measurement')
 
+    def test_san(self, center, span, sweep_time, sweep_count, rbw, vbw, rlev, offs):
+        self.set_init()
+        #self.set_acp_init()
+        self.set_meas('SAN')
+        self.set_att(16)
+        self.set_pow_gain()
+        self.set_cont(1)
+        self.set_center(center)
+        self.set_span(span)
+        self.set_rlev(rlev)
+        self.set_rlev_offs(offs)
+        self.set_aver(sweep_count)
+        #self.set_sa_sweep_time(sweep_time)
+        self.set_rbw(rbw)
+        self.set_vbw(vbw)
+
+        self.set_title('O-RU SA Measurement')
+
     def test(self):
         self.set_title('O-RU ACLR measurement')
 
@@ -447,14 +526,16 @@ if __name__ == '__main__':
     # chp2 = mysa.test_chp(3800, 10, 1, 0, 100, 5)
     # print(chp2)
     # print(type(chp2))
-    for i in range(1):
-        dt = datetime.datetime.now()
-        #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
-        mysa.test_acp(center=3700, span=800, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=0.6, cbw=100, obw=98.2)
-        #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
-        #print(chp1)
-        mysa.take_one_sweep()
-        filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
-        mysa.get_scr(filename)
+    #mysa.test_acp(center=3000, span=10, sweep_time=50, sweep_count=10, rbw=0.5, vbw=1, rlev=15, offs=0.6, cbw=2, obw=1.8)
+    mysa.test_san(center=3000, span=50, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
+    # for i in range(1):
+    #     dt = datetime.datetime.now()
+    #     #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
+    #     mysa.test_acp(center=3000, span=300, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=0.6, cbw=500, obw=45)
+    #     #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
+    #     #print(chp1)
+    #     mysa.take_one_sweep()
+    #     filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
+    #     mysa.get_scr(filename)
     #mysa.test()
     mysa.set_close()
