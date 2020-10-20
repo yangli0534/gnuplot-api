@@ -244,9 +244,9 @@ class SA:
 
     # target  unit db
     # set amplitude offset
-    def set_acp_rlev_offs(self, target):
-        cmd = f'DISP:WIND:TRAC:Y:RLEV:OFFS {target}'
-        self.write_value(cmd)
+    # def set_acp_rlev_offs(self, target):
+    #     cmd = f'DISP:WIND:TRAC:Y:RLEV:OFFS {target}'
+    #     self.write_value(cmd)
 
     #
     def set_acp_band_rbw(self, target):
@@ -450,11 +450,13 @@ class SA:
 
         print(f'{filename} has been saved on PC')
 
-    def test_chp(self, center, span, sweep_time, sweep_count, rbw, int_bw):
+    def test_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs):
         self.set_init()
         self.set_meas('CHP')
         self.set_center(center)
-        self.set_chp_span(span)
+        #self.set_chp_span(span)
+        self.set_rlev(rlev)
+        self.set_rlev_offs(offs)
         self.set_chp_sweep_time(sweep_time)
         self.set_chp_rbw(rbw)
         self.set_chp_int_bw(int_bw)
@@ -481,7 +483,7 @@ class SA:
         self.set_center(center)
         self.set_acp_span(span)
         self.set_acp_rlev(rlev)
-        self.set_acp_rlev_offs(offs)
+        self.set_rlev_offs(offs)
         self.set_acp_aver(sweep_count)
         self.set_acp_sweep_time(sweep_time)
         self.set_acp_band_rbw(rbw)
@@ -519,15 +521,16 @@ class SA:
         self.set_title('O-RU ACLR measurement')
 
 if __name__ == '__main__':
-    mysa = SA('GPIB0::25::INSTR')
-    #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
-    #print(chp1)
+    #mysa = SA('GPIB0::25::INSTR')
+    mysa = SA('TCPIP0::172.16.1.66::inst0::INSTR')
+    chp1 = mysa.test_chp(center=3000, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev = -20, offs = 0.6)
+    print(chp1)
     # print(type(chp1))
     # chp2 = mysa.test_chp(3800, 10, 1, 0, 100, 5)
     # print(chp2)
     # print(type(chp2))
     #mysa.test_acp(center=3000, span=10, sweep_time=50, sweep_count=10, rbw=0.5, vbw=1, rlev=15, offs=0.6, cbw=2, obw=1.8)
-    mysa.test_san(center=3000, span=50, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
+    #mysa.test_san(center=3000, span=50, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
     # for i in range(1):
     #     dt = datetime.datetime.now()
     #     #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)

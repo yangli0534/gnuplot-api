@@ -11,6 +11,8 @@ import threading
 import numpy as np
 import matplotlib.pyplot as plt
 import cmath
+from pathlib import Path
+import os
 
 class SG:
     def __init__(self, address):
@@ -119,8 +121,24 @@ class SG:
         self.turn_off()
         print('SG is turning off')
 
-    def test_wv_mtone(self, sample_rate = 125e6, bandwith = 3.84e6, step = 0.5e6, ):
+    def read_waveform(self, filename):
+        waveform =[]
+        #filename ="LTE_FDD_10MHz_TM3p1_fs15360000_nrb50.txt"
+        #path = Path(__file__).parent / "../waveform/LTE_FDD_10MHz_TM3p1_fs15360000_nrb50.txt"
+        with open(filename, 'r') as file:
+            #waveform = f.readlines
+            for line in file:
+                waveform.append(float(line.replace('\n','')))
+        #waveform = waveform.split("\n")
+        file.close()
+        return waveform
 
+    def test_wv_mtone(self, sample_rate = 125e6, bandwith = 3.84e6, step = 0.5e6, rf_freq = 3000, amp = -30 ):
+        # sample_rate Hz
+        # bandwidth Hz
+        # step　MHz
+        # rf_freq MHz
+        # amp dBm
         #sample_rate =125e6
         fs = sample_rate
         T = 1.0 / fs
@@ -160,12 +178,44 @@ class SG:
         # Markers = np.sign(Markers)
         # Markers = (Markers + 1)/2.0
         #return Markers
-        self.write_value('SOURce:FREQuency 3000000000')
-        self.write_value('POWer -30')
+        #self.write_value('SOURce:FREQuency 3000000000')
+        #self.write_value('POWer -30')
+
         self.load_wv( IQData, 'agtsample', str(sample_rate), 'play', 'no_normscale', Markers)
-        self.write_value('OUTP:STAT ON')
+        #self.write_value('OUTP:STAT ON')
+        self.set_sg(rf_freq, amp)
         #return tmp
-        
+
+    def test_waveform(self, rf_freq=3000, amp=-30):
+
+        # rf_freq MHz
+        # amp dBm
+        #sample_rate = 15360000
+        #print(os.getcwd())
+        filename = "../waveform/NR-FR1-TM3.1_FDD_100MHz_fs122880000.txt"
+        waveform = self.read_waveform(filename)
+        sample_rate = waveform.pop(0)
+        waveform_real = np.array(waveform[::2])
+        waveform_imag = np.array(waveform[1::2])
+        IQData  = waveform_real + 1j * waveform_imag
+        #IQData = np.array(waveform)
+        #IQData = np.zeros((1, round(len(waveform)/2)))
+
+        Markers = np.zeros((2, len(IQData)))
+        # Markers[0,:] = np.sign(IQData.real)
+        # Markers[1,:] = np.sign(IQData.imag)
+        Markers = (np.vstack((np.sign(IQData.real), np.sign(IQData.imag))) + 1) / 2
+        # tmp = Markers
+        # Markers = np.sign(Markers)
+        # Markers = (Markers + 1)/2.0
+        # return Markers
+        # self.write_value('SOURce:FREQuency 3000000000')
+        # self.write_value('POWer -30')
+
+        self.load_wv(IQData, filename[12:35], str(sample_rate), 'play', 'no_normscale', Markers)
+        # self.write_value('OUTP:STAT ON')
+        self.set_sg(rf_freq, amp)
+
     def load_wv(self, IQData, ArbFileName, sample_rate, play_flag, normscale_flag, markers):
 
         # Input:
@@ -298,12 +348,14 @@ class SG:
 
 
 if __name__ == '__main__':
-    mysg = SG('GPIB0::20::INSTR')
+    #mysg = SG('GPIB0::20::INSTR')
+    mysg = SG('TCPIP0::172.16.1.41::inst0::INSTR')
     print(mysg.name)
     #mysg.set_sg(freq = 3720, amp = -50)
     #mysg.set_sg_list(3680, 3720, 10, 0.5, -5)
     #timer = threading.Timer(10, mysg.tmp)
     #print(mysg.gen_wv())
-    mysg.test_wv_mtone(sample_rate=125e6, bandwith=4.5e6, step = 0.5e6)
+    #mysg.test_wv_mtone(sample_rate=125e6, bandwith=4.5e6, step = 0.5e6, rf_freq= 3000, amp = -20)
+    mysg.test_waveform(rf_freq = 3000, amp = -30)
     #mysg.set_close()
 
