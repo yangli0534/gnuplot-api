@@ -1,6 +1,6 @@
 "# visa tutorials" 
 
-Type	                    Public	            Internal
+Type	                    	                              Public	           	                                    Internal
 Modules	                    lower_with_under	_lower_with_under
 Packages	                lower_with_under	 
 Classes	                    CapWords	        _CapWords
