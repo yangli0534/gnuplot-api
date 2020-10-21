@@ -23,6 +23,7 @@ class SG:
         self._instr.chunk_size = 102400
         self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
+        print(f'{self.name} has been connected successfully')
 
 
     def write_value(self, cmd):
@@ -346,6 +347,11 @@ class SG:
         cmd = f':SOURce:RADio:ARB:STATE ON'
         self.write_value(cmd)
 
+    def __del__(self):
+        self.set_close()
+        print('SG has been disconnected')
+
+
 
 if __name__ == '__main__':
     #mysg = SG('GPIB0::20::INSTR')
@@ -356,6 +362,6 @@ if __name__ == '__main__':
     #timer = threading.Timer(10, mysg.tmp)
     #print(mysg.gen_wv())
     #mysg.test_wv_mtone(sample_rate=125e6, bandwith=4.5e6, step = 0.5e6, rf_freq= 3000, amp = -20)
-    mysg.test_waveform(rf_freq = 3000, amp = -30)
+    mysg.test_waveform(rf_freq = 3700, amp = -50)
     #mysg.set_close()
 

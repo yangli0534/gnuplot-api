@@ -17,6 +17,7 @@ class PS:
         self._instr.timeout = 10000
         self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
+        print(f'{self.name} has been connected successfully' )
 
 
     def write_value(self, cmd):
@@ -90,6 +91,11 @@ class PS:
         # print(type(self.get_vol()))
         # print(type(self.get_curr()))
         return self.get_vol()* self.get_curr()
+
+    def __del__(self):
+        self.set_close()
+        print('PS has been disconnected')
+
 if __name__ == '__main__':
     myps = PS('TCPIP0::172.16.1.57::inst0::INSTR')
     print(myps.name)

@@ -16,6 +16,7 @@ class PM:
         self._instr.timeout = 10000
         self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
+        print(f'{self.name} has been connected successfully' )
 
 
     def write_value(self, cmd):
@@ -64,6 +65,9 @@ class PM:
         else:
             cmd = f'MEAS?'
             return self.read_value(cmd)
+    def __del__(self):
+        self.set_close()
+        print('PM has been disconnected')
 
 if __name__ == '__main__':
     mypm = PM('GPIB0::13::INSTR')

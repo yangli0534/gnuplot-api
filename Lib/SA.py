@@ -17,6 +17,7 @@ class SA:
         self._instr.chunk_size = 102400
         #self.name = self.instr.query('*IDN?')[:-1]
         self.set_init()
+        print(f'{self.name} has been connected successfully' )
 
 
     def write_value(self, cmd):
@@ -526,6 +527,11 @@ class SA:
 
     def test(self):
         self.set_title('O-RU ACLR measurement')
+
+    def __del__(self):
+        self.set_close()
+        print('SA has been disconnected')
+
 
 if __name__ == '__main__':
     #mysa = SA('GPIB0::25::INSTR')
