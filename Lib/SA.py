@@ -2,7 +2,7 @@
 """
 Created on Wed Jan  8 14:22:56 2020
 
-@author: Integration
+@author: Integration: Jimmy and Leon
 """
 import pyvisa
 import time

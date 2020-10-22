@@ -38,6 +38,111 @@ class RU:
 
     #def write(self):
 
+    def get_sw_rev(self):
+        cmd = 'fpga r 0x1808'
+        tmp = self._mycom.send_read_cmd(cmd)
+        sw_rev = re.findall(r"= (.+?)\n", tmp)[0].strip()[-4:]
+        print(f'This sw release data is {sw_rev}')
+
+    def get_clk_status(self):
+        cmd = 'fpga r 0x2c06'
+        tmp = self._mycom.send_read_cmd(cmd)
+        status = (re.findall(r"= 0x(.+?)\n", tmp)[0].strip())=='c000000e'
+        # status = True, locked
+        # status = False, unlocked
+        return status
+
+    def get_jesd_status(self):
+        cmd = 'fpga r 0x2e06'
+        tmp = self._mycom.send_read_cmd(cmd)
+        status = (re.findall(r"= 0x(.+?)\n", tmp)[0].strip())=='0'
+        # status = True, link up
+        # status = False, link down
+        return status
+
+    def get_fb_nco_freq(self, branch):
+        # freq unit: MHz
+        branch = self.__branch_def(branch)
+        cmd = 'fpga w 0x1910 0x2'
+        self._mycom.send_cmd(cmd)
+        cmd = 'fpga w 0x1913 0x24'
+        self._mycom.send_cmd(cmd)
+        cmd = 'spi afe w 0x0013 0x02'
+        self._mycom.send_cmd(cmd)
+        if branch == 'A' or branch == 'B':
+
+            byte0 = self._mycom.send_read_cmd('spi afe r 0x343c')
+            byte0 = re.findall(r"3c] =(.+?)\n", byte0)[0].strip()[2:]
+
+            byte1 = self._mycom.send_read_cmd('spi afe r 0x343d')
+            byte1 = re.findall(r"3d] =(.+?)\n", byte1)[0].strip()[2:]
+
+            byte2 = self._mycom.send_read_cmd('spi afe r 0x343e')
+            byte2 = re.findall(r"3e] =(.+?)\n", byte2)[0].strip()[2:]
+
+            byte3 = self._mycom.send_read_cmd('spi afe r 0x343f')
+            byte3 = re.findall(r"3f] =(.+?)\n", byte3)[0].strip()[2:]
+            #freq = byte3 + byte2 + byte1 + byte0
+        else:
+            byte0 = self._mycom.send_read_cmd('spi afe r 0x3444')
+            byte0 = re.findall(r"44] =(.+?)\n", byte0)[0].strip()[2:]
+
+            byte1 = self._mycom.send_read_cmd('spi afe r 0x3445')
+            byte1 = re.findall(r"45] =(.+?)\n", byte1)[0].strip()[2:]
+
+            byte2 = self._mycom.send_read_cmd('spi afe r 0x3446')
+            byte2 = re.findall(r"46] =(.+?)\n", byte2)[0].strip()[2:]
+
+            byte3 = self._mycom.send_read_cmd('spi afe r 0x3447')
+            byte3 = re.findall(r"47] =(.+?)\n", byte3)[0].strip()[2:]
+
+        freq = byte3 + byte2 + byte1 + byte0
+        #print(freq)
+        freq = int(freq, 16)/1000
+        return freq
+
+    def get_lo_freq(self):
+        #freq unit: MHz
+        self._mycom.send_cmd('spi afe w 0x0015 0x80')
+        self._mycom.send_cmd('spi afe w 0x01d4 0x01')
+        self._mycom.send_cmd('spi afe w 0x0374 0x00')
+        self._mycom.send_cmd('spi afe w 0x0015 0x00')
+        time.sleep(0.1)
+
+        self._mycom.send_cmd(f'spi afe w 0x0014 0x08')
+        temp=self._mycom.send_read_cmd('spi afe r 0x0028')
+        pll_N = round(int(re.findall(r"28] =(.+?)\n", temp)[0].strip()[2:],16))
+
+        temp = self._mycom.send_read_cmd('spi afe r 0x002e')
+        pll_F = round(int(re.findall(r"2e] =(.+?)\n", temp)[0].strip()[2:], 16))<<16
+        temp = self._mycom.send_read_cmd('spi afe r 0x002d')
+        pll_F = (round(int(re.findall(r"2d] =(.+?)\n", temp)[0].strip()[2:], 16)) << 8) + pll_F
+        temp = self._mycom.send_read_cmd('spi afe r 0x002c')
+        pll_F = round(int(re.findall(r"2c] =(.+?)\n", temp)[0].strip()[2:], 16))+pll_F
+
+        temp = self._mycom.send_read_cmd('spi afe r 0x0032')
+        pll_D = (round(int(re.findall(r"32] =(.+?)\n", temp)[0].strip()[2:], 16)) & 15) << 16
+        temp = self._mycom.send_read_cmd('spi afe r 0x0031')
+        pll_D = (round(int(re.findall(r"31] =(.+?)\n", temp)[0].strip()[2:], 16)) << 8) + pll_D
+        temp = self._mycom.send_read_cmd('spi afe r 0x0030')
+        pll_D = round(int(re.findall(r"30] =(.+?)\n", temp)[0].strip()[2:], 16)) + pll_D
+
+        temp = self._mycom.send_read_cmd('spi afe r 0x003f')
+        pll_op_div = round(int(re.findall(r"3f] =(.+?)\n", temp)[0].strip()[2:], 16)) & 7
+
+        self._mycom.send_cmd('spi afe w 0x0014 0x0')
+
+        fact = (pll_N + pll_F/pll_D)/pll_op_div
+        freq = fact*245.76/2
+
+        self._mycom.send_cmd('spi afe w 0x0015 0x80')
+        self._mycom.send_cmd('spi afe w 0x01d4 0x00')
+        self._mycom.send_cmd('spi afe w 0x0374 0x00')
+        self._mycom.send_cmd('spi afe w 0x0015 0x00')
+        time.sleep(0.1)
+
+        return freq
+
     def __branch_def(self, branch_id):
         branch_id = str(branch_id)
         branch_def = {'0':'A','1':'B','2':'C','3':'D','A':'A','B':'B','C':'C','D':'D','a':'A','b':'B','c':'C','d':'D'}
@@ -51,6 +156,7 @@ class RU:
     def get_sw_status(self, branch, component):
         # branch: A|B|C|D
         # compoent: pa|tx|hpsw|lna
+        branch = self.__branch_def(branch)
         status = self._mycom.send_read_cmd(f' fpga r 0x2403 ')
         status = int(re.findall(r"=(.+?)\n", status)[0].strip()[2:],16)
         pa_A = not (status & 1)
@@ -73,7 +179,7 @@ class RU:
         # branch: A|B|C|D
         # state: driver|final
         # main_or_peak: main|peak
-
+        branch = self.__branch_def(branch)
         cmd = {'A': {'final': {'main': {'cs0':'fpga w 0x1910 0x0','cs1':'fpga w 0x1911 0x04','read': 'spi paCtrl r 0x30'}, \
                                'peak': {'cs0':'fpga w 0x1910 0x0','cs1':'fpga w 0x1911 0x04','read': 'spi paCtrl r 0x32'}}, \
                       'driver': {'main': {'cs0':'fpga w 0x1910 0x0','cs1':'fpga w 0x1911 0x04','read': 'spi paCtrl r 0x34'}, \
@@ -91,53 +197,6 @@ class RU:
                       'driver': {'main': {'cs0':'fpga w 0x1910 0x1','cs1':'fpga w 0x1911 0x14','read': 'spi paCtrl r 0x35'}, \
                                  'peak': {'cs0':'fpga w 0x1910 0x1','cs1':'fpga w 0x1911 0x14','read': 'spi paCtrl r 0x37'}}}}
 
-        # self._mycom.send_cmd('fpga w 0x1910 0x0')
-        # self._mycom.send_cmd('fpga w 0x1911 0x04')
-        # final_main = self._mycom.send_read_cmd('spi paCtrl r 0x30')
-        # final_main_A = int(re.findall(r"30] =(.+?)\n", final_main)[0].strip()[2:],16)
-        # final_peak = self._mycom.send_read_cmd('spi paCtrl r 0x32')
-        # final_peak_A = int(re.findall(r"32] =(.+?)\n", final_peak)[0].strip()[2:],16)
-        # driver_main = self._mycom.send_read_cmd('spi paCtrl r 0x34')
-        # driver_main_A = int(re.findall(r"34] =(.+?)\n", driver_main)[0].strip()[2:],16)
-        # driver_peak = self._mycom.send_read_cmd('spi paCtrl r 0x36')
-        # driver_peak_A = int(re.findall(r"36] =(.+?)\n", driver_peak)[0].strip()[2:],16)
-        #
-        # final_main = self._mycom.send_read_cmd('spi paCtrl r 0x31')
-        # final_main_B = int(re.findall(r"31] =(.+?)\n", final_main)[0].strip()[2:],16)
-        # final_peak = self._mycom.send_read_cmd('spi paCtrl r 0x33')
-        # final_peak_B = int(re.findall(r"33] =(.+?)\n", final_peak)[0].strip()[2:],16)
-        # driver_main = self._mycom.send_read_cmd('spi paCtrl r 0x35')
-        # driver_main_B = int(re.findall(r"35] =(.+?)\n", driver_main)[0].strip()[2:],16)
-        # driver_peak = self._mycom.send_read_cmd('spi paCtrl r 0x37')
-        # driver_peak_B = int(re.findall(r"37] =(.+?)\n", driver_peak)[0].strip()[2:],16)
-        #
-        #
-        # self._mycom.send_cmd('fpga w 0x1910 0x1')
-        # self._mycom.send_cmd('fpga w 0x1911 0x14')
-        #
-        # final_main = self._mycom.send_read_cmd('spi paCtrl r 0x30')
-        # final_main_C = int(re.findall(r"30] =(.+?)\n", final_main)[0].strip()[2:], 16)
-        # final_peak = self._mycom.send_read_cmd('spi paCtrl r 0x32')
-        # final_peak_C = int(re.findall(r"32] =(.+?)\n", final_peak)[0].strip()[2:], 16)
-        # driver_main = self._mycom.send_read_cmd('spi paCtrl r 0x34')
-        # driver_main_C = int(re.findall(r"34] =(.+?)\n", driver_main)[0].strip()[2:], 16)
-        # driver_peak = self._mycom.send_read_cmd('spi paCtrl r 0x36')
-        # driver_peak_C = int(re.findall(r"36] =(.+?)\n", driver_peak)[0].strip()[2:], 16)
-        #
-        # final_main = self._mycom.send_read_cmd('spi paCtrl r 0x31')
-        # final_main_D = int(re.findall(r"31] =(.+?)\n", final_main)[0].strip()[2:], 16)
-        # final_peak = self._mycom.send_read_cmd('spi paCtrl r 0x33')
-        # final_peak_D = int(re.findall(r"33] =(.+?)\n", final_peak)[0].strip()[2:], 16)
-        # driver_main = self._mycom.send_read_cmd('spi paCtrl r 0x35')
-        # driver_main_D = int(re.findall(r"35] =(.+?)\n", driver_main)[0].strip()[2:], 16)
-        # driver_peak = self._mycom.send_read_cmd('spi paCtrl r 0x37')
-        # driver_peak_D = int(re.findall(r"37] =(.+?)\n", driver_peak)[0].strip()[2:], 16)
-        #
-        # bias = {'A': {'final':{'main':final_main_A, 'peak':final_peak_A},'driver':{'main': driver_main_A, 'peak':driver_peak_A}}, \
-        #         'B': {'final':{'main':final_main_B, 'peak':final_peak_B},'driver':{'main': driver_main_B, 'peak':driver_peak_B}}, \
-        #         'C': {'final': {'main': final_main_C, 'peak': final_peak_C},'driver': {'main': driver_main_C, 'peak': driver_peak_C}}, \
-        #         'D': {'final': {'main': final_main_D, 'peak': final_peak_D}, 'driver': {'main': driver_main_D, 'peak': driver_peak_D}} }
-        #
         cs0_cmd = cmd[branch][stage][main_or_peak]['cs0']
         self._mycom.send_cmd(cs0_cmd)
         cs1_cmd = cmd[branch][stage][main_or_peak]['cs1']
@@ -151,87 +210,49 @@ class RU:
 
     def init_check(self):
         print('init check:')
-        temp = myRU.read_temp_PA('A')
-        print(f'branch A PA temperature is {round(temp)}°')
-        temp = myRU.read_temp_PA('B')
-        print(f'branch B PA temperature is {round(temp)}°')
-        temp = myRU.read_temp_PA('C')
-        print(f'branch C PA temperature is {round(temp)}°')
-        temp = myRU.read_temp_PA('D')
-        print(f'branch D PA temperature is {round(temp)}°')
 
-        if myRU.get_sw_status('A', 'pa'):
-            print(f'branch A PA is on')
-        else:
-            print(f'branch A PA is off')
-        if myRU.get_sw_status('B', 'pa'):
-            print(f'branch B PA is on')
-        else:
-            print(f'branch B PA is off')
-        if myRU.get_sw_status('C', 'pa'):
-            print(f'branch C PA is on')
-        else:
-            print(f'branch C PA is off')
-        if myRU.get_sw_status('D', 'pa'):
-            print(f'branch D PA is on')
-        else:
-            print(f'branch D PA is off')
+        # print sw release date
+        myRU.get_sw_rev()
 
-        if myRU.get_sw_status('A', 'lna'):
-            print(f'branch A lna is on')
+        # check clk status
+        if myRU.get_clk_status():
+            print('clk locked')
         else:
-            print(f'branch A lna is off')
-        if myRU.get_sw_status('B', 'lna'):
-            print(f'branch B lna is on')
-        else:
-            print(f'branch B lna is off')
-        if myRU.get_sw_status('C', 'lna'):
-            print(f'branch C lna is on')
-        else:
-            print(f'branch C lna is off')
-        if myRU.get_sw_status('D', 'lna'):
-            print(f'branch D lna is on')
-        else:
-            print(f'branch D lna is off')
-        #
-        # tmp = self.get_bias('A','final','main')
-        # print(f'Branch A PA final main bias is {tmp} ')
-        # tmp = self.get_bias('A','final','peak')
-        # print(f'Branch A PA final peak bias is {tmp} ')
-        # tmp = self.get_bias('A','driver','main')
-        # print(f'Branch A PA driver main bias is {tmp} ')
-        # tmp = self.get_bias('A','driver','peak')
-        # print(f'Branch A PA driver peak bias is {tmp} ')
-        # tmp = self.get_bias('B','final','main')
-        # print(f'Branch B PA final main bias is {tmp} ')
-        # tmp = self.get_bias('B','final','peak')
-        # print(f'Branch B PA final peak bias is {tmp} ')
-        # tmp = self.get_bias('B','driver','main')
-        # print(f'Branch B PA driver main bias is {tmp} ')
-        # tmp = self.get_bias('B','driver','peak')
-        # print(f'Branch B PA driver peak bias is {tmp} ')
-        # tmp = self.get_bias('C','final','main')
-        # print(f'Branch C PA final main bias is {tmp} ')
-        # tmp = self.get_bias('C','final','peak')
-        # print(f'Branch C PA final peak bias is {tmp} ')
-        # tmp = self.get_bias('C','driver','main')
-        # print(f'Branch C PA driver main bias is {tmp} ')
-        # tmp = self.get_bias('C','driver','peak')
-        # print(f'Branch C PA driver peak bias is {tmp} ')
-        # tmp = self.get_bias('D','final','main')
-        # print(f'Branch D PA final main bias is {tmp} ')
-        # tmp = self.get_bias('D','final','peak')
-        # print(f'Branch D PA final peak bias is {tmp} ')
-        # tmp = self.get_bias('D','driver','main')
-        # print(f'Branch D PA driver main bias is {tmp} ')
-        # tmp = self.get_bias('D','driver','peak')
-        # print(f'Branch D PA driver peak bias is {tmp} ')
+            print('clk unlocked')
 
-        for branch in ['A', 'B', 'C', 'D']:
-            for stage in ['final', 'driver']:
-                for main_or_peak in ['main','peak']:
-                    tmp = self.get_bias( branch, stage, main_or_peak)
-                    print(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+        # check jesd status
+        if False:
+            if myRU.get_jesd_status():
+                print('jesd link up')
+            else:
+                print('jesd linkdown')
+
+        if False:
+            for branch in ['A', 'B', 'C', 'D']:
+                temp = myRU.read_temp_PA(branch)
+                print(f'branch {branch} PA temperature is {round(temp)}°')
+
+        if False:
+            for branch in ['A', 'B', 'C', 'D']:
+                for component in ['pa','lna']:
+                    if myRU.get_sw_status(branch, component):
+                        print(f'branch {branch} {component} is on')
+                    else:
+                        print(f'branch {branch} {component} is off')
+        if False:
+            for branch in ['A', 'B', 'C', 'D']:
+                for stage in ['final', 'driver']:
+                    for main_or_peak in ['main','peak']:
+                        tmp = self.get_bias( branch, stage, main_or_peak)
+                        print(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+
+        # check fb nco freq
+        if False:
+            for branch in ['A', 'B', 'C', 'D']:
+                freq = self.get_fb_nco_freq(branch)
+                print(f'branch {branch} fb nco frequency = {freq} MHz')
+
+        print(f'LO frequency is {self.get_lo_freq()}MHz')
 
     def __del__(self):
         print('RU has been disconnected')
