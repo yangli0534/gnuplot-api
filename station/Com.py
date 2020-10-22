@@ -5,17 +5,25 @@
 import serial
 import re
 import time
+import sys
 
 
 
 class Com:
     def __init__(self, com_id, baud_rate, t):
         port = 'COM' + str(com_id)
-        self.com = serial.Serial(port, baud_rate, timeout=t)
-        if self.com.isOpen():
+        try:
+            self.com = serial.Serial(port, baud_rate, timeout=t)
             print("COM port create and open successfully")
-        else:
-            print("COM create failed")
+            #return True
+        except:
+            print(f'COM{com_id} is not available so fail to open!!!')
+            sys.exit('stop running')
+            #return False
+        # if self.com.isOpen():
+        #     print("COM port create and open successfully")
+        # else:
+        #     print("COM create failed")
         self.iv = self.is_virtual()
 
     def receive_data(self):
