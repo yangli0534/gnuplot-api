@@ -2,7 +2,7 @@
 
 """
 @author: Leon
-@time: 2020-19-20
+@time: 2020-10-20
 
 """
 import sys
@@ -51,7 +51,7 @@ class RU:
             self.RX_DDC_VCA_MAX_GAIN = 3
             self.RX_DDC_VCA_MIN_GAIN = -3
             self.RX_DDC_VCA_STEP = 0.01
-
+            #self.set_init()
     #def write(self):
 
     def get_sw_rev(self):
@@ -78,7 +78,7 @@ class RU:
 
     def get_fb_nco_freq(self, branch):
         # freq unit: MHz
-        branch = self.__branch_def(branch)
+        branch = self.__branch_def_alp(branch)
         cmd = 'fpga w 0x1910 0x2'
         self._mycom.send_cmd(cmd)
         cmd = 'fpga w 0x1913 0x24'
@@ -247,12 +247,23 @@ class RU:
         bias = int(re.findall(search, bias)[0].strip()[2:], 16)
         return bias
 
-    def get_tor_pm(self, branch):
+    def get_tor_pm(self, branch, aver_cnt = 1):
+        aver_cnt = round(int(aver_cnt))
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga torpwr {branch}'
         tmp= self._mycom.send_read_cmd(cmd)
         torpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
-        return torpm
+        torpm = 0
+        # there is sw bug in read tor pm and 2rd read to workaround
+        if aver_cnt == 1:
+            tmp= self._mycom.send_read_cmd(cmd)
+            torpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return torpm
+        else:
+            for i in range(aver_cnt):
+                tmp = self._mycom.send_read_cmd(cmd)
+                torpm = torpm + float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return float(torpm/aver_cnt)
 
     def get_DUC_pm(self, branch):
         branch = self.__branch_def_alp(branch)
@@ -303,10 +314,14 @@ class RU:
         # branch = A|B|C|D|all
         # turn of DUC->driver&final->Tor->predriver, turn on LNA, HPSW switch to Rx
         branch = self.__branch_def_alp(branch)
-        if branch =='all':
+        if branch !='all':
             cmd = f'fpga paCtrl turnOff tx {branch}'
         else:
-            cmd = f'fpga paCtrl turnOff tx'
+            cmd = f'fpga paCtrl turnOffAll tx'
+        self._mycom.send_cmd(cmd)
+
+    def set_off_all(self):
+        cmd = f'fpga paCtrl turnOffAll tx'
         self._mycom.send_cmd(cmd)
 
     def set_rx_on(self, branch):
@@ -384,43 +399,119 @@ class RU:
         # branch: A|B|C|D
         # dpdPost_vca_gain unit: dB
 
-        branch = self.__branch_def_num(branch)
-        branch_alp = self.__branch_def_alp(branch)
-        cmd = f'ztest getDpdPostGain {branch}'
-        #print(cmd)
-        tmp = self._mycom.send_read_cmd(cmd)
-        #print(tmp)
-        search = f'{branch_alp}dpd post gain =(.+?)\n'
-        dpd_post_vca_gain = float(re.findall(search, tmp)[0].strip())
+        # branch = self.__branch_def_num(branch)
+        # branch_alp = self.__branch_def_alp(branch)
+        # cmd = f'ztest getDpdPostGain {branch}'
+        # #print(cmd)
+        # tmp = self._mycom.send_read_cmd(cmd)
+        # #print(tmp)
+        # search = f'{branch_alp}dpd post gain =(.+?)\n'
+        # dpd_post_vca_gain = float(re.findall(search, tmp)[0].strip())
+
+        # branch = self.__branch_def_num(branch)
+        # if branch =='A' or branch == 'B':
+        #     tmp = self._mycom.send_read_cmd('fpga r 0x1824')
+        #     search = f'24] =(.+?)\n'
+        #     if branch == 'A':
+        #         tmp = re.findall(search, tmp)[0].strip()[6:10]
+        #     else:
+        #         tmp = re.findall(search, tmp)[0].strip()[2:6]
+        # else:
+        #     tmp = self._mycom.send_read_cmd('fpga r 0x1825')
+        #     search = f'25] =(.+?)\n'
+        #     if branch == 'C':
+        #         tmp = re.findall(search, tmp)[0].strip()[6:10]
+        #     else:
+        #         tmp = re.findall(search, tmp)[0].strip()[2:6]
+        tmp = self.get_dpd_post_vca_gain_reg(branch)
+        dpd_post_vca_gain = 20*math.log10(int(tmp, 16)/16384)
+        #print(dpd_post_vca_gain)
         return dpd_post_vca_gain
 
     def get_dpd_post_vca_gain_reg(self, branch):
-        branch = self.__branch_def_num(branch)
-        if branch =='A' or branch == 'B':
+        branch = self.__branch_def_alp(branch)
+        if branch == 'A' or branch == 'B':
             tmp = self._mycom.send_read_cmd('fpga r 0x1824')
             search = f'24] =(.+?)\n'
+            if branch == 'A':
+                dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
+            else:
+                dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
         else:
             tmp = self._mycom.send_read_cmd('fpga r 0x1825')
             search = f'25] =(.+?)\n'
-
-        return  re.findall(search, tmp)[0].strip()
+            if branch == 'C':
+                dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
+            else:
+                dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
+        #print(dpd_post_vca_gain_reg)
+        return  dpd_post_vca_gain_reg
 
     def get_dpd_pre_vca_gain_reg(self, branch):
-        branch = self.__branch_def_num(branch)
+        branch = self.__branch_def_alp(branch)
         if branch =='A' or branch == 'B':
             tmp = self._mycom.send_read_cmd('fpga r 0x1820')
             search = f'20] =(.+?)\n'
-            if branch == 'A':
-                return re.findall(search, tmp)[0].strip()[2:5]
+            if branch == 'B':
+                dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
             else:
-                return re.findall(search, tmp)[0].strip()[6:9]
+                dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
         else:
             tmp = self._mycom.send_read_cmd('fpga r 0x1821')
             search = f'21] =(.+?)\n'
-            if branch == 'C':
-                return re.findall(search, tmp)[0].strip()[2:5]
+            if branch == 'D':
+                dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
             else:
-                return re.findall(search, tmp)[0].strip()[6:9]
+                dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
+        #print(dpd_pre_vca_gain_reg)
+        return dpd_pre_vca_gain_reg
+
+    def get_dpd_pre_vca_gain(self, branch):
+        # branch = self.__branch_def_num(branch)
+        # if branch =='A' or branch == 'B':
+        #     tmp = self._mycom.send_read_cmd('fpga r 0x1820')
+        #     search = f'20] =(.+?)\n'
+        #     if branch == 'A':
+        #         gain = re.findall(search, tmp)[0].strip()[2:6]
+        #     else:
+        #         gain = re.findall(search, tmp)[0].strip()[6:10]
+        # else:
+        #     tmp = self._mycom.send_read_cmd('fpga r 0x1821')
+        #     search = f'21] =(.+?)\n'
+        #     if branch == 'C':
+        #         gain = re.findall(search, tmp)[0].strip()[2:6]
+        #     else:
+        #         gain =  re.findall(search, tmp)[0].strip()[6:10]
+
+        tmp = self.get_dpd_post_vca_gain_reg(branch)
+        dpd_pre_vca_gain = 20 * math.log10(int(tmp, 16) / 16384)
+        return dpd_pre_vca_gain
+
+    def set_dpd_pre_vca_gain(self, branch, gain):
+        # branch: A|B|C|D
+        # gain unit: dB -3dB to 3dB
+        branch = self.__branch_def_alp(branch)
+        tmp = round(math.sqrt(math.pow(10, float(gain) / 10.0)) * 16384)
+        if branch == 'A' or branch == 'B':
+            previous_A = int(self.get_dpd_pre_vca_gain_reg('A'), 16)
+            previous_B = int(self.get_dpd_pre_vca_gain_reg('B'), 16)
+            if branch == 'B':
+                new = previous_A + (tmp << 16)
+            else:
+                new = (previous_B << 16) + tmp
+            new = hex(new)
+            cmd = f'fpga w 0x1820 {new}'
+        else:
+            previous_C = int(self.get_dpd_post_vca_gain_reg('C'), 16)
+            previous_D = int(self.get_dpd_post_vca_gain_reg('D'), 16)
+            if branch == 'D':
+                new = previous_C + (tmp << 16)
+            else:
+                new = (previous_D << 16 ) + tmp
+            new = hex(new)
+            cmd = f'fpga w 0x1821 {new}'
+
+        self._mycom.send_cmd(cmd)
 
 
     def set_dpd_post_vca_gain(self, branch, gain):
@@ -429,22 +520,24 @@ class RU:
         branch = self.__branch_def_alp(branch)
         tmp = round(math.sqrt(math.pow(10, float(gain) / 10.0)) * 16384)
         if branch == 'A' or branch == 'B':
-            previous = int(self.get_dpd_post_vca_gain_reg(branch), 16)
-            if branch == 'A':
-                new = (previous & int('0x0000ffff', 16))+ (tmp << 16)
+            previous_A = int(self.get_dpd_post_vca_gain_reg('A'), 16)
+            previous_B = int(self.get_dpd_post_vca_gain_reg('B'), 16)
+            if branch == 'B':
+                new = previous_A + (tmp << 16)
             else:
-                new = (previous & int('0xffff0000', 16)) + tmp
+                new = (previous_B << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1824 {new}'
         else:
-            previous = int(self.get_dpd_post_vca_gain_reg(branch), 16)
-            if branch == 'C':
-                new = (previous & int('0x0000ffff', 16))+ (tmp << 16)
+            previous_C = int(self.get_dpd_post_vca_gain_reg('C'), 16)
+            previous_D = int(self.get_dpd_post_vca_gain_reg('D'), 16)
+            if branch == 'D':
+                new = previous_C + (tmp << 16)
             else:
-                new = (previous & int('0xffff0000', 16)) + tmp
+                new = (previous_D << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1825 {new}'
-
+        #print(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_rx_alg_dsa_gain(self, branch):
@@ -465,7 +558,7 @@ class RU:
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setRxA {branch} {gain}'
-        print(cmd)
+        #print(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_rx_vca_gain(self, branch):
@@ -492,90 +585,170 @@ class RU:
 
     def set_dpd_init(self):
         cmd = f'dpd init'
-        tmp = self._mycom.send_cmd(cmd)
+        tmp = self._mycom.send_read_cmd(cmd)
         return re.search('Xilinx Dpd Init OK!', tmp, re.M | re.I) != None
 
-    def init_check(self):
+    def get_dpd_status(self):
+        cmd = f'cat /proc/interrupts'
+        tmp = self._mycom.send_read_cmd(cmd)
+        #print(tmp)
+        search = f'45:(.+?)          1'
+        previous = re.findall(search, tmp)[0].strip()
+        #previous = re.findall(search, tmp)
+        #print(previous)
+        tmp = self._mycom.send_read_cmd(cmd)
+        #print(tmp)
+        current = re.findall(search, tmp)[0].strip()
+        #current = re.findall(search, tmp)
+        #print(current)
+        if previous == current:
+            return False
+        else:
+            return True
+
+    def set_duc_off(self, branch):
+        branch= self.__branch_def_alp(branch)
+        cmd ={'A': 'fpga w 0x4010 0x000', 'B': 'fpga w 0x4011 0x000', 'C': 'fpga w 0x4012 0x000','D': 'fpga w 0x4013 0x000'}
+        if branch != 'all':
+            self._mycom.send_cmd(cmd[branch])
+        else:
+            self._mycom.send_cmd(cmd['A'])
+            self._mycom.send_cmd(cmd['B'])
+            self._mycom.send_cmd(cmd['C'])
+            self._mycom.send_cmd(cmd['D'])
+
+    def set_duc_on(self, branch):
+        branch = self.__branch_def_alp(branch)
+        cmd = {'A': 'fpga w 0x4010 0x4000', 'B': 'fpga w 0x4011 0x4000', 'C': 'fpga w 0x4012 0x4000',
+               'D': 'fpga w 0x4013 0x4000'}
+        if branch != 'all':
+            self._mycom.send_cmd(cmd[branch])
+        else:
+            self._mycom.send_cmd(cmd['A'])
+            self._mycom.send_cmd(cmd['B'])
+            self._mycom.send_cmd(cmd['C'])
+            self._mycom.send_cmd(cmd['D'])
+
+    def get_pa_vdd_target(self):
+        #vol unit: V
+        cmd = 'spi readpavdd'
+        tmp = self._mycom.send_read_cmd(cmd)
+        search = f'pavdd voltage is:(.+?)\n'
+        vol = float(re.findall(search, tmp)[0].strip())
+        return vol
+
+    def get_pa_vdd(self, stage='final'):
+        # stage: final or driver
+        #vol unit: V
+        stage = str(stage)
+        if stage == 'final':
+            cmd = 'fpga get pavdd'
+        else:
+            cmd = 'fpga get dpavdd'
+        tmp = self._mycom.send_read_cmd(cmd)
+        search = f'=(.+?),'
+        vol = float(re.findall(search, tmp)[0].strip())
+        return vol
+
+    def set_init(self):
         print('init check:')
 
         # print sw release date
 
-        myRU.get_sw_rev()
+        self.get_sw_rev()
 
         # check clk status
-        if myRU.get_clk_status():
+        if self.get_clk_status():
             print('clk locked')
         else:
             print('clk unlocked')
 
         # check jesd status
-        if False:
-            if myRU.get_jesd_status():
+        if True:
+            if self.get_jesd_status():
                 print('jesd link up')
             else:
                 print('jesd linkdown')
 
-        if False:
-            for branch in ['A', 'B', 'C', 'D']:
-                temp = myRU.read_temp_PA(branch)
+        #print('turning off all')
+        #self.set_off_all()
+
+        if True:
+            for branch in ['A']:
+                temp = self.read_temp_PA(branch)
                 print(f'branch {branch} PA temperature is {round(temp)}°')
 
         if True:
-            for branch in ['A', 'B', 'C', 'D']:
+            for branch in ['A']:
                 for component in ['pa', 'tx','lna']:
-                    if myRU.get_sw_status(branch, component):
+                    if self.get_sw_status(branch, component):
                         print(f'branch {branch} {component} is on')
                     else:
                         print(f'branch {branch} {component} is off')
         if True:
-            for branch in ['A', 'B', 'C', 'D']:
+            for branch in ['A']:
                 for stage in ['final', 'driver']:
                     for main_or_peak in ['main','peak']:
                         tmp = self.get_bias( branch, stage, main_or_peak)
                         print(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
 
         # check fb nco freq
-        if False:
-            for branch in ['A', 'B', 'C', 'D']:
+        if True:
+            for branch in ['A']:
                 freq = self.get_fb_nco_freq(branch)
                 print(f'branch {branch} fb nco frequency = {freq} MHz')
 
-        #print(f'LO frequency is {self.get_lo_freq()}MHz')
+        print(f'LO frequency is {self.get_lo_freq()}MHz')
 
         # read torpm
 
         if True:
-            for branch in ['A', 'B', 'C', 'D']:
-                # torpm = self.get_tor_pm(branch)
-                # print(f'branch {branch} tor power  = {torpm} dBm')
-                # adcpm = self.get_ADC_pm(branch)
-                # print(f'branch {branch} adc power  = {adcpm} dBm')
-                # dpdpm = self.get_DPD_pm(branch)
-                # print(f'branch {branch} dpd power  = {dpdpm} dBm')
+            for branch in ['A']:
+                torpm = self.get_tor_pm(branch)
+                print(f'branch {branch} tor power  = {torpm} dBm')
+                adcpm = self.get_ADC_pm(branch)
+                print(f'branch {branch} adc power  = {adcpm} dBm')
+                dpdpm = self.get_DPD_pm(branch)
+                print(f'branch {branch} dpd power  = {dpdpm} dBm')
 
+                #self.set_tx_alg_dsa_gain(branch, -20)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
                 print(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
-                #self.set_tx_alg_dsa_gain(branch, -15)
-                #tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
-                #print(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
+
+                tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
+                print(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
+
+                #self.set_dpd_post_vca_gain(branch, 3)
                 tx_vca_dpd_post_gain = self.get_dpd_post_vca_gain(branch)
                 print(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
-                #self.set_dpd_post_vca_gain(branch, -2)
-                tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain_reg(branch)
+
+                #tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain_reg(branch)
+                #print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
+                #self.set_dpd_pre_vca_gain(branch, 3)
+                tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain(branch)
                 print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
+                #self.set_tor_alg_dsa_gain(branch, -10)
                 tor_alg_dsa_gain = self.get_tor_alg_dsa_gain(branch)
                 print(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
-                #self.set_tor_alg_dsa_gain(branch, -5)
 
+                #self.set_rx_alg_dsa_gain(branch, -10)
                 rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
                 print(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
-                #self.set_rx_alg_dsa_gain(branch, -5)
 
+                #self.set_rx_vca_gain(branch, -2)
                 rx_vca_gain = self.get_rx_vca_gain(branch)
                 print(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
-                #self.set_rx_vca_gain(branch, -2)
 
+        # if(self.set_dpd_init()):
+        #     print('dpd init successfully')
+        # else:
+        #     print('dpd init failed')
+
+        pavdd = self.get_pa_vdd('final')
+        print(f'final pa vdd = {pavdd}V')
+        dpavdd = self.get_pa_vdd('driver')
+        print(f'driver pa vdd = {dpavdd}V')
     def __del__(self):
         print('RU has been disconnected')
 
@@ -585,7 +758,7 @@ if __name__ == '__main__':
     #active = True
     try:
         while True:
-            myRU.init_check()
+            myRU.set_init()
             print(f'total consumption is {round(myps.get_consumption())} W')
     except KeyboardInterrupt:
         pass

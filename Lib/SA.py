@@ -15,7 +15,7 @@ class SA:
         self._instr = rm.open_resource(address)
         self._instr.timeout = 10000
         self._instr.chunk_size = 102400
-        #self.name = self.instr.query('*IDN?')[:-1]
+        self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
         print(f'{self.name} has been connected successfully' )
 
@@ -235,6 +235,13 @@ class SA:
     # target unit is MHz
     def set_chp_int_bw(self, target):
         cmd = f'CHP:BAND:INT {target} MHz'
+        self.write_value(cmd)
+
+    def set_chp_scale(self, target):
+        cmd = f'DISP:CHP:VIEW:WIND:TRAC:Y:PDIV {target}'
+        self.write_value(cmd)
+    def set_chp_scale_auto(self):
+        cmd = f'DISP:CHP:VIEW:WIND:TRAC:Y:COUP ON'
         self.write_value(cmd)
 
     # target unit dBm
@@ -457,13 +464,15 @@ class SA:
 
         print(f'{filename} has been saved on PC')
 
-    def test_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs):
+    def test_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs, scale = 5):
         self.set_init()
         self.set_meas('CHP')
         self.set_center(center)
         #self.set_chp_span(span)
         self.set_rlev(rlev)
         self.set_rlev_offs(offs)
+        #self.set_chp_scale(scale)
+        self.set_chp_scale_auto()
         self.set_chp_sweep_time(sweep_time)
         self.set_chp_rbw(rbw)
         self.set_chp_int_bw(int_bw)
@@ -536,7 +545,7 @@ class SA:
 if __name__ == '__main__':
     #mysa = SA('GPIB0::25::INSTR')
     mysa = SA('TCPIP0::172.16.1.66::inst0::INSTR')
-    #chp1 = mysa.test_chp(center=3000, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev = -20, offs = 0.6)
+    chp1 = mysa.test_chp(center=3700, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev = 20, offs = 41.7)
     #print(chp1)
 
 
@@ -545,7 +554,7 @@ if __name__ == '__main__':
     # print(chp2)
     # print(type(chp2))
     #mysa.test_acp(center=3000, span=10, sweep_time=50, sweep_count=10, rbw=0.5, vbw=1, rlev=15, offs=0.6, cbw=2, obw=1.8)
-    mysa.test_san(center=3000, span=500, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
+    #mysa.test_san(center=3000, span=500, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
     # for i in range(1):
     #     dt = datetime.datetime.now()
     #     #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
@@ -556,6 +565,6 @@ if __name__ == '__main__':
     #     filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")
     #     mysa.get_scr(filename)
     #mysa.test()
-    trace = mysa.get_trace()
-    print(len(trace))
+    #trace = mysa.get_trace()
+    #print(len(trace))
     mysa.set_close()
