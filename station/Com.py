@@ -26,16 +26,33 @@ class Com:
         #     print("COM create failed")
         self.iv = self.is_virtual()
 
-    def receive_data(self):
-        output = ''
+    def __read_line_cus(self, terminator):
+        eol = b'\r'
+        leneol = len(eol)
+        ter_eol = len(terminator)
+        line = bytearray()
         while True:
-            data = self.com.readline()
+            c = self.com.read(1)
+            if c:
+                line += c
+                if line[-leneol:] == eol or (line[-ter_eol:] == terminator):
+                    break
+            else:
+                break
+        return bytes(line)
+
+    def receive_data(self):
+
+        output = ''
+        flag = 1
+        while flag:
+            data = self.__read_line_cus(b'root@ORU1226:~#')
             try:
-                if data != b'':
-                    output = output + data.decode('utf-8')
+                if re.search('root@ORU1226:~#', str(data), re.M | re.I) is not None:
+                    flag = 0
                     #print(data.decode('utf-8'), end='')
                 else:
-                    break
+                    output = output + data.decode('utf-8')
             except Exception as err:
                 print('Error %s in reading', err)
         return output
@@ -43,11 +60,12 @@ class Com:
     def send_read_cmd(self, cmd):
         cmd = self.carriage_return(cmd)
         self.com.write(cmd.encode('utf-8'))
-        #print(cmd)
+        print(cmd)
         return self.receive_data()
 
     def send_cmd(self, cmd):
         cmd = self.carriage_return(cmd)
+        print('cmd')
         self.com.write(cmd.encode('utf-8'))
 
     def read_raw_reg(self, cmd):
@@ -107,15 +125,19 @@ class Com:
     def read_db(self, cmd):
         out = self.send_read_cmd(cmd)
         return out
+
     def __del__(self):
         print('COM has been disconnected')
         self.close()
 
 
-
 if __name__ == '__main__':
-    a = Com(1, 115200, 0.5)
-    for i in range(10):
-        a.send_cmd('fpga r 0x1807')
+    a = Com(3, 115200, 1)
+    for i in range(1):
+        start = time.perf_counter()
+        a.send_read_cmd('spi paCtrl temp A')
+        stop = time.perf_counter()
+        cost_time = stop - start
+        print(f'Total time is {cost_time} s')
         time.sleep(1)
     a.close()

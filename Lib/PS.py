@@ -16,8 +16,12 @@ class PS:
         self._instr = rm.open_resource(address)
         self._instr.timeout = 10000
         self.name = self._instr.query('*IDN?')[:-1]
-        self.set_init()
         print(f'{self.name} has been connected successfully' )
+        if not self.get_status():
+            self.set_init()
+            self.turn_on()
+            time.sleep(10)
+
 
 
     def write_value(self, cmd):
@@ -57,13 +61,28 @@ class PS:
 
         cmd = f'*OPC?'
         return self.read_value(cmd)
+
+    def get_status(self):
+        cmd = f'OUTPut:STATe?'
+        status = self.read_value(cmd)[0]
+        if status:
+            return True
+        else:
+            return False
+
     def turn_on(self):
+        print('turning on power supply')
         cmd = f'OUTPut:STATe ON'
         self.write_value(cmd)
 
     def turn_off(self):
         cmd = f'OUTPut:STATe OFF'
         self.write_value(cmd)
+
+    def restart(self):
+        self.turn_off()
+        time.sleep(2)
+        self.turn_on()
 
     def set_vol(self, target = 48):
         cmd = f'VOLT:AMPL {target}V'
@@ -97,9 +116,14 @@ class PS:
         print('PS has been disconnected')
 
 if __name__ == '__main__':
-    myps = PS('TCPIP0::172.16.1.57::inst0::INSTR')
+    myps = PS('TCPIP0::172.16.1.252::inst0::INSTR')
     print(myps.name)
+    if myps.get_status():
+        print('PS has been turned on and no need to update')
+    else:
+        print('PS has been turned off and we will turn it on..')
+        myps.turn_on()
     #myps.turn_on()
     #time.sleep(10)
-    print(myps.get_consumption())
+    #print(myps.get_consumption())
     myps.set_close()

@@ -20,38 +20,38 @@ from threading import Thread
 class RU:
     def __init__(self, com_id, baud_rate, t):
         self._mycom = Com.Com(3, 115200, 0.5)
-        connect_status = 0
-        while connect_status == 0:
-            time.sleep(1)
-            answer = self._mycom.send_read_cmd('')
+
             # answer = mycom.receive_data()
             # answer = answer.rstrip()
             #print(answer)
             # print([ord(c) for c in answer])
             # print([ord(c) for c in 'root@ORU4419:~#'])
-            terminator = 'root@ORU1226:~#'
+        answer = self._mycom.send_read_cmd('')
+        terminator = 'root@ORU1226:~#'
+
+        search_obj = re.search(terminator, answer, re.M | re.I)
+        while (not search_obj):
+            print('RU Connecting...')
+            time.sleep(1)
+            answer = self._mycom.send_read_cmd('')
             search_obj = re.search(terminator, answer, re.M | re.I)
-            if search_obj:
-                connect_status = 1
-                print('RU connected successful')
-            else:
-                print('Connecting...')
-            self.TX_ALG_DSA_MAX_GAIN = 0
-            self.TX_ALG_DSA_MIN_GAIN = 30
-            self.TX_ALG_DSA_STEP = 1
-            self.TX_DPD_POST_VCA_MAX_GAIN = 3.0
-            self.TX_DPD_POST_VCA_MIN_GAIN = -3.0
-            self.TX_DPD_POST_VCA_STEP = 0.01
-            self.TOR_ALG_DSA_MAX_GAIN = 0
-            self.TOR_ALG_DSA_MIN_GAIN = -16
-            self.TOR_ALG_DSA_STEP = 1
-            self.RX_ALG_DSA_MAX_GAIN = 0
-            self.RX_ALG_DSA_MIN_GAIN = -28
-            self.RX_ALG_DSA_STEP = 1
-            self.RX_DDC_VCA_MAX_GAIN = 3
-            self.RX_DDC_VCA_MIN_GAIN = -3
-            self.RX_DDC_VCA_STEP = 0.01
-            #self.set_init()
+        print('RU connected successful')
+        self.TX_ALG_DSA_MAX_GAIN = 0
+        self.TX_ALG_DSA_MIN_GAIN = 30
+        self.TX_ALG_DSA_STEP = 1
+        self.TX_DPD_POST_VCA_MAX_GAIN = 3.0
+        self.TX_DPD_POST_VCA_MIN_GAIN = -3.0
+        self.TX_DPD_POST_VCA_STEP = 0.01
+        self.TOR_ALG_DSA_MAX_GAIN = 0
+        self.TOR_ALG_DSA_MIN_GAIN = -16
+        self.TOR_ALG_DSA_STEP = 1
+        self.RX_ALG_DSA_MAX_GAIN = 0
+        self.RX_ALG_DSA_MIN_GAIN = -28
+        self.RX_ALG_DSA_STEP = 1
+        self.RX_DDC_VCA_MAX_GAIN = 3
+        self.RX_DDC_VCA_MIN_GAIN = -3
+        self.RX_DDC_VCA_STEP = 0.01
+        self.set_init(branch_set = ['A','B'])
     #def write(self):
 
     def get_sw_rev(self):
@@ -189,7 +189,7 @@ class RU:
     def read_temp_FPGA(self):
         temp = self._mycom.send_read_cmd(f'fpga temperature')
         FPGA_temp = float(re.findall(r"of FPGA is: (.+?)\n", temp)[0].strip())
-        return AFE_temp
+        return FPGA_temp
 
 
     def get_sw_status(self, branch, component):
@@ -293,13 +293,38 @@ class RU:
         adcpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
         return adcpm
 
-    def set_pa_bias(self, branch):
+    def set_pa_bias(self, branch, bias=[]):
         branch = self.__branch_def_alp(branch)
-        cmd = f'ztest pabias {branch}'
-        tmp = self._mycom.send_read_cmd(cmd)
-        return re.search(r'config PA BIAS OK!', tmp, re.M|re.I) != None
+        #cmd = f'ztest pabias {branch}'
+        #tmp = self._mycom.send_read_cmd(cmd)
+        #return re.search(r'config PA BIAS OK!', tmp, re.M|re.I) != None
+        if branch == A:
+            cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x689',
+                       'spi paCtrl w 0x32 0x2e1', 'spi paCtrl w 0x34 0x731', 'spi paCtrl w 0x36 0x54a',
+                       'spi paCtrl w 0x17 0x0']
+        elif branch == B:
+            cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x67a',
+                       'spi paCtrl w 0x33 0x2e1', 'spi paCtrl w 0x35 0x731', 'spi paCtrl w 0x37 0x54a',
+                       'spi paCtrl w 0x17 0x0']
 
-    def set_pa_on(self, branch):
+        elif branch == C:
+            cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1911 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x699',
+                       'spi paCtrl w 0x32 0x2f1', 'spi paCtrl w 0x34 0x741', 'spi paCtrl w 0x36 0x731',
+                       'spi paCtrl w 0x17 0x0']
+
+        else:
+            cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1911 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x684',
+                       'spi paCtrl w 0x33 0x2e1',
+                       'spi paCtrl w 0x35 0x5e9', 'spi paCtrl w 0x37 0x5c9', 'spi paCtrl w 0x17 0x0']
+
+        for cmd in cmd_set:
+            tmp = self._mycom.send_read_cmd(cmd)
+
+def set_pa_on(self, branch):
         # turn on driver and final, HPSW switch to VSWR, turn off LNA
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga paCtrl turnOn {branch}'
@@ -588,11 +613,22 @@ class RU:
         tmp = self._mycom.send_read_cmd(cmd)
         return re.search('Xilinx Dpd Init OK!', tmp, re.M | re.I) != None
 
+    def set_data_on(self, bandwidth = 100):
+        #bandwidth:　100 for 100MHz data\filter\cfr, 20 for 20MHz data\filter\cfr
+        bandwidth = str(bandwidth)
+        # parameter check
+        if  not (bandwidth == '100' or bandwidth == '20'):
+            return False
+        else:
+            cmd = f'senddata s{bandwidth}'
+            tmp = self._mycom.send_read_cmd(cmd)
+            return re.search('I/Q data OK', tmp, re.M | re.I) != None
+
     def get_dpd_status(self):
         cmd = f'cat /proc/interrupts'
         tmp = self._mycom.send_read_cmd(cmd)
         #print(tmp)
-        search = f'45:(.+?)          1'
+        search = f'45:(.+?)          '
         previous = re.findall(search, tmp)[0].strip()
         #previous = re.findall(search, tmp)
         #print(previous)
@@ -650,7 +686,7 @@ class RU:
         vol = float(re.findall(search, tmp)[0].strip())
         return vol
 
-    def set_init(self):
+    def set_init(self, branch_set = ['A', 'B']):
         print('init check:')
 
         # print sw release date
@@ -670,23 +706,23 @@ class RU:
             else:
                 print('jesd linkdown')
 
-        #print('turning off all')
-        #self.set_off_all()
+        print('turning off all')
+        self.set_off_all()
 
         if True:
-            for branch in ['A']:
+            for branch in branch_set:
                 temp = self.read_temp_PA(branch)
                 print(f'branch {branch} PA temperature is {round(temp)}°')
 
         if True:
-            for branch in ['A']:
+            for branch in branch_set:
                 for component in ['pa', 'tx','lna']:
                     if self.get_sw_status(branch, component):
                         print(f'branch {branch} {component} is on')
                     else:
                         print(f'branch {branch} {component} is off')
         if True:
-            for branch in ['A']:
+            for branch in branch_set:
                 for stage in ['final', 'driver']:
                     for main_or_peak in ['main','peak']:
                         tmp = self.get_bias( branch, stage, main_or_peak)
@@ -694,7 +730,7 @@ class RU:
 
         # check fb nco freq
         if True:
-            for branch in ['A']:
+            for branch in branch_set:
                 freq = self.get_fb_nco_freq(branch)
                 print(f'branch {branch} fb nco frequency = {freq} MHz')
 
@@ -703,7 +739,7 @@ class RU:
         # read torpm
 
         if True:
-            for branch in ['A']:
+            for branch in branch_set:
                 torpm = self.get_tor_pm(branch)
                 print(f'branch {branch} tor power  = {torpm} dBm')
                 adcpm = self.get_ADC_pm(branch)
@@ -711,32 +747,32 @@ class RU:
                 dpdpm = self.get_DPD_pm(branch)
                 print(f'branch {branch} dpd power  = {dpdpm} dBm')
 
-                #self.set_tx_alg_dsa_gain(branch, -20)
+                self.set_tx_alg_dsa_gain(branch, -20)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
                 print(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
 
                 tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
                 print(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
 
-                #self.set_dpd_post_vca_gain(branch, 3)
+                self.set_dpd_post_vca_gain(branch, 3)
                 tx_vca_dpd_post_gain = self.get_dpd_post_vca_gain(branch)
                 print(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
 
                 #tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain_reg(branch)
                 #print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
-                #self.set_dpd_pre_vca_gain(branch, 3)
+                self.set_dpd_pre_vca_gain(branch, 3)
                 tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain(branch)
                 print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
-                #self.set_tor_alg_dsa_gain(branch, -10)
+                self.set_tor_alg_dsa_gain(branch, -10)
                 tor_alg_dsa_gain = self.get_tor_alg_dsa_gain(branch)
                 print(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
 
-                #self.set_rx_alg_dsa_gain(branch, -10)
+                self.set_rx_alg_dsa_gain(branch, -10)
                 rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
                 print(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
 
-                #self.set_rx_vca_gain(branch, -2)
+                self.set_rx_vca_gain(branch, -2)
                 rx_vca_gain = self.get_rx_vca_gain(branch)
                 print(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
 
