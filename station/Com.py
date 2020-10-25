@@ -50,17 +50,20 @@ class Com:
             try:
                 if re.search('root@ORU1226:~#', str(data), re.M | re.I) is not None:
                     flag = 0
-                    #print(data.decode('utf-8'), end='')
+                    output = output + data.decode('utf-8')
+                    print(data.decode('utf-8'), end='\n')
                 else:
                     output = output + data.decode('utf-8')
+                    print(data.decode('utf-8'), end='')
             except Exception as err:
                 print('Error %s in reading', err)
+
         return output
 
     def send_read_cmd(self, cmd):
         cmd = self.carriage_return(cmd)
         self.com.write(cmd.encode('utf-8'))
-        print(cmd)
+        #print(cmd)
         return self.receive_data()
 
     def send_cmd(self, cmd):

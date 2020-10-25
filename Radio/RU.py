@@ -324,11 +324,12 @@ class RU:
         for cmd in cmd_set:
             tmp = self._mycom.send_read_cmd(cmd)
 
-def set_pa_on(self, branch):
+    def set_pa_on(self, branch):
         # turn on driver and final, HPSW switch to VSWR, turn off LNA
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga paCtrl turnOn {branch}'
         self._mycom.send_cmd(cmd)
+
     def set_txlow_on(self, branch):
         # turn on predriver, Tor
         branch = self.__branch_def_alp(branch)
