@@ -51,6 +51,12 @@ class RU:
         self.RX_DDC_VCA_MAX_GAIN = 3
         self.RX_DDC_VCA_MIN_GAIN = -3
         self.RX_DDC_VCA_STEP = 0.01
+        self.DRIVER_MAIN_INIT_VALUE = '0x600'
+        self.DRIVER_PEAK_INIT_VALUE = '0x470'
+        self.FINAL_MAIN_INIT_VALUE = '0x600'
+        self.FINAL_PEAK_INIT_VALUE = '0x550'
+        self.DRIVER_BIAS_TARGET = 70
+        self.FINAL_BIAS_TARGET = 180
         self.set_init(branch_set = ['A','B','C','D'])
     #def write(self):
 
@@ -176,10 +182,10 @@ class RU:
                       'b': '0', 'c': '1', 'd': '1'}
         return branch_def[branch_id]
 
-    def read_temp_PA(self, branch):
+    def read_temp_pa(self, branch):
         temp = self._mycom.send_read_cmd(f' spi paCtrl temp {self.__branch_def_alp(branch)}')
-        PA_temp = float(re.findall(r"Reading PA temperature :(.+?)\n", temp)[0].strip())
-        return PA_temp
+        pa_temp = float(re.findall(r"Reading PA temperature :(.+?)\n", temp)[0].strip())
+        return pa_temp
 
     def read_temp_AFE(self):
         temp = self._mycom.send_read_cmd(f'spi temperature')
@@ -346,7 +352,7 @@ class RU:
         cmd = f'fpga paCtrl dlLinkup {branch}'
         self._mycom.send_cmd(cmd)
 
-    def set_tx_off(self,branch):
+    def set_tx_off(branch):
         # branch = A|B|C|D|all
         # turn of DUC->driver&final->Tor->predriver, turn on LNA, HPSW switch to Rx
         print(f'*****************set off PA branch {branch}*********************')
@@ -721,6 +727,251 @@ class RU:
         vol = float(re.findall(search, tmp)[0].strip())
         return vol
 
+    def reset_pa_driver(self):
+        self._mycom.send_cmd('fpga w 0x1880 0x08800000')
+        self._mycom.send_cmd('fpga w 0x1880 0xc8800000')
+
+    def set_pa_branch(self, branch):
+        branch = self.__branch_def_alp(branch)
+        if branch == 'A' or branch == 'B':
+            self._mycom.send_cmd('fpga w 0x1910 0x0')
+            self._mycom.send_cmd('fpga w 0x1911 0x04')
+        elif branch == 'C' or branch == 'D':
+            self._mycom.send_cmd('fpga w 0x1910 0x1')
+            self._mycom.send_cmd('fpga w 0x1911 0x14')
+        else:
+            print('Branch ID error!')
+            exit()
+
+    def pre_set_bias(self):
+        self._mycom.send_cmd('spi paCtrl w 0x2 0x2')
+        self._mycom.send_cmd('spi paCtrl w 0x16 0x5')
+        self._mycom.send_cmd('spi paCtrl w 0x4E 0xBB8')
+        self._mycom.send_cmd('spi paCtrl w 0x4F 0xBB8')
+
+    def set_lowest_pa_bias(self):
+        self._mycom.send_cmd('spi paCtrl w 0x30 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x31 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x32 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x33 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x34 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x35 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x36 0x0')
+        self._mycom.send_cmd('spi paCtrl w 0x37 0x0')
+
+    def pa_final_bias_calc_write_dac(self, branch, device_id, dac_value):
+        branch = self.__branch_def_alp(branch)
+        if device_id == 1:
+            if branch == 'A' or branch == 'C':
+                cmd = f'spi paCtrl w 0x30 {dac_value}'
+                self._mycom.send_cmd(cmd)
+            elif branch == 'B' or branch == 'D':
+                cmd = f'spi paCtrl w 0x31 {dac_value}'
+                self._mycom.send_cmd(cmd)
+            else:
+                print('Branch ID error!')
+                exit()
+        elif device_id == 2:
+            if branch == 'A' or branch == 'C':
+                cmd = f'spi paCtrl w 0x32 {dac_value}'
+                self._mycom.send_cmd(cmd)
+            elif branch == 'B' or branch == 'D':
+                cmd = f'spi paCtrl w 0x33 {dac_value}'
+                self._mycom.send_cmd(cmd)
+            else:
+                print('Branch ID error!')
+                exit()
+        else:
+            print('Device ID error!')
+            exit()
+
+    def pa_bias_calc_en_dac(self):
+        self._mycom.send_cmd('spi paCtrl w 0x17 0x0')
+
+    def pa_bias_calc_pa_on(self, branch):
+        branch = self.__branch_def_alp(branch)
+        if branch == 'A':
+            #self.fpga_write('0x2403', '0x0f3E')
+            self._mycom.send_cmd('fpga w 0x2403 0x0f3E')
+        elif branch == 'B':
+            self._mycom.send_cmd('fpga w 0x2403 0x0f3D')
+        elif branch == 'C':
+            self._mycom.send_cmd('fpga w 0x2403 0x0f3B')
+        elif branch == 'D':
+            self._mycom.send_cmd('fpga w 0x2403 0x0f37')
+        else:
+            print('Branch Id error!')
+            exit()
+        self._mycom.send_cmd('fpga w 0x2401 0x0f3f')
+    
+    def pa_bias_calc_pa_off(self):
+        self._mycom.send_cmd('fpga w 0x2403 0x030F')
+        self._mycom.send_cmd('fpga w 0x2401 0x030F')
+    
+    def pa_bias_read_curr_preset(self):
+        self._mycom.send_cmd('spi paCtrl w  0x2 0x2')
+        self._mycom.send_cmd('spi paCtrl w  0x10 0x300 ')
+        self._mycom.send_cmd('spi paCtrl w  0x11 0x436A')
+        self._mycom.send_cmd('spi paCtrl w  0x12 0x4FF0')
+        self._mycom.send_cmd('spi paCtrl w  0x1B 0x0')
+        self._mycom.send_cmd('spi paCtrl w  0x1C 0x1')
+
+    def pa_final_bias_read_curr(self, branch):
+        branch = self.__branch_def_alp(branch)
+        if branch == 'A' or branch == 'C':
+            cmd = f'spi paCtrl r 0x28'                     
+        elif branch == 'B' or branch == 'D':
+            curr_hex = self.spi_read('paCtrl', '0x2a')
+            cmd = f'spi paCtrl r 0x2a'            
+        else:
+            print('Branch ID error!')
+            exit()
+        tmp = cmd[-2:]
+        search = f'{tmp}] =(.+?)\\n'
+        result = self._mycom.send_read_cmd(cmd)
+        curr_hex = re.findall(search, result)[0].strip()[2:]
+        curr_dec = int(curr_hex, 16)
+        curr = curr_dec * 10000 / 4096
+        print(f'curr = {curr}')
+        return curr
+    
+    def pa_bias_write_and_read(self, dac_value):
+        self.pa_bias_calc_write_dac(dac_value)
+        curr = self.pa_bias_read_curr()
+        return curr
+    
+    def pa_final_bias_calc_tune(self, branch, device_id, dac_value, target):
+        tune_times = 1
+        act = 1
+        self.pa_bias_read_curr_preset()
+        while act:
+            if tune_times > 100:
+                print('Hit the tune times limit!\n')
+                act = 0;
+                break
+            dac_value = int(dac_value, 16)
+            curr = self.pa_final_bias_read_curr(branch)
+            curr = int(curr)
+            print('\nNow the current is ' + str(curr) +' mA\n')
+            delta = curr - target
+            if delta == 0:
+                act = 0
+            elif delta < 100 - target:
+                dac_value += 10
+            elif delta < 170 - target:
+                dac_value += 5
+            elif delta < 180 - target:
+                dac_value += 1
+            elif delta > 300 - target:
+                dac_value -= 10
+            elif delta > 200 - target:
+                dac_value -= 5
+            elif delta > 180 - target:
+                dac_value -= 1
+            else:
+                print('Current error!')
+                exit()
+            if dac_value > 1872:
+                dac_value = 1872
+            dac_value = hex(dac_value)
+            self.pa_final_bias_calc_write_dac(branch, device_id, dac_value)
+            tune_times += 1
+            print('\n%%%%%%%%%New DAC value!!!!!!!')
+            print(dac_value)
+            time.sleep(0.5)
+        print('PA Final tune finished! Good job!')
+        return dac_value
+
+    def pa_driver_bias_calc_write_dac(self, branch, device_id, dac_value):
+        branch = self.__branch_def_alp(branch)
+        if device_id == 1:
+            if branch == 'A' or branch == 'C':
+                cmd = f'spi paCtrl w 0x34 {dac_value}'
+            elif branch == 'B' or branch == 'D':
+                cmd = f'spi paCtrl w 0x35 {dac_value}'
+            else:
+                print('Branch ID error!')
+                exit()
+        elif device_id == 2:
+            if branch == 'A' or branch == 'C':
+                cmd = f'spi paCtrl w 0x36 {dac_value}'
+            elif branch == 'B' or branch == 'D':
+                cmd = f'spi paCtrl w 0x37 {dac_value}'
+            else:
+                print('Branch ID error!')
+                exit()
+        else:
+            print('Device ID error!')
+            exit()
+        self._mycom.send_cmd(cmd)
+
+    def pa_driver_bias_read_curr(self, branch):
+        # self.PA_BIAS_ReadCurr_Preset()
+        if branch == 'A' or branch == 'C':
+            cmd = f'spi paCtrl r 0x29'
+        elif branch == 'B' or branch == 'D':
+            cmd = f'spi paCtrl r 0x2B'
+        else:
+            print('Branch ID error!')
+            exit()
+
+        tmp = cmd[-2:]
+        search = f'{tmp}] =(.+?)\\n'
+        result = self._mycom.send_read_cmd(cmd)
+        curr_hex = re.findall(search, result)[0].strip()[2:]
+        curr_dec = int(curr_hex, 16)
+        curr = curr_dec * 10000 / 4096
+        print(f'curr = {curr}')
+        return curr
+    
+    def pa_driver_bias_calc_tune(self, branch, dac_value, target):
+        dac_value_low = 0
+        tune_times = 1
+        act = 1
+        self.pa_bias_read_curr_preset()
+        while act:
+            dac_value = int(dac_value, 16)
+            if tune_times > 100:
+                print('Hit the tune times limit!\n')
+                act = 0;
+                break
+            curr = self.pa_driver_bias_read_curr(branch)
+            print('\nNow the current is ' + str(curr) + ' mA\n')
+            #curr = int(curr)
+            delta = curr - target
+            if abs(delta) <= 0.3:
+                act = 0
+            elif delta < 0 - target:
+                dac_value += 10
+            elif delta < 60 - target:
+                dac_value += 5
+            elif delta < 70 - target:
+                dac_value += 1
+            elif delta > 200 - target:
+                dac_value -= 10
+            elif delta > 80 - target:
+                dac_value -= 5
+            elif delta > 70 - target:
+                dac_value -= 1
+            else:
+                print('Current error!')
+                exit()
+            dac_value_low = dac_value - 300
+
+            if dac_value > 1972:
+                dac_value = 1972
+            dac_value = hex(dac_value)
+            dac_value_low = hex(dac_value_low)
+            print('The new DAC value is as below!')
+            print(dac_value)
+            self.pa_driver_bias_calc_write_dac(branch, 1, dac_value)
+            self.pa_driver_bias_calc_write_dac(branch, 1, dac_value_low)
+            time.sleep(0.5)
+            tune_times += 1
+        print('PA Driver tune finished! Good job!')
+        dac_value = hex(dac_value)
+        return dac_value, dac_value_low
+
     def set_init(self, branch_set = ['A', 'B','C','D']):
         print('******************init check:******************')
 
@@ -747,7 +998,7 @@ class RU:
 
         if True:
             for branch in branch_set:
-                temp = self.read_temp_PA(branch)
+                temp = self.read_temp_pa(branch)
                 print(f'branch {branch} PA temperature is {round(temp)}°')
 
         if True:
@@ -837,12 +1088,12 @@ class RU:
         print('RU has been disconnected')
 
 if __name__ == '__main__':
-    myRU = RU(com_id = 3 , baud_rate = 115200 , t = 1)
+    self = RU(com_id = 3 , baud_rate = 115200 , t = 1)
     myps = PS.PS('TCPIP0::172.16.1.57::inst0::INSTR')
     #active = True
     try:
         while True:
-            myRU.set_init()
+            self.set_init()
             print(f'total consumption is {round(myps.get_consumption())} W')
     except KeyboardInterrupt:
         pass
