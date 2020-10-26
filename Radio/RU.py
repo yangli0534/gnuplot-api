@@ -777,15 +777,17 @@ class RU:
                 rx_vca_gain = self.get_rx_vca_gain(branch)
                 print(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
 
-        # if(self.set_dpd_init()):
-        #     print('dpd init successfully')
-        # else:
-        #     print('dpd init failed')
+        if(self.set_dpd_init()):
+            print('dpd init successfully')
+        else:
+            print('dpd init failed')
 
         pavdd = self.get_pa_vdd('final')
         print(f'final pa vdd = {pavdd}V')
         dpavdd = self.get_pa_vdd('driver')
         print(f'driver pa vdd = {dpavdd}V')
+
+
     def __del__(self):
         print('RU has been disconnected')
 

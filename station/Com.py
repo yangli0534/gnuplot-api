@@ -68,8 +68,9 @@ class Com:
 
     def send_cmd(self, cmd):
         cmd = self.carriage_return(cmd)
-        print('cmd')
+        #print('cmd')
         self.com.write(cmd.encode('utf-8'))
+        self.receive_data()
 
     def read_raw_reg(self, cmd):
         cmd = self.carriage_return(cmd)
