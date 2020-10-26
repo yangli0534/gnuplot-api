@@ -193,7 +193,7 @@ class SG:
         # amp dBm
         #sample_rate = 15360000
         #print(os.getcwd())
-        filename = "../waveform/NR-FR1-TM3.1_FDD_100MHz_fs122880000.txt"
+        filename = "../waveform/NR-FR1-TM3.1_FDD_20MHz_fs30720000.txt"
         waveform = self.read_waveform(filename)
         sample_rate = waveform.pop(0)
         waveform_real = np.array(waveform[::2])
@@ -355,13 +355,13 @@ class SG:
 
 if __name__ == '__main__':
     #mysg = SG('GPIB0::20::INSTR')
-    mysg = SG('TCPIP0::172.16.1.41::inst0::INSTR')
+    mysg = SG('TCPIP0::172.16.1.199::inst0::INSTR')
     print(mysg.name)
     #mysg.set_sg(freq = 3720, amp = -50)
     #mysg.set_sg_list(3680, 3720, 10, 0.5, -5)
     #timer = threading.Timer(10, mysg.tmp)
     #print(mysg.gen_wv())
     #mysg.test_wv_mtone(sample_rate=125e6, bandwith=4.5e6, step = 0.5e6, rf_freq= 3000, amp = -20)
-    mysg.test_waveform(rf_freq = 3700, amp = -50)
+    mysg.test_waveform(rf_freq = 3700, amp = -0)
     #mysg.set_close()
 

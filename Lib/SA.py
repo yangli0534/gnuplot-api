@@ -412,7 +412,7 @@ class SA:
 
     def get_chp(self):
         cmd = 'FETCh:CHPower:CHPower?'
-        return self.read_value(cmd)
+        return self.read_value(cmd)[0]
 
     def set_cd(self, cd):
         cmd = f'MMEM:CDIR {cd}'
@@ -464,7 +464,7 @@ class SA:
 
         print(f'{filename} has been saved on PC')
 
-    def test_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs, scale = 5):
+    def set_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs, scale = 5):
         self.set_init()
         self.set_meas('CHP')
         self.set_center(center)
@@ -494,7 +494,7 @@ class SA:
         self.set_init()
         #self.set_acp_init()
         self.set_meas('ACP')
-        self.set_att(16)
+        self.set_att(0)
         self.set_pow_gain()
         self.set_cont(1)
         self.set_center(center)
@@ -545,21 +545,21 @@ class SA:
 if __name__ == '__main__':
     #mysa = SA('GPIB0::25::INSTR')
     mysa = SA('TCPIP0::172.16.1.66::inst0::INSTR')
-    chp1 = mysa.test_chp(center=3700, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev = 20, offs = 41.7)
+    #chp1 = mysa.set_chp(center=3700, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev = 20, offs = 41.7)
     #print(chp1)
 
 
     # print(type(chp1))
-    # chp2 = mysa.test_chp(3800, 10, 1, 0, 100, 5)
+    # chp2 = mysa.set_chp(3800, 10, 1, 0, 100, 5)
     # print(chp2)
     # print(type(chp2))
-    #mysa.test_acp(center=3000, span=10, sweep_time=50, sweep_count=10, rbw=0.5, vbw=1, rlev=15, offs=0.6, cbw=2, obw=1.8)
+    mysa.test_acp(center=3700, span=100, sweep_time=10, sweep_count=10, rbw=0.1, vbw=0.3, rlev=-40, offs=0.6, cbw=20, obw=18)
     #mysa.test_san(center=3000, span=500, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
     # for i in range(1):
     #     dt = datetime.datetime.now()
-    #     #     #chp1 = mysa.test_chp(3700, 100, 1, 0, 100, 5)
+    #     #     #chp1 = mysa.set_chp(3700, 100, 1, 0, 100, 5)
     #     mysa.test_acp(center=3000, span=300, sweep_time=50, sweep_count=10, rbw=100, vbw=300, rlev=15, offs=0.6, cbw=500, obw=45)
-    #     #chp1 = mysa.test_chp(3700, 10, 1, 0, 100, 5)
+    #     #chp1 = mysa.set_chp(3700, 10, 1, 0, 100, 5)
     #     #print(chp1)
     #     mysa.take_one_sweep()
     #     filename = dt.strftime("MSO5_%Y%m%d_%H%M%S.png")

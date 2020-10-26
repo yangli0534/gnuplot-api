@@ -51,10 +51,10 @@ class Com:
                 if re.search('root@ORU1226:~#', str(data), re.M | re.I) is not None:
                     flag = 0
                     output = output + data.decode('utf-8')
-                    print(data.decode('utf-8'), end='\n')
+                    #print(data.decode('utf-8'), end='\n')
                 else:
                     output = output + data.decode('utf-8')
-                    print(data.decode('utf-8'), end='')
+                    #print(data.decode('utf-8'), end='')
             except Exception as err:
                 print('Error %s in reading', err)
 
