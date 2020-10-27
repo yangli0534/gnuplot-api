@@ -1,14 +1,37 @@
-"# visa tutorials" 
-
-Type	                    	                              Public	           	                                    Internal
-Modules	                    lower_with_under	_lower_with_under
-Packages	                lower_with_under	 
-Classes	                    CapWords	        _CapWords
-Exceptions	                CapWords	 
-Functions	                lower_with_under()	_lower_with_under()
-Global/Class Constants	    CAPS_WITH_UNDER	    _CAPS_WITH_UNDER
-Global/Class Variables	    lower_with_under	_lower_with_under
-Instance Variables	        lower_with_under	_lower_with_under (protected) or __lower_with_under (private)
-Method Names	            lower_with_under()	_lower_with_under() (protected) or __lower_with_under() (private)
-Function/Method Parameters	lower_with_under	 
-Local Variables	            lower_with_under	 
+e99c186 - yangli0534, 65 minutes ago : import logging module to add log feature
+dca6e00 - yangli0534, 15 hours ago : merge pa bias calib
+4ba59b6 - yangli0534, 17 hours ago : workaround rx DDC read\write bug
+6ecb1e6 - yangli0534, 27 hours ago : solve com read bug after adding new teminator
+27cd965 - yangli0534, 2 days ago : Delete .DS_Store
+63a59e8 - yangli0534, 2 days ago : optimize com print
+0403740 - yangli0534, 2 days ago : optimize com read and write
+5afc557 - yangli0534, 3 days ago : update radio interface; add tor dsa linearity check
+9e33d84 - yangli0534, 3 days ago : update tx\tor\rx dsa\vca read and write
+d51d449 - yangli0534, 5 days ago : update radio interface, add pm, dsa read
+5f3aa53 - yangli0534, 5 days ago : update radio interface, add Tx\Rx\Tor LO frequency read
+1445181 - yangli0534, 5 days ago : update radio interface, add read temp, switch status, bias
+e102919 - yangli0534, 6 days ago : add radio interface
+5803938 - yangli0534, 7 days ago : Merge remote-tracking branch 'origin/master' into master
+ae67b84 - yangli0534, 7 days ago : add power supply driver
+f22aa59 - yangli0534, 7 days ago : Update README.md
+0d1a9a3 - yangli0534, 7 days ago : update waveform gen and load
+eefb8c5 - yangli0534, 8 days ago : update sg to add waveform download featur
+bb4a636 - leonli, 9 days ago : update waveform download part
+495c170 - yangli0534, 10 days ago : update SG cmd
+bb4bec7 - yangli0534, 10 days ago : waveform gen
+a31b8a3 - yangli0534, 11 days ago : add pm and sg
+d884e43 - yangli0534, 12 days ago : update SA  cmd set
+f7b98a2 - yangli0534, 2 weeks ago : update SA  cmd set
+cccb77a - yangli0534, 2 weeks ago : update SA  cmd set
+b6dcd51 - yangli0534, 2 weeks ago : update SA  cmd set
+7060741 - yangli0534, 2 weeks ago : update SA aclr cmd
+c0c10c5 - yangli0534, 2 weeks ago : add Jupyter notebook example
+b16ff1f - leonli, 3 weeks ago : add visa class
+23c0e85 - leonli, 4 weeks ago : update cmd set
+561f7e4 - leonli, 4 weeks ago : update
+e9b5f6b - yangli0534, 4 weeks ago : update gpib addr
+e683e34 - leonli, 4 weeks ago : update instrument addr
+6202793 - leonli, 4 weeks ago : update comment
+db45701 - Leon Li, 4 weeks ago : file operation
+f77df43 - yangli0534, 5 weeks ago :  add datasheet and Lib
+8f796a4 - unknown, 5 weeks ago : first commit

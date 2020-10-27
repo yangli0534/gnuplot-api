@@ -308,38 +308,73 @@ class RU:
         #tmp = self._mycom.send_read_cmd(cmd)
         #return re.search(r'config PA BIAS OK!', tmp, re.M|re.I) != None
         self.logger.info(f'******************config PA bias branch {branch}***********************')
-        if branch == 'A':
-            cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
-                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x689',
-                       'spi paCtrl w 0x32 0x2e1', 'spi paCtrl w 0x34 0x731', 'spi paCtrl w 0x36 0x54a',
-                       'spi paCtrl w 0x17 0x0']
-        elif branch == 'B':
-            cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
-                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x67a',
-                       'spi paCtrl w 0x33 0x2e1', 'spi paCtrl w 0x35 0x731', 'spi paCtrl w 0x37 0x54a',
-                       'spi paCtrl w 0x17 0x0']
+        if bias != [] and len(bias) == 4:
+            final_main = bias[0]
+            final_peak = bias[1]
+            driver_main = bias[2]
+            driver_peak = bias[3]
+            if branch == 'A':
+                cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', f'spi paCtrl w 0x30 {final_main}',
+                           f'spi paCtrl w 0x32 {final_peak}', f'spi paCtrl w 0x34 {driver_main}', f'spi paCtrl w 0x36 {driver_peak}',
+                           'spi paCtrl w 0x17 0x0']
+            elif branch == 'B':
+                cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', f'spi paCtrl w 0x31 {final_main}',
+                           f'spi paCtrl w 0x33 {final_peak}', f'spi paCtrl w 0x35 {driver_main}', f'spi paCtrl w 0x37 {driver_peak}',
+                           'spi paCtrl w 0x17 0x0']
 
-        elif branch == 'C':
-            cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
-                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x699',
-                       'spi paCtrl w 0x32 0x2f1', 'spi paCtrl w 0x34 0x741', 'spi paCtrl w 0x36 0x731',
-                       'spi paCtrl w 0x17 0x0']
+            elif branch == 'C':
+                cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', f'spi paCtrl w 0x30 {final_main}',
+                           f'spi paCtrl w 0x32 {final_peak}', f'spi paCtrl w 0x34 {driver_main}', f'spi paCtrl w 0x36 {driver_peak}',
+                           'spi paCtrl w 0x17 0x0']
+
+            else:
+                cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', f'spi paCtrl w 0x31 {final_main}',
+                           f'spi paCtrl w 0x33 {final_peak}',
+                           f'spi paCtrl w 0x35 {driver_main}', f'spi paCtrl w 0x37 {driver_peak}', 'spi paCtrl w 0x17 0x0']
 
         else:
-            cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
-                       'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x684',
-                       'spi paCtrl w 0x33 0x2e1',
-                       'spi paCtrl w 0x35 0x5e9', 'spi paCtrl w 0x37 0x5c9', 'spi paCtrl w 0x17 0x0']
+            if branch == 'A':
+                cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x689',
+                           'spi paCtrl w 0x32 0x2e1', 'spi paCtrl w 0x34 0x731', 'spi paCtrl w 0x36 0x54a',
+                           'spi paCtrl w 0x17 0x0']
+            elif branch == 'B':
+                cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x67a',
+                           'spi paCtrl w 0x33 0x2e1', 'spi paCtrl w 0x35 0x731', 'spi paCtrl w 0x37 0x54a',
+                           'spi paCtrl w 0x17 0x0']
+
+            elif branch == 'C':
+                cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x699',
+                           'spi paCtrl w 0x32 0x2f1', 'spi paCtrl w 0x34 0x741', 'spi paCtrl w 0x36 0x731',
+                           'spi paCtrl w 0x17 0x0']
+
+            else:
+                cmd_set = ['fpga w 0x1910 0x1', 'fpga w 0x1912 0x14', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
+                           'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x31 0x684',
+                           'spi paCtrl w 0x33 0x2e1',
+                           'spi paCtrl w 0x35 0x5e9', 'spi paCtrl w 0x37 0x5c9', 'spi paCtrl w 0x17 0x0']
 
         for cmd in cmd_set:
             tmp = self._mycom.send_read_cmd(cmd)
-    def read_pa_bias(self, branch_set = ['A', 'B','C','D']):
-        for branch in branch_set:
+    def read_pa_bias(self, branch_set ):
+        if(type(branch_set)== list ):
+            for branch in branch_set:
+                for stage in ['final', 'driver']:
+                    for main_or_peak in ['main', 'peak']:
+                        tmp = self.get_bias(branch, stage, main_or_peak)
+                        self.logger.info(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+        elif branch_set in ['A','B','D','D']:
+            branch = self.__branch_def_alp(branch_set)
             for stage in ['final', 'driver']:
                 for main_or_peak in ['main', 'peak']:
                     tmp = self.get_bias(branch, stage, main_or_peak)
                     self.logger.info(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
-
 
     def set_pa_on(self, branch):
         # turn on driver and final, HPSW switch to VSWR, turn off LNA
@@ -823,7 +858,7 @@ class RU:
         if branch == 'A' or branch == 'C':
             cmd = f'spi paCtrl r 0x28'                     
         elif branch == 'B' or branch == 'D':
-            curr_hex = self.spi_read('paCtrl', '0x2a')
+            #curr_hex = self.spi_read('paCtrl', '0x2a')
             cmd = f'spi paCtrl r 0x2a'            
         else:
             self.logger.info('Branch ID error!')
@@ -834,7 +869,7 @@ class RU:
         curr_hex = re.findall(search, result)[0].strip()[2:]
         curr_dec = int(curr_hex, 16)
         curr = curr_dec * 10000 / 4096
-        self.logger.info(f'curr = {curr}')
+        #self.logger.info(f'curr = {curr}')
         return curr
     
     def pa_bias_write_and_read(self, dac_value):
@@ -848,8 +883,8 @@ class RU:
         self.pa_bias_read_curr_preset()
         while act:
             if tune_times > 100:
-                self.logger.info('Hit the tune times limit!\n')
-                act = 0;
+                self.logger.info('Hit the tune times limit!')
+                act = 0
                 break
             dac_value = int(dac_value, 16)
             curr = self.pa_final_bias_read_curr(branch)
@@ -878,7 +913,7 @@ class RU:
             dac_value = hex(dac_value)
             self.pa_final_bias_calc_write_dac(branch, device_id, dac_value)
             tune_times += 1
-            self.logger.info('\n%%%%%%%%%New DAC value!!!!!!!')
+            self.logger.info('%%%%%%%%%New DAC value!!!!!!!')
             self.logger.info(dac_value)
             time.sleep(0.5)
         self.logger.info('PA Final tune finished! Good job!')
@@ -912,7 +947,7 @@ class RU:
         if branch == 'A' or branch == 'C':
             cmd = f'spi paCtrl r 0x29'
         elif branch == 'B' or branch == 'D':
-            cmd = f'spi paCtrl r 0x2B'
+            cmd = f'spi paCtrl r 0x2b'
         else:
             self.logger.info('Branch ID error!')
             exit()
@@ -920,10 +955,11 @@ class RU:
         tmp = cmd[-2:]
         search = f'{tmp}] =(.+?)\\n'
         result = self._mycom.send_read_cmd(cmd)
+        #self.logger.critical(result)
         curr_hex = re.findall(search, result)[0].strip()[2:]
         curr_dec = int(curr_hex, 16)
-        curr = curr_dec * 10000 / 4096
-        self.logger.info(f'curr = {curr}')
+        curr = curr_dec * 10000 / 24576
+        #self.logger.info(f'curr = {curr}')
         return curr
     
     def pa_driver_bias_calc_tune(self, branch, dac_value, target):
@@ -934,8 +970,8 @@ class RU:
         while act:
             dac_value = int(dac_value, 16)
             if tune_times > 100:
-                self.logger.info('Hit the tune times limit!\n')
-                act = 0;
+                self.logger.info('Hit the tune times limit!')
+                act = 0
                 break
             curr = self.pa_driver_bias_read_curr(branch)
             self.logger.info('Now the current is ' + str(curr) + ' mA')
@@ -964,14 +1000,16 @@ class RU:
                 dac_value = 1972
             dac_value = hex(dac_value)
             dac_value_low = hex(dac_value_low)
-            self.logger.info('The new DAC value is as below!')
-            self.logger.info(dac_value)
+            self.logger.info(f'The new DAC value is {dac_value}')
+            #self.logger.info(dac_value)
+            self.logger.info(f'The  DAC value low is { dac_value_low}')
+            #self.logger.info(dac_value_low)
             self.pa_driver_bias_calc_write_dac(branch, 1, dac_value)
-            self.pa_driver_bias_calc_write_dac(branch, 1, dac_value_low)
+            self.pa_driver_bias_calc_write_dac(branch, 2, dac_value_low)
             time.sleep(0.5)
             tune_times += 1
         self.logger.info('PA Driver tune finished! Good job!')
-        dac_value = hex(dac_value)
+        #dac_value = hex(dac_value)
         return dac_value, dac_value_low
 
     def set_init(self, branch_set = ['A', 'B','C','D']):
@@ -1030,7 +1068,7 @@ class RU:
         if True:
 
 
-                self.set_tx_alg_dsa_gain(branch, -23)
+                self.set_tx_alg_dsa_gain(branch, -25)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
                 self.logger.info(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
 

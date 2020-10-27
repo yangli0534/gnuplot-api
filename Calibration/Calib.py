@@ -27,6 +27,17 @@ import log
 
 #def tor_dsa_sweep(myRU)
 
+# def set_tx_init_power(mySA, myRU,  backoff = 6):
+
+# class Calib(object):
+#
+#     def __init__(self):
+#
+#
+#     def __del__(self):
+#
+
+
 def tor_dsa_lin( myRU):
 
     print('****************TOR DSA VLIN***********************************')
@@ -61,7 +72,7 @@ def pa_driver_bias_calib(myRU, branch):
     myRU.set_lowest_pa_bias()
     main_init_value = myRU.DRIVER_MAIN_INIT_VALUE
     peak_init_value = myRU.DRIVER_PEAK_INIT_VALUE
-    myRU.pa_driver_bias_calc_write_dac( branch, 1, main_init_value)
+    myRU.pa_driver_bias_calc_write_dac(branch, 1, main_init_value)
     myRU.pa_driver_bias_calc_write_dac(branch, 2, peak_init_value)
     myRU.pa_bias_calc_en_dac()
     myRU.pa_bias_calc_pa_on(branch)
@@ -86,7 +97,8 @@ def pa_final_bias_calc(myRU, branch):
     myRU.pa_bias_calc_en_dac()
     myRU.pa_bias_calc_pa_on(branch)
     z = myRU.pa_final_bias_calc_tune(branch, 2, peak_init_value, target)
-    myRU.pa_bias_calc_pa_off()
+    #myRU.pa_bias_calc_pa_off()
+    myRU.set_off_all()
     z = int(z, 16)
     z -= 900
     z = hex(z)
@@ -107,7 +119,7 @@ if __name__ == '__main__':
     myps = PS.PS('TCPIP0::172.16.1.252::inst0::INSTR')
     mySA = SA.SA('TCPIP0::172.16.1.66::inst0::INSTR')
 
-    chp1 = mySA.set_chp(center=3700, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=98.3, rlev=20,
+    chp1 = mySA.set_chp(center=3700, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18, rlev=25,
                          offs=41.7)
     myRU = RU.RU(com_id=3, baud_rate=115200, t=1)
     #active = True
@@ -118,18 +130,15 @@ if __name__ == '__main__':
         # myRU.set_pa_bias('C')
         # myRU.set_pa_bias('D')
 
-        myRU.read_pa_bias( branch_set = ['A', 'B','C','D'])
+
+
+        #myRU.read_pa_bias( branch_set = ['A', 'B','C','D'])
 
 
 
-        # #set carrier and pa on
-        # #if myRU.set_data_on(bandwidth=100):
-        # if myRU.set_data_on(bandwidth=20):
-        #     if myRU.set_carrier(type = 'tx', freq = 3700, bandwidth = 100):
-        #         myRU.set_pa_on(branch='A')
-        #         myRU.set_txlow_on(branch='A')
+
         record = ()
-        for branch in ['A']:
+        for branch in ['B']:
             torpm = myRU.get_tor_pm(branch)
             logger.debug(f'branch {branch} tor power  = {torpm} dBm')
             adcpm = myRU.get_ADC_pm(branch)
@@ -138,16 +147,42 @@ if __name__ == '__main__':
             logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
 
             # pa bias calib
+            logger.critical(f'##############START　PA BIAS CALIBRATION BRANCH {branch} ##################')
             [y, x] = pa_driver_bias_calib(myRU, branch)
             [m, z] = pa_final_bias_calc(myRU, branch)
-            logger.critical(f'The calc DAC value in main of driver of branch {branch} is {y}')
-            logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {x}')
-            logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {m}')
-            logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {z}')
+
+            logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {int(m, 16)}')
+            logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {int(z, 16)}')
+            logger.critical(f'The calc DAC value in main of driver of branch {branch} is {int(y, 16)}')
+            logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {int(x, 16)}')
+            logger.critical(f'##############　PA BIAS CALIBRATION BRANCH {branch} FINISHED ###############')
             record = record + (y,)
             record = record + (x,)
             record = record + (m,)
             record = record + (z,)
+
+
+            logger.critical(f'##############START　CONFIG PA BIAS  BRANCH {branch} ####################')
+            bias = [m, z, y, x]
+            myRU.set_pa_bias(branch, bias)
+            myRU.read_pa_bias(branch)
+            myRU.set_pa_branch(branch)
+            myRU.set_pa_on(branch)
+            driver_bias_curr = myRU.pa_driver_bias_read_curr(branch)
+            logger.info(f'pa driver bias current = {driver_bias_curr} mA')
+            final_bias_curr = myRU.pa_final_bias_read_curr(branch)
+            logger.info(f'pa final bias current = {final_bias_curr} mA')
+            myRU.set_off_all()
+            logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
+
+
+            #set carrier and pa on
+            #if myRU.set_data_on(bandwidth=100):
+            # if myRU.set_data_on(bandwidth=20):
+            #     if myRU.set_carrier(type = 'tx', freq = 3700, bandwidth = 100):
+            #         myRU.set_pa_on(branch='A')
+            #         myRU.set_txlow_on(branch='A')
+
         #tor_dsa_lin(myRU)
 
         # for j in range(int(len(record) / 4)):
