@@ -7,9 +7,11 @@ Created on Wed Jan  8 14:22:56 2020
 import pyvisa
 import time
 import datetime
+import logging
 
 class SA:
     def __init__(self, address):
+        self.logger = logging.getLogger('root')
         rm = pyvisa.ResourceManager()
         # instr = rm.open_resource('GPIB0::18::INSTR')
         self._instr = rm.open_resource(address)
@@ -17,7 +19,7 @@ class SA:
         self._instr.chunk_size = 102400
         self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
-        print(f'{self.name} has been connected successfully' )
+        self.logger.info(f'{self.name} has been connected successfully' )
 
 
     def write_value(self, cmd):
@@ -462,7 +464,7 @@ class SA:
         cmd = f'MMEM:DEL "{filename}"'
         self.write_value(cmd)
 
-        print(f'{filename} has been saved on PC')
+        self.logger.info(f'{filename} has been saved on PC')
 
     def set_chp(self, center, sweep_time, sweep_count, rbw, int_bw, rlev, offs, scale = 5):
         self.set_init()
@@ -549,10 +551,10 @@ if __name__ == '__main__':
     #print(chp1)
 
 
-    # print(type(chp1))
+    #self.logger.info(type(chp1))
     # chp2 = mysa.set_chp(3800, 10, 1, 0, 100, 5)
-    # print(chp2)
-    # print(type(chp2))
+    #self.logger.info(chp2)
+    #self.logger.info(type(chp2))
     mysa.test_acp(center=3700, span=100, sweep_time=10, sweep_count=10, rbw=0.1, vbw=0.3, rlev=-40, offs=0.6, cbw=20, obw=18)
     #mysa.test_san(center=3000, span=500, sweep_time=50, sweep_count=10, rbw=10, vbw=30, rlev=0, offs=0.7)
     # for i in range(1):

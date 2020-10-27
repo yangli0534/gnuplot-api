@@ -8,15 +8,18 @@ Created on Tue Oct  20 14:22:56 2020
 import pyvisa
 import time
 import datetime
+import logging
 
 class PS:
     def __init__(self, address):
+        self.logger = logging.getLogger('root')
         rm = pyvisa.ResourceManager()
         # instr = rm.open_resource('GPIB0::18::INSTR')
         self._instr = rm.open_resource(address)
         self._instr.timeout = 10000
         self.name = self._instr.query('*IDN?')[:-1]
-        print(f'{self.name} has been connected successfully' )
+
+        self.logger.info(f'{self.name} has been connected successfully' )
         if not self.get_status():
             self.set_init()
             self.turn_on()
@@ -71,7 +74,7 @@ class PS:
             return False
 
     def turn_on(self):
-        print('turning on power supply')
+        self.logger.info('turning on power supply')
         cmd = f'OUTPut:STATe ON'
         self.write_value(cmd)
 
@@ -105,10 +108,10 @@ class PS:
         return self.read_value(cmd)[0]
 
     def get_consumption(self):
-        # print(self.get_vol())
-        # print(self.get_curr())
-        # print(type(self.get_vol()))
-        # print(type(self.get_curr()))
+        #self.logger.info(self.get_vol())
+        #self.logger.info(self.get_curr())
+        #self.logger.info(type(self.get_vol()))
+        #self.logger.info(type(self.get_curr()))
         return self.get_vol()* self.get_curr()
 
     def __del__(self):

@@ -8,9 +8,10 @@
 
 
 import sys
-sys.path.append(r'D:\code\visa_tutorials\Station')
-sys.path.append(r'D:\code\visa_tutorials\Lib')
-sys.path.append(r'D:\code\visa_tutorials\Radio')
+sys.path.append(r'..\Station')
+sys.path.append(r'..\Lib')
+sys.path.append(r'..\Radio')
+sys.path.append(r'..\Common')
 
 import PS
 import SA
@@ -20,6 +21,9 @@ import matplotlib.pyplot as plt
 import time
 import math
 from datetime import datetime
+import log
+#import submodule
+
 
 #def tor_dsa_sweep(myRU)
 
@@ -92,6 +96,14 @@ def pa_final_bias_calc(myRU, branch):
 
 
 if __name__ == '__main__':
+
+    dt = datetime.now()
+    filename = dt.strftime("../../../Result/ORU1126 calibration and test log_%Y%m%d_%H%M%S.txt")
+    # set up logging to file - see previous section for more details
+    logger = log.setup_custom_logger('root', filename)
+    logger.debug('main message')
+
+
     myps = PS.PS('TCPIP0::172.16.1.252::inst0::INSTR')
     mySA = SA.SA('TCPIP0::172.16.1.66::inst0::INSTR')
 
@@ -119,19 +131,19 @@ if __name__ == '__main__':
         record = ()
         for branch in ['A']:
             torpm = myRU.get_tor_pm(branch)
-            print(f'branch {branch} tor power  = {torpm} dBm')
+            logger.debug(f'branch {branch} tor power  = {torpm} dBm')
             adcpm = myRU.get_ADC_pm(branch)
-            print(f'branch {branch} adc power  = {adcpm} dBm')
+            logger.debug(f'branch {branch} adc power  = {adcpm} dBm')
             dpdpm = myRU.get_DPD_pm(branch)
-            print(f'branch {branch} dpd power  = {dpdpm} dBm')
+            logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
 
             # pa bias calib
             [y, x] = pa_driver_bias_calib(myRU, branch)
             [m, z] = pa_final_bias_calc(myRU, branch)
-            print(f'The calc DAC value in main of driver of branch {branch} is {y}')
-            print(f'The calc DAC value in peak of driver of branch  {branch} is {x}')
-            print(f'The calc DAC value in main of final of branch  {branch} is  {m}')
-            print(f'The calc DAC value in peak of final of branch  {branch} is  {z}')
+            logger.critical(f'The calc DAC value in main of driver of branch {branch} is {y}')
+            logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {x}')
+            logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {m}')
+            logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {z}')
             record = record + (y,)
             record = record + (x,)
             record = record + (m,)
@@ -140,18 +152,18 @@ if __name__ == '__main__':
 
         # for j in range(int(len(record) / 4)):
         #     branch = chr(j + 65)
-        #     print(f'The calc DAC value in main of driver of branch {branch} is { record[j * 4]}')
-        #     print(f'The calc DAC value in peak of driver of branch { branch } is {record[j * 4 + 1]}')
-        #     print(f'The calc DAC value in main of final of branch { branch } is {record[j * 4 + 2]}')
-        #     print(f'The calc DAC value in peak of final of branch {branch } is {record[j * 4 + 3] }')
+        #   logger.debug(f'The calc DAC value in main of driver of branch {branch} is { record[j * 4]}')
+        #   logger.debug(f'The calc DAC value in peak of driver of branch { branch } is {record[j * 4 + 1]}')
+        #   logger.debug(f'The calc DAC value in main of final of branch { branch } is {record[j * 4 + 2]}')
+        #   logger.debug(f'The calc DAC value in peak of final of branch {branch } is {record[j * 4 + 3] }')
 
         while True:
             #myRU.init_check()
-            print(f'total consumption is {round(myps.get_consumption())} W')
+            logger.info(f'total consumption is {round(myps.get_consumption())} W')
             chp = mySA.get_chp()
-            print(f' carrier power is {chp} dBm')
+            logger.info(f' carrier power is {chp} dBm')
             temp = myRU.read_temp_pa('A')
-            print(f'branch A PA temperature is {round(temp)}°')
+            logger.info(f'branch A PA temperature is {round(temp)}°')
             time.sleep(0.3)
             # if myRU.get_dpd_status():
             #     print('dpd is running')
@@ -161,4 +173,6 @@ if __name__ == '__main__':
 
 
     except KeyboardInterrupt:
+        #logger_info.removeHandler(console)
+        #del logger_info, console
         pass

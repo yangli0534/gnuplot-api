@@ -16,26 +16,28 @@ import re
 import math
 from threading import Thread
 #from Lib import PS
+import logging
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
+        self.logger = logging.getLogger('root')
         self._mycom = Com.Com(3, 115200, 0.5)
 
             # answer = mycom.receive_data()
             # answer = answer.rstrip()
-            #print(answer)
-            # print([ord(c) for c in answer])
-            # print([ord(c) for c in 'root@ORU4419:~#'])
+            #self.logger.info(answer)
+            # self.logger.info([ord(c) for c in answer])
+            # self.logger.info([ord(c) for c in 'root@ORU4419:~#'])
         answer = self._mycom.send_read_cmd('')
         terminator = 'root@ORU1226:~#'
 
         search_obj = re.search(terminator, answer, re.M | re.I)
         while (not search_obj):
-            print('RU Connecting...')
+            self.logger.info('RU Connecting...')
             time.sleep(1)
             answer = self._mycom.send_read_cmd('')
             search_obj = re.search(terminator, answer, re.M | re.I)
-        print('RU connected successful')
+        self.logger.info('RU connected successful')
         self.TX_ALG_DSA_MAX_GAIN = 0
         self.TX_ALG_DSA_MIN_GAIN = 30
         self.TX_ALG_DSA_STEP = 1
@@ -64,7 +66,7 @@ class RU:
         cmd = 'fpga r 0x1808'
         tmp = self._mycom.send_read_cmd(cmd)
         sw_rev = re.findall(r"= (.+?)\n", tmp)[0].strip()[-4:]
-        print(f'This sw release data is {sw_rev}')
+        self.logger.info(f'This sw release data is {sw_rev}')
 
     def get_clk_status(self):
         cmd = 'fpga r 0x2c06'
@@ -119,7 +121,7 @@ class RU:
             byte3 = re.findall(r"47] =(.+?)\n", byte3)[0].strip()[2:]
 
         freq = byte3 + byte2 + byte1 + byte0
-        #print(freq)
+        #self.logger.info(freq)
         freq = int(freq, 16)/1000
         return freq
 
@@ -148,11 +150,11 @@ class RU:
         pll_D = (round(int(re.findall(r"31] =(.+?)\n", temp)[0].strip()[2:], 16)) << 8) + pll_D
         temp = self._mycom.send_read_cmd('spi afe r 0x0030')
         pll_D = round(int(re.findall(r"30] =(.+?)\n", temp)[0].strip()[2:], 16)) + pll_D
-        #print(pll_D)
+        #self.logger.info(pll_D)
         temp = self._mycom.send_read_cmd('spi afe r 0x003f')
         pll_op_div = round(int(re.findall(r"3f] =(.+?)\n", temp)[0].strip()[2:], 16)) & 7
 
-        #print(pll_op_div)
+        #self.logger.info(pll_op_div)
         self._mycom.send_cmd('spi afe w 0x0014 0x0')
 
         fact = (pll_N + pll_F/pll_D)/pll_op_div
@@ -305,7 +307,7 @@ class RU:
         #cmd = f'ztest pabias {branch}'
         #tmp = self._mycom.send_read_cmd(cmd)
         #return re.search(r'config PA BIAS OK!', tmp, re.M|re.I) != None
-        print(f'******************config PA bias branch {branch}***********************')
+        self.logger.info(f'******************config PA bias branch {branch}***********************')
         if branch == 'A':
             cmd_set = ['fpga w 0x1910 0x0', 'fpga w 0x1911 0x04', 'spi paCtrl w 0x2 0x2', 'spi paCtrl w 0x16 0x5',
                        'spi paCtrl w 0x4E 0xBB8', 'spi paCtrl w 0x4F 0xBB8', 'spi paCtrl w 0x30 0x689',
@@ -336,7 +338,7 @@ class RU:
             for stage in ['final', 'driver']:
                 for main_or_peak in ['main', 'peak']:
                     tmp = self.get_bias(branch, stage, main_or_peak)
-                    print(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+                    self.logger.info(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
 
 
     def set_pa_on(self, branch):
@@ -344,7 +346,7 @@ class RU:
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga paCtrl turnOn {branch}'
         self._mycom.send_cmd(cmd)
-        print(f'************** PA branch {branch} is turn on***************')
+        self.logger.info(f'************** PA branch {branch} is turn on***************')
 
     def set_txlow_on(self, branch):
         # turn on predriver, Tor
@@ -355,7 +357,7 @@ class RU:
     def set_tx_off(branch):
         # branch = A|B|C|D|all
         # turn of DUC->driver&final->Tor->predriver, turn on LNA, HPSW switch to Rx
-        print(f'*****************set off PA branch {branch}*********************')
+        self.logger.info(f'*****************set off PA branch {branch}*********************')
         branch = self.__branch_def_alp(branch)
         if branch !='all':
             cmd = f'fpga paCtrl turnOff tx {branch}'
@@ -364,13 +366,13 @@ class RU:
         self._mycom.send_cmd(cmd)
 
     def set_off_all(self):
-        print('*******************set off all*********************')
+        self.logger.info('*******************set off all*********************')
         cmd = f'fpga paCtrl turnOffAll tx'
         self._mycom.send_cmd(cmd)
 
     def set_rx_on(self, branch):
         # branch = A|B|C|D
-        print('***********set rx on****************')
+        self.logger.info('***********set rx on****************')
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga turnonrx {branch}'
         self._mycom.send_cmd(cmd)
@@ -394,27 +396,27 @@ class RU:
     def set_tx_alg_dsa_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain: 0dB to -39dB
-        print('**********************set tx alg dsa****************')
+        self.logger.info('**********************set tx alg dsa****************')
         branch = self.__branch_def_num(branch)
         if gain >0 or gain < -39:
-            print(f'tx branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'tx branch {branch} {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setTxAnal {branch} {gain}'
-        #print(cmd)
+        #self.logger.info(cmd)
         self._mycom.send_cmd(cmd)
 
     def set_tx_dig_dsa_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain: 3dB to -20.875dB
         branch = self.__branch_def_num(branch)
-        print('*****************set tx dig dsa *********************')
+        self.logger.info('*****************set tx dig dsa *********************')
         if gain >3 or gain < -20.875:
-            print(f'tx branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'tx branch {branch} {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain*100))
         cmd = f'spi DSA setTxDigt {branch} {gain}'
-        print(cmd)
+        self.logger.info(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_tor_alg_dsa_gain(self, branch):
@@ -422,7 +424,7 @@ class RU:
         # tordsa unit: dB
         branch = self.__tor_branch_def(branch)
         cmd = f'spi DSA getFbA {branch}'
-        #print(cmd)
+        #self.logger.info(cmd)
         tmp = self._mycom.send_read_cmd(cmd)
         search = f'Current Attenuation for FB Channel {branch}:(.+?)\n'
         gain = -1* int(re.findall(search, tmp)[0].strip())
@@ -431,14 +433,14 @@ class RU:
     def set_tor_alg_dsa_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain: 0dB to -16dB
-        print('**********************set tor alg dsa *************************')
+        self.logger.info('**********************set tor alg dsa *************************')
         branch = self.__tor_branch_def(branch)
         if gain >0 or gain < -16:
-            print(f'tor branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'tor branch {branch} {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setFbA {branch} {gain}'
-        #print(cmd)
+        #self.logger.info(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_dpd_post_vca_gain(self, branch):
@@ -448,9 +450,9 @@ class RU:
         # branch = self.__branch_def_num(branch)
         # branch_alp = self.__branch_def_alp(branch)
         # cmd = f'ztest getDpdPostGain {branch}'
-        # #print(cmd)
+        # #self.logger.info(cmd)
         # tmp = self._mycom.send_read_cmd(cmd)
-        # #print(tmp)
+        # #self.logger.info(tmp)
         # search = f'{branch_alp}dpd post gain =(.+?)\n'
         # dpd_post_vca_gain = float(re.findall(search, tmp)[0].strip())
 
@@ -471,7 +473,7 @@ class RU:
         #         tmp = re.findall(search, tmp)[0].strip()[2:6]
         tmp = self.get_dpd_post_vca_gain_reg(branch)
         dpd_post_vca_gain = 20*math.log10(int(tmp, 16)/16384)
-        #print(dpd_post_vca_gain)
+        #self.logger.info(dpd_post_vca_gain)
         return dpd_post_vca_gain
 
     def get_dpd_post_vca_gain_reg(self, branch):
@@ -490,7 +492,7 @@ class RU:
                 dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
             else:
                 dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
-        print(f' branch {branch} dpd post vca gain reg = {dpd_post_vca_gain_reg}')
+        self.logger.info(f' branch {branch} dpd post vca gain reg = {dpd_post_vca_gain_reg}')
         return  dpd_post_vca_gain_reg
 
     def get_dpd_pre_vca_gain_reg(self, branch):
@@ -509,7 +511,7 @@ class RU:
                 dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
             else:
                 dpd_pre_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
-        #print(dpd_pre_vca_gain_reg)
+        #self.logger.info(dpd_pre_vca_gain_reg)
         return dpd_pre_vca_gain_reg
 
     def get_dpd_pre_vca_gain(self, branch):
@@ -530,14 +532,14 @@ class RU:
         #         gain =  re.findall(search, tmp)[0].strip()[6:10]
 
         tmp = self.get_dpd_pre_vca_gain_reg(branch)
-        #print(f'branch {branch} dpd post vca gain reg is {tmp}')
+        #self.logger.info(f'branch {branch} dpd post vca gain reg is {tmp}')
         dpd_pre_vca_gain = 20 * math.log10(int(tmp, 16) / 16384)
         return dpd_pre_vca_gain
 
     def set_dpd_pre_vca_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain unit: dB -3dB to 3dB
-        print('**********************set dpd pre vca gain*********************')
+        self.logger.info('**********************set dpd pre vca gain*********************')
         branch = self.__branch_def_alp(branch)
         tmp = round(math.sqrt(math.pow(10, float(gain) / 10.0)) * 16384)
         if branch == 'A' or branch == 'B':
@@ -558,14 +560,14 @@ class RU:
                 new = (previous << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1821 {new}'
-        #print(f'branch {branch} pre vca gain reg is set to {new}')
+        #self.logger.info(f'branch {branch} pre vca gain reg is set to {new}')
         self._mycom.send_cmd(cmd)
 
 
     def set_dpd_post_vca_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain unit: dB -3dB to 3dB
-        print('********************set dpd post vca gain********************')
+        self.logger.info('********************set dpd post vca gain********************')
         branch = self.__branch_def_alp(branch)
         tmp = round(math.sqrt(math.pow(10, float(gain) / 10.0)) * 16384)
         if branch == 'A' or branch == 'B':
@@ -586,7 +588,7 @@ class RU:
                 new = (previous << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1825 {new}'
-        #print(f'branch {branch} dpd post vca gain reg is set to {new}')
+        #self.logger.info(f'branch {branch} dpd post vca gain reg is set to {new}')
         self._mycom.send_cmd(cmd)
 
     def get_rx_alg_dsa_gain(self, branch):
@@ -600,14 +602,14 @@ class RU:
     def set_rx_alg_dsa_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain: 0dB to -28dB
-        print('****************set rx alg dsa********************')
+        self.logger.info('****************set rx alg dsa********************')
         branch = self.__branch_def_num(branch)
         if gain >0 or gain < -28:
-            print(f'rx branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'rx branch {branch} {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setRxA {branch} {gain}'
-        #print(cmd)
+        #self.logger.info(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_rx_vca_gain(self, branch):
@@ -622,14 +624,14 @@ class RU:
     def set_rx_vca_gain(self, branch, gain):
         # branch: A|B|C|D
         # gain: -3dB to +3
-        print('****************set rx vca gain**********************')
+        self.logger.info('****************set rx vca gain**********************')
         branch = self.__branch_def_num(branch)
         if gain >3 or gain < -3:
-            print(f'rx branch {branch} vca gain {str(gain)} is out of range')
+            self.logger.info(f'rx branch {branch} vca gain {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(gain*100))
         cmd = f'ztest setDdcGain {branch} {gain}'
-        #print(cmd)
+        #self.logger.info(cmd)
         self._mycom.send_cmd(cmd)
 
     def set_dpd_init(self):
@@ -649,9 +651,9 @@ class RU:
             tmp = self._mycom.send_read_cmd(cmd)
             status = re.search('I/Q data OK', tmp, re.M | re.I) != None
             if status:
-                print('******************data has been sent out successfully******************')
+                self.logger.info('******************data has been sent out successfully******************')
             else:
-                print('!!!!!!!!!!!!!!!!!!!data sent failed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                self.logger.info('!!!!!!!!!!!!!!!!!!!data sent failed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             return status
 
     def set_carrier(self, type = 'tx', freq = 3700, bandwidth = 100):
@@ -659,25 +661,25 @@ class RU:
         tmp = self._mycom.send_read_cmd(cmd)
         status = re.search('root@ORU1226:~#', tmp, re.M | re.I)!= None
         if status:
-            print('******************carrier has been setup successfully******************')
+            self.logger.info('******************carrier has been setup successfully******************')
         else:
-            print('!!!!!!!!!!!!!!!!carrier setup failed!!!!!!!!!!!!!!!!!!!!!!!')
+            self.logger.info('!!!!!!!!!!!!!!!!carrier setup failed!!!!!!!!!!!!!!!!!!!!!!!')
         return status
 
     def get_dpd_status(self):
-        print('******************check dpd status******************')
+        self.logger.info('******************check dpd status******************')
         cmd = f'cat /proc/interrupts'
         tmp = self._mycom.send_read_cmd(cmd)
-        #print(tmp)
+        #self.logger.info(tmp)
         search = f'45:(.+?)          '
         previous = re.findall(search, tmp)[0].strip()
         #previous = re.findall(search, tmp)
-        #print(previous)
+        #self.logger.info(previous)
         tmp = self._mycom.send_read_cmd(cmd)
-        #print(tmp)
+        #self.logger.info(tmp)
         current = re.findall(search, tmp)[0].strip()
         #current = re.findall(search, tmp)
-        #print(current)
+        #self.logger.info(current)
         if previous == current:
             return False
         else:
@@ -740,7 +742,7 @@ class RU:
             self._mycom.send_cmd('fpga w 0x1910 0x1')
             self._mycom.send_cmd('fpga w 0x1911 0x14')
         else:
-            print('Branch ID error!')
+            self.logger.info('Branch ID error!')
             exit()
 
     def pre_set_bias(self):
@@ -769,7 +771,7 @@ class RU:
                 cmd = f'spi paCtrl w 0x31 {dac_value}'
                 self._mycom.send_cmd(cmd)
             else:
-                print('Branch ID error!')
+                self.logger.info('Branch ID error!')
                 exit()
         elif device_id == 2:
             if branch == 'A' or branch == 'C':
@@ -779,10 +781,10 @@ class RU:
                 cmd = f'spi paCtrl w 0x33 {dac_value}'
                 self._mycom.send_cmd(cmd)
             else:
-                print('Branch ID error!')
+                self.logger.info('Branch ID error!')
                 exit()
         else:
-            print('Device ID error!')
+            self.logger.info('Device ID error!')
             exit()
 
     def pa_bias_calc_en_dac(self):
@@ -800,7 +802,7 @@ class RU:
         elif branch == 'D':
             self._mycom.send_cmd('fpga w 0x2403 0x0f37')
         else:
-            print('Branch Id error!')
+            self.logger.info('Branch Id error!')
             exit()
         self._mycom.send_cmd('fpga w 0x2401 0x0f3f')
     
@@ -824,7 +826,7 @@ class RU:
             curr_hex = self.spi_read('paCtrl', '0x2a')
             cmd = f'spi paCtrl r 0x2a'            
         else:
-            print('Branch ID error!')
+            self.logger.info('Branch ID error!')
             exit()
         tmp = cmd[-2:]
         search = f'{tmp}] =(.+?)\\n'
@@ -832,7 +834,7 @@ class RU:
         curr_hex = re.findall(search, result)[0].strip()[2:]
         curr_dec = int(curr_hex, 16)
         curr = curr_dec * 10000 / 4096
-        print(f'curr = {curr}')
+        self.logger.info(f'curr = {curr}')
         return curr
     
     def pa_bias_write_and_read(self, dac_value):
@@ -846,13 +848,13 @@ class RU:
         self.pa_bias_read_curr_preset()
         while act:
             if tune_times > 100:
-                print('Hit the tune times limit!\n')
+                self.logger.info('Hit the tune times limit!\n')
                 act = 0;
                 break
             dac_value = int(dac_value, 16)
             curr = self.pa_final_bias_read_curr(branch)
             curr = int(curr)
-            print('\nNow the current is ' + str(curr) +' mA\n')
+            self.logger.info('Now the current is ' + str(curr) +' mA')
             delta = curr - target
             if delta == 0:
                 act = 0
@@ -869,17 +871,17 @@ class RU:
             elif delta > 180 - target:
                 dac_value -= 1
             else:
-                print('Current error!')
+                self.logger.info('Current error!')
                 exit()
             if dac_value > 1872:
                 dac_value = 1872
             dac_value = hex(dac_value)
             self.pa_final_bias_calc_write_dac(branch, device_id, dac_value)
             tune_times += 1
-            print('\n%%%%%%%%%New DAC value!!!!!!!')
-            print(dac_value)
+            self.logger.info('\n%%%%%%%%%New DAC value!!!!!!!')
+            self.logger.info(dac_value)
             time.sleep(0.5)
-        print('PA Final tune finished! Good job!')
+        self.logger.info('PA Final tune finished! Good job!')
         return dac_value
 
     def pa_driver_bias_calc_write_dac(self, branch, device_id, dac_value):
@@ -890,7 +892,7 @@ class RU:
             elif branch == 'B' or branch == 'D':
                 cmd = f'spi paCtrl w 0x35 {dac_value}'
             else:
-                print('Branch ID error!')
+                self.logger.info('Branch ID error!')
                 exit()
         elif device_id == 2:
             if branch == 'A' or branch == 'C':
@@ -898,10 +900,10 @@ class RU:
             elif branch == 'B' or branch == 'D':
                 cmd = f'spi paCtrl w 0x37 {dac_value}'
             else:
-                print('Branch ID error!')
+                self.logger.info('Branch ID error!')
                 exit()
         else:
-            print('Device ID error!')
+            self.logger.info('Device ID error!')
             exit()
         self._mycom.send_cmd(cmd)
 
@@ -912,7 +914,7 @@ class RU:
         elif branch == 'B' or branch == 'D':
             cmd = f'spi paCtrl r 0x2B'
         else:
-            print('Branch ID error!')
+            self.logger.info('Branch ID error!')
             exit()
 
         tmp = cmd[-2:]
@@ -921,7 +923,7 @@ class RU:
         curr_hex = re.findall(search, result)[0].strip()[2:]
         curr_dec = int(curr_hex, 16)
         curr = curr_dec * 10000 / 4096
-        print(f'curr = {curr}')
+        self.logger.info(f'curr = {curr}')
         return curr
     
     def pa_driver_bias_calc_tune(self, branch, dac_value, target):
@@ -932,11 +934,11 @@ class RU:
         while act:
             dac_value = int(dac_value, 16)
             if tune_times > 100:
-                print('Hit the tune times limit!\n')
+                self.logger.info('Hit the tune times limit!\n')
                 act = 0;
                 break
             curr = self.pa_driver_bias_read_curr(branch)
-            print('\nNow the current is ' + str(curr) + ' mA\n')
+            self.logger.info('Now the current is ' + str(curr) + ' mA')
             #curr = int(curr)
             delta = curr - target
             if abs(delta) <= 0.3:
@@ -954,7 +956,7 @@ class RU:
             elif delta > 70 - target:
                 dac_value -= 1
             else:
-                print('Current error!')
+                self.logger.info('Current error!')
                 exit()
             dac_value_low = dac_value - 300
 
@@ -962,66 +964,66 @@ class RU:
                 dac_value = 1972
             dac_value = hex(dac_value)
             dac_value_low = hex(dac_value_low)
-            print('The new DAC value is as below!')
-            print(dac_value)
+            self.logger.info('The new DAC value is as below!')
+            self.logger.info(dac_value)
             self.pa_driver_bias_calc_write_dac(branch, 1, dac_value)
             self.pa_driver_bias_calc_write_dac(branch, 1, dac_value_low)
             time.sleep(0.5)
             tune_times += 1
-        print('PA Driver tune finished! Good job!')
+        self.logger.info('PA Driver tune finished! Good job!')
         dac_value = hex(dac_value)
         return dac_value, dac_value_low
 
     def set_init(self, branch_set = ['A', 'B','C','D']):
-        print('******************init check:******************')
+        self.logger.info('******************init check:******************')
 
-        # print sw release date
+        # self.logger.info sw release date
 
         self.get_sw_rev()
 
         # check clk status
         if self.get_clk_status():
-            print('******************clk locked******************')
+            self.logger.info('******************clk locked******************')
         else:
-            print('!!!!!!!!!!!!!!!!!!!!!!!!clk unlocked!!!!!!!!!!!!!!!!!!!!!!!!')
+            self.logger.info('!!!!!!!!!!!!!!!!!!!!!!!!clk unlocked!!!!!!!!!!!!!!!!!!!!!!!!')
 
         # check jesd status
         if True:
             if self.get_jesd_status():
-                print('******************jesd link up******************')
+                self.logger.info('******************jesd link up******************')
             else:
-                print('!!!!!!!!!!!!!!!!!!!!!!!!jesd linkdown!!!!!!!!!!!')
+                self.logger.info('!!!!!!!!!!!!!!!!!!!!!!!!jesd linkdown!!!!!!!!!!!')
 
-        print('******************turning off all*******************')
+        self.logger.info('******************turning off all*******************')
         self.set_off_all()
         time.sleep(1)
 
         if True:
             for branch in branch_set:
                 temp = self.read_temp_pa(branch)
-                print(f'branch {branch} PA temperature is {round(temp)}°')
+                self.logger.info(f'branch {branch} PA temperature is {round(temp)}°')
 
         if True:
             for branch in branch_set:
                 for component in ['pa', 'tx','lna']:
                     if self.get_sw_status(branch, component):
-                        print(f'branch {branch} {component} is on')
+                        self.logger.info(f'branch {branch} {component} is on')
                     else:
-                        print(f'branch {branch} {component} is off')
+                        self.logger.info(f'branch {branch} {component} is off')
         if True:
             for branch in branch_set:
                 for stage in ['final', 'driver']:
                     for main_or_peak in ['main','peak']:
                         tmp = self.get_bias( branch, stage, main_or_peak)
-                        print(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+                        self.logger.info(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
 
         # check fb nco freq
         if True:
             for branch in branch_set:
                 freq = self.get_fb_nco_freq(branch)
-                print(f'branch {branch} fb nco frequency = {freq} MHz')
+                self.logger.info(f'branch {branch} fb nco frequency = {freq} MHz')
 
-        print(f'LO frequency is {self.get_lo_freq()}MHz')
+        self.logger.info(f'LO frequency is {self.get_lo_freq()}MHz')
 
         # read torpm
 
@@ -1030,62 +1032,63 @@ class RU:
 
                 self.set_tx_alg_dsa_gain(branch, -23)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
-                print(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
+                self.logger.info(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
 
                 tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
-                print(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
+                self.logger.info(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
 
                 self.set_dpd_post_vca_gain(branch, 3)
                 tx_vca_dpd_post_gain = self.get_dpd_post_vca_gain(branch)
-                print(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
+                self.logger.info(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
 
 
                 #tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain_reg(branch)
-                #print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
+                #self.logger.info(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
 
 
                 self.set_dpd_pre_vca_gain(branch, 3)
                 tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain(branch)
-                print(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
+                self.logger.info(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
 
 
                 self.set_tor_alg_dsa_gain(branch, -10)
                 tor_alg_dsa_gain = self.get_tor_alg_dsa_gain(branch)
-                print(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
+                self.logger.info(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
 
 
 
                 # self.set_rx_alg_dsa_gain(branch, -10)
                 # rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
-                # print(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
+                # self.logger.info(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
                 # bug in ddc write which impact
                 # self.set_rx_vca_gain(branch, -2)
                 # rx_vca_gain = self.get_rx_vca_gain(branch)
-                # print(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
+                # self.logger.info(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
 
                 for branch in branch_set:
                     torpm = self.get_tor_pm(branch)
-                    print(f'branch {branch} tor power  = {torpm} dBm')
+                    self.logger.info(f'branch {branch} tor power  = {torpm} dBm')
                     adcpm = self.get_ADC_pm(branch)
-                    print(f'branch {branch} adc power  = {adcpm} dBm')
+                    self.logger.info(f'branch {branch} adc power  = {adcpm} dBm')
                     dpdpm = self.get_DPD_pm(branch)
-                    print(f'branch {branch} dpd power  = {dpdpm} dBm')
+                    self.logger.info(f'branch {branch} dpd power  = {dpdpm} dBm')
 
         if(self.set_dpd_init()):
-            print('dpd init successfully')
+            self.logger.info('dpd init successfully')
         else:
-            print('dpd init failed')
+            self.logger.info('dpd init failed')
 
         pavdd = self.get_pa_vdd('final')
-        print(f'final pa vdd = {pavdd}V')
+        self.logger.info(f'final pa vdd = {pavdd}V')
         dpavdd = self.get_pa_vdd('driver')
-        print(f'driver pa vdd = {dpavdd}V')
+        self.logger.info(f'driver pa vdd = {dpavdd}V')
 
 
     def __del__(self):
         print('RU has been disconnected')
+
 
 if __name__ == '__main__':
     self = RU(com_id = 3 , baud_rate = 115200 , t = 1)

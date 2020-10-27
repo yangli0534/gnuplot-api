@@ -1,0 +1,1208 @@
+2020-10-27 11:46:29,293 - INFO - PS - Agilent Technologies,N5767A,US12K1882L,A.04.04,REV:E has been connected successfully
+2020-10-27 11:46:29,495 - INFO - SA - Agilent Technologies,N9020A,MY49100209,A.13.07 has been connected successfully
+2020-10-27 11:46:31,484 - INFO - RU - RU connected successful
+2020-10-27 11:46:31,485 - INFO - RU - ******************init check:******************
+2020-10-27 11:46:31,513 - INFO - RU - This sw release data is 1009
+2020-10-27 11:46:31,540 - INFO - RU - ******************clk locked******************
+2020-10-27 11:46:31,568 - INFO - RU - ******************jesd link up******************
+2020-10-27 11:46:31,569 - INFO - RU - ******************turning off all*******************
+2020-10-27 11:46:31,569 - INFO - RU - *******************set off all*********************
+2020-10-27 11:46:32,652 - INFO - RU - branch A PA temperature is 33бу
+2020-10-27 11:46:32,704 - INFO - RU - branch B PA temperature is 32бу
+2020-10-27 11:46:32,748 - INFO - RU - branch C PA temperature is 186бу
+2020-10-27 11:46:32,788 - INFO - RU - branch D PA temperature is 186бу
+2020-10-27 11:46:32,816 - INFO - RU - branch A pa is off
+2020-10-27 11:46:32,844 - INFO - RU - branch A tx is off
+2020-10-27 11:46:32,872 - INFO - RU - branch A lna is off
+2020-10-27 11:46:32,900 - INFO - RU - branch B pa is off
+2020-10-27 11:46:32,928 - INFO - RU - branch B tx is off
+2020-10-27 11:46:32,956 - INFO - RU - branch B lna is off
+2020-10-27 11:46:32,984 - INFO - RU - branch C pa is off
+2020-10-27 11:46:33,012 - INFO - RU - branch C tx is off
+2020-10-27 11:46:33,040 - INFO - RU - branch C lna is off
+2020-10-27 11:46:33,068 - INFO - RU - branch D pa is off
+2020-10-27 11:46:33,096 - INFO - RU - branch D tx is off
+2020-10-27 11:46:33,125 - INFO - RU - branch D lna is off
+2020-10-27 11:46:33,208 - INFO - RU - Branch A PA final main bias is 0
+2020-10-27 11:46:33,292 - INFO - RU - Branch A PA final peak bias is 1738
+2020-10-27 11:46:33,380 - INFO - RU - Branch A PA driver main bias is 0
+2020-10-27 11:46:33,465 - INFO - RU - Branch A PA driver peak bias is 0
+2020-10-27 11:46:33,552 - INFO - RU - Branch B PA final main bias is 0
+2020-10-27 11:46:33,640 - INFO - RU - Branch B PA final peak bias is 0
+2020-10-27 11:46:33,724 - INFO - RU - Branch B PA driver main bias is 0
+2020-10-27 11:46:33,809 - INFO - RU - Branch B PA driver peak bias is 0
+2020-10-27 11:46:33,896 - INFO - RU - Branch C PA final main bias is 0
+2020-10-27 11:46:33,980 - INFO - RU - Branch C PA final peak bias is 0
+2020-10-27 11:46:34,064 - INFO - RU - Branch C PA driver main bias is 0
+2020-10-27 11:46:34,148 - INFO - RU - Branch C PA driver peak bias is 0
+2020-10-27 11:46:34,232 - INFO - RU - Branch D PA final main bias is 0
+2020-10-27 11:46:34,320 - INFO - RU - Branch D PA final peak bias is 0
+2020-10-27 11:46:34,404 - INFO - RU - Branch D PA driver main bias is 0
+2020-10-27 11:46:34,492 - INFO - RU - Branch D PA driver peak bias is 0
+2020-10-27 11:46:34,692 - INFO - RU - branch A fb nco frequency = 3700.01 MHz
+2020-10-27 11:46:34,892 - INFO - RU - branch B fb nco frequency = 3700.01 MHz
+2020-10-27 11:46:35,096 - INFO - RU - branch C fb nco frequency = 3700.01 MHz
+2020-10-27 11:46:35,292 - INFO - RU - branch D fb nco frequency = 3700.01 MHz
+2020-10-27 11:46:36,217 - INFO - RU - LO frequency is 3700.01MHz
+2020-10-27 11:46:36,217 - INFO - RU - **********************set tx alg dsa****************
+2020-10-27 11:46:36,281 - INFO - RU - Branch D Tx analog dsa  gain is -23.0 dB
+2020-10-27 11:46:36,324 - INFO - RU - Branch D Tx digital dsa  gain is 0.0 dB
+2020-10-27 11:46:36,324 - INFO - RU - ********************set dpd post vca gain********************
+2020-10-27 11:46:36,356 - INFO - RU -  branch C dpd post vca gain reg = 4000
+2020-10-27 11:46:36,416 - INFO - RU -  branch D dpd post vca gain reg = 5a67
+2020-10-27 11:46:36,416 - INFO - RU - Branch D dpd post vca gain is 2.9999943210899693 dB
+2020-10-27 11:46:36,416 - INFO - RU - **********************set dpd pre vca gain*********************
+2020-10-27 11:46:36,504 - INFO - RU - Branch D dpd pre vca gain is 2.9999943210899693
+2020-10-27 11:46:36,504 - INFO - RU - **********************set tor alg dsa *************************
+2020-10-27 11:46:36,556 - INFO - RU - Branch D tor dsa gain is -10 dB
+2020-10-27 11:46:36,612 - INFO - RU - branch A tor power  = -55.012557 dBm
+2020-10-27 11:46:36,640 - INFO - RU - branch A adc power  = -24.430851 dBm
+2020-10-27 11:46:36,668 - INFO - RU - branch A dpd power  = 0.0 dBm
+2020-10-27 11:46:36,724 - INFO - RU - branch B tor power  = -54.959689 dBm
+2020-10-27 11:46:36,752 - INFO - RU - branch B adc power  = -24.496136 dBm
+2020-10-27 11:46:36,780 - INFO - RU - branch B dpd power  = 0.0 dBm
+2020-10-27 11:46:36,836 - INFO - RU - branch C tor power  = -65.253316 dBm
+2020-10-27 11:46:36,864 - INFO - RU - branch C adc power  = -62.982917 dBm
+2020-10-27 11:46:36,892 - INFO - RU - branch C dpd power  = 0.0 dBm
+2020-10-27 11:46:36,948 - INFO - RU - branch D tor power  = -65.098272 dBm
+2020-10-27 11:46:36,976 - INFO - RU - branch D adc power  = -62.191797 dBm
+2020-10-27 11:46:37,004 - INFO - RU - branch D dpd power  = 0.0 dBm
+2020-10-27 11:46:38,277 - INFO - RU - dpd init successfully
+2020-10-27 11:46:38,305 - INFO - RU - final pa vdd = 52.226562V
+2020-10-27 11:46:38,336 - INFO - RU - driver pa vdd = 29.363476V
+2020-10-27 11:46:38,424 - INFO - RU - Branch A PA final main bias is 0
+2020-10-27 11:46:38,508 - INFO - RU - Branch A PA final peak bias is 1738
+2020-10-27 11:46:38,592 - INFO - RU - Branch A PA driver main bias is 0
+2020-10-27 11:46:38,677 - INFO - RU - Branch A PA driver peak bias is 0
+2020-10-27 11:46:38,760 - INFO - RU - Branch B PA final main bias is 0
+2020-10-27 11:46:38,844 - INFO - RU - Branch B PA final peak bias is 0
+2020-10-27 11:46:38,928 - INFO - RU - Branch B PA driver main bias is 0
+2020-10-27 11:46:39,012 - INFO - RU - Branch B PA driver peak bias is 0
+2020-10-27 11:46:39,096 - INFO - RU - Branch C PA final main bias is 0
+2020-10-27 11:46:39,180 - INFO - RU - Branch C PA final peak bias is 0
+2020-10-27 11:46:39,264 - INFO - RU - Branch C PA driver main bias is 0
+2020-10-27 11:46:39,348 - INFO - RU - Branch C PA driver peak bias is 0
+2020-10-27 11:46:39,432 - INFO - RU - Branch D PA final main bias is 0
+2020-10-27 11:46:39,516 - INFO - RU - Branch D PA final peak bias is 0
+2020-10-27 11:46:39,600 - INFO - RU - Branch D PA driver main bias is 0
+2020-10-27 11:46:39,684 - INFO - RU - Branch D PA driver peak bias is 0
+2020-10-27 11:46:40,656 - INFO - RU - curr = 158.69140625
+2020-10-27 11:46:40,656 - INFO - RU - 
+Now the current is 158.69140625 mA
+
+2020-10-27 11:46:40,657 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:40,657 - INFO - RU - 0x5fb
+2020-10-27 11:46:41,248 - INFO - RU - curr = 0.0
+2020-10-27 11:46:41,249 - INFO - RU - 
+Now the current is 0.0 mA
+
+2020-10-27 11:46:41,249 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:41,249 - INFO - RU - 0x600
+2020-10-27 11:46:41,844 - INFO - RU - curr = 9.765625
+2020-10-27 11:46:41,844 - INFO - RU - 
+Now the current is 9.765625 mA
+
+2020-10-27 11:46:41,845 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:41,845 - INFO - RU - 0x605
+2020-10-27 11:46:42,436 - INFO - RU - curr = 17.08984375
+2020-10-27 11:46:42,437 - INFO - RU - 
+Now the current is 17.08984375 mA
+
+2020-10-27 11:46:42,437 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:42,437 - INFO - RU - 0x60a
+2020-10-27 11:46:43,032 - INFO - RU - curr = 14.6484375
+2020-10-27 11:46:43,032 - INFO - RU - 
+Now the current is 14.6484375 mA
+
+2020-10-27 11:46:43,032 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:43,033 - INFO - RU - 0x60f
+2020-10-27 11:46:43,628 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:43,628 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:43,629 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:43,629 - INFO - RU - 0x614
+2020-10-27 11:46:44,221 - INFO - RU - curr = 9.765625
+2020-10-27 11:46:44,221 - INFO - RU - 
+Now the current is 9.765625 mA
+
+2020-10-27 11:46:44,221 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:44,221 - INFO - RU - 0x619
+2020-10-27 11:46:44,816 - INFO - RU - curr = 14.6484375
+2020-10-27 11:46:44,816 - INFO - RU - 
+Now the current is 14.6484375 mA
+
+2020-10-27 11:46:44,817 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:44,817 - INFO - RU - 0x61e
+2020-10-27 11:46:45,409 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:45,409 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:45,409 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:45,409 - INFO - RU - 0x623
+2020-10-27 11:46:46,004 - INFO - RU - curr = 9.765625
+2020-10-27 11:46:46,004 - INFO - RU - 
+Now the current is 9.765625 mA
+
+2020-10-27 11:46:46,005 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:46,005 - INFO - RU - 0x628
+2020-10-27 11:46:46,596 - INFO - RU - curr = 12.20703125
+2020-10-27 11:46:46,596 - INFO - RU - 
+Now the current is 12.20703125 mA
+
+2020-10-27 11:46:46,597 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:46,597 - INFO - RU - 0x62d
+2020-10-27 11:46:47,188 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:47,188 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:47,189 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:47,189 - INFO - RU - 0x632
+2020-10-27 11:46:47,780 - INFO - RU - curr = 12.20703125
+2020-10-27 11:46:47,780 - INFO - RU - 
+Now the current is 12.20703125 mA
+
+2020-10-27 11:46:47,780 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:47,780 - INFO - RU - 0x637
+2020-10-27 11:46:48,376 - INFO - RU - curr = 9.765625
+2020-10-27 11:46:48,376 - INFO - RU - 
+Now the current is 9.765625 mA
+
+2020-10-27 11:46:48,377 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:48,377 - INFO - RU - 0x63c
+2020-10-27 11:46:48,968 - INFO - RU - curr = 7.32421875
+2020-10-27 11:46:48,968 - INFO - RU - 
+Now the current is 7.32421875 mA
+
+2020-10-27 11:46:48,969 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:48,969 - INFO - RU - 0x641
+2020-10-27 11:46:49,560 - INFO - RU - curr = 24.4140625
+2020-10-27 11:46:49,560 - INFO - RU - 
+Now the current is 24.4140625 mA
+
+2020-10-27 11:46:49,561 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:49,562 - INFO - RU - 0x646
+2020-10-27 11:46:50,156 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:50,157 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:50,158 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:50,158 - INFO - RU - 0x64b
+2020-10-27 11:46:50,748 - INFO - RU - curr = 17.08984375
+2020-10-27 11:46:50,748 - INFO - RU - 
+Now the current is 17.08984375 mA
+
+2020-10-27 11:46:50,749 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:50,749 - INFO - RU - 0x650
+2020-10-27 11:46:51,340 - INFO - RU - curr = 26.85546875
+2020-10-27 11:46:51,340 - INFO - RU - 
+Now the current is 26.85546875 mA
+
+2020-10-27 11:46:51,341 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:51,341 - INFO - RU - 0x655
+2020-10-27 11:46:51,933 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:51,933 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:51,933 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:51,934 - INFO - RU - 0x65a
+2020-10-27 11:46:52,528 - INFO - RU - curr = 19.53125
+2020-10-27 11:46:52,528 - INFO - RU - 
+Now the current is 19.53125 mA
+
+2020-10-27 11:46:52,529 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:52,529 - INFO - RU - 0x65f
+2020-10-27 11:46:53,121 - INFO - RU - curr = 21.97265625
+2020-10-27 11:46:53,121 - INFO - RU - 
+Now the current is 21.97265625 mA
+
+2020-10-27 11:46:53,121 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:53,121 - INFO - RU - 0x664
+2020-10-27 11:46:53,712 - INFO - RU - curr = 14.6484375
+2020-10-27 11:46:53,712 - INFO - RU - 
+Now the current is 14.6484375 mA
+
+2020-10-27 11:46:53,712 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:53,712 - INFO - RU - 0x669
+2020-10-27 11:46:54,308 - INFO - RU - curr = 21.97265625
+2020-10-27 11:46:54,308 - INFO - RU - 
+Now the current is 21.97265625 mA
+
+2020-10-27 11:46:54,309 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:54,309 - INFO - RU - 0x66e
+2020-10-27 11:46:54,900 - INFO - RU - curr = 31.73828125
+2020-10-27 11:46:54,901 - INFO - RU - 
+Now the current is 31.73828125 mA
+
+2020-10-27 11:46:54,901 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:54,901 - INFO - RU - 0x673
+2020-10-27 11:46:55,492 - INFO - RU - curr = 21.97265625
+2020-10-27 11:46:55,493 - INFO - RU - 
+Now the current is 21.97265625 mA
+
+2020-10-27 11:46:55,493 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:55,493 - INFO - RU - 0x678
+2020-10-27 11:46:56,088 - INFO - RU - curr = 36.62109375
+2020-10-27 11:46:56,088 - INFO - RU - 
+Now the current is 36.62109375 mA
+
+2020-10-27 11:46:56,089 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:56,089 - INFO - RU - 0x67d
+2020-10-27 11:46:56,680 - INFO - RU - curr = 29.296875
+2020-10-27 11:46:56,680 - INFO - RU - 
+Now the current is 29.296875 mA
+
+2020-10-27 11:46:56,680 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:56,681 - INFO - RU - 0x682
+2020-10-27 11:46:57,276 - INFO - RU - curr = 24.4140625
+2020-10-27 11:46:57,276 - INFO - RU - 
+Now the current is 24.4140625 mA
+
+2020-10-27 11:46:57,277 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:57,277 - INFO - RU - 0x687
+2020-10-27 11:46:57,868 - INFO - RU - curr = 31.73828125
+2020-10-27 11:46:57,868 - INFO - RU - 
+Now the current is 31.73828125 mA
+
+2020-10-27 11:46:57,868 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:57,869 - INFO - RU - 0x68c
+2020-10-27 11:46:58,464 - INFO - RU - curr = 34.1796875
+2020-10-27 11:46:58,465 - INFO - RU - 
+Now the current is 34.1796875 mA
+
+2020-10-27 11:46:58,465 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:58,465 - INFO - RU - 0x691
+2020-10-27 11:46:59,056 - INFO - RU - curr = 34.1796875
+2020-10-27 11:46:59,056 - INFO - RU - 
+Now the current is 34.1796875 mA
+
+2020-10-27 11:46:59,056 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:59,056 - INFO - RU - 0x696
+2020-10-27 11:46:59,652 - INFO - RU - curr = 34.1796875
+2020-10-27 11:46:59,652 - INFO - RU - 
+Now the current is 34.1796875 mA
+
+2020-10-27 11:46:59,653 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:46:59,653 - INFO - RU - 0x69b
+2020-10-27 11:47:00,244 - INFO - RU - curr = 48.828125
+2020-10-27 11:47:00,244 - INFO - RU - 
+Now the current is 48.828125 mA
+
+2020-10-27 11:47:00,245 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:00,245 - INFO - RU - 0x6a0
+2020-10-27 11:47:00,840 - INFO - RU - curr = 48.828125
+2020-10-27 11:47:00,841 - INFO - RU - 
+Now the current is 48.828125 mA
+
+2020-10-27 11:47:00,841 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:00,841 - INFO - RU - 0x6a5
+2020-10-27 11:47:01,433 - INFO - RU - curr = 48.828125
+2020-10-27 11:47:01,433 - INFO - RU - 
+Now the current is 48.828125 mA
+
+2020-10-27 11:47:01,434 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:01,434 - INFO - RU - 0x6aa
+2020-10-27 11:47:02,028 - INFO - RU - curr = 53.7109375
+2020-10-27 11:47:02,028 - INFO - RU - 
+Now the current is 53.7109375 mA
+
+2020-10-27 11:47:02,029 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:02,029 - INFO - RU - 0x6af
+2020-10-27 11:47:02,620 - INFO - RU - curr = 51.26953125
+2020-10-27 11:47:02,621 - INFO - RU - 
+Now the current is 51.26953125 mA
+
+2020-10-27 11:47:02,621 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:02,621 - INFO - RU - 0x6b4
+2020-10-27 11:47:03,216 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:03,216 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:03,217 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:03,217 - INFO - RU - 0x6b5
+2020-10-27 11:47:03,808 - INFO - RU - curr = 48.828125
+2020-10-27 11:47:03,808 - INFO - RU - 
+Now the current is 48.828125 mA
+
+2020-10-27 11:47:03,809 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:03,809 - INFO - RU - 0x6ba
+2020-10-27 11:47:04,400 - INFO - RU - curr = 58.59375
+2020-10-27 11:47:04,400 - INFO - RU - 
+Now the current is 58.59375 mA
+
+2020-10-27 11:47:04,401 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:04,401 - INFO - RU - 0x6bf
+2020-10-27 11:47:04,992 - INFO - RU - curr = 58.59375
+2020-10-27 11:47:04,993 - INFO - RU - 
+Now the current is 58.59375 mA
+
+2020-10-27 11:47:04,993 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:04,993 - INFO - RU - 0x6c4
+2020-10-27 11:47:05,588 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:05,588 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:05,589 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:05,589 - INFO - RU - 0x6c5
+2020-10-27 11:47:06,180 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:06,181 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:06,181 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:06,182 - INFO - RU - 0x6c6
+2020-10-27 11:47:06,776 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:06,777 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:06,777 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:06,777 - INFO - RU - 0x6c5
+2020-10-27 11:47:07,369 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:07,369 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:07,370 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:07,370 - INFO - RU - 0x6c6
+2020-10-27 11:47:07,964 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:07,964 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:07,965 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:07,965 - INFO - RU - 0x6c7
+2020-10-27 11:47:08,556 - INFO - RU - curr = 78.125
+2020-10-27 11:47:08,556 - INFO - RU - 
+Now the current is 78.125 mA
+
+2020-10-27 11:47:08,557 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:08,557 - INFO - RU - 0x6c6
+2020-10-27 11:47:09,149 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:09,149 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:09,149 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:09,150 - INFO - RU - 0x6c5
+2020-10-27 11:47:09,744 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:09,744 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:09,745 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:09,745 - INFO - RU - 0x6c4
+2020-10-27 11:47:10,336 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:10,336 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:10,337 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:10,337 - INFO - RU - 0x6c5
+2020-10-27 11:47:10,929 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:10,929 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:10,929 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:10,929 - INFO - RU - 0x6c6
+2020-10-27 11:47:11,521 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:11,521 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:11,521 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:11,522 - INFO - RU - 0x6c7
+2020-10-27 11:47:12,116 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:12,116 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:12,117 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:12,117 - INFO - RU - 0x6c8
+2020-10-27 11:47:12,709 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:12,709 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:12,710 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:12,710 - INFO - RU - 0x6c9
+2020-10-27 11:47:13,304 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:13,304 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:13,305 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:13,305 - INFO - RU - 0x6c8
+2020-10-27 11:47:13,896 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:13,896 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:13,897 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:13,897 - INFO - RU - 0x6c7
+2020-10-27 11:47:14,489 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:14,489 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:14,489 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:14,490 - INFO - RU - 0x6c8
+2020-10-27 11:47:15,084 - INFO - RU - curr = 75.68359375
+2020-10-27 11:47:15,084 - INFO - RU - 
+Now the current is 75.68359375 mA
+
+2020-10-27 11:47:15,085 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:15,085 - INFO - RU - 0x6c7
+2020-10-27 11:47:15,676 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:15,677 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:15,677 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:15,677 - INFO - RU - 0x6c6
+2020-10-27 11:47:16,268 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:16,268 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:16,268 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:16,269 - INFO - RU - 0x6c7
+2020-10-27 11:47:16,860 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:16,860 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:16,861 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:16,861 - INFO - RU - 0x6c8
+2020-10-27 11:47:17,452 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:17,453 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:17,453 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:17,453 - INFO - RU - 0x6c9
+2020-10-27 11:47:18,048 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:18,048 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:18,049 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:18,049 - INFO - RU - 0x6ca
+2020-10-27 11:47:18,641 - INFO - RU - curr = 75.68359375
+2020-10-27 11:47:18,641 - INFO - RU - 
+Now the current is 75.68359375 mA
+
+2020-10-27 11:47:18,641 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:18,641 - INFO - RU - 0x6c9
+2020-10-27 11:47:19,236 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:19,236 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:19,237 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:19,237 - INFO - RU - 0x6c8
+2020-10-27 11:47:19,829 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:19,829 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:19,829 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:19,829 - INFO - RU - 0x6c9
+2020-10-27 11:47:20,424 - INFO - RU - curr = 58.59375
+2020-10-27 11:47:20,424 - INFO - RU - 
+Now the current is 58.59375 mA
+
+2020-10-27 11:47:20,425 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:20,425 - INFO - RU - 0x6ce
+2020-10-27 11:47:21,020 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:21,021 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:21,021 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:21,021 - INFO - RU - 0x6cd
+2020-10-27 11:47:21,612 - INFO - RU - curr = 78.125
+2020-10-27 11:47:21,612 - INFO - RU - 
+Now the current is 78.125 mA
+
+2020-10-27 11:47:21,613 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:21,613 - INFO - RU - 0x6cc
+2020-10-27 11:47:22,204 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:22,204 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:22,205 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:22,205 - INFO - RU - 0x6cb
+2020-10-27 11:47:22,797 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:22,797 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:22,797 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:22,798 - INFO - RU - 0x6ca
+2020-10-27 11:47:23,393 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:23,393 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:23,394 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:23,394 - INFO - RU - 0x6cb
+2020-10-27 11:47:23,984 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:23,984 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:23,985 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:23,985 - INFO - RU - 0x6cc
+2020-10-27 11:47:24,576 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:24,577 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:24,577 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:24,577 - INFO - RU - 0x6cb
+2020-10-27 11:47:25,168 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:25,168 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:25,169 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:25,169 - INFO - RU - 0x6cc
+2020-10-27 11:47:25,760 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:25,761 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:25,761 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:25,761 - INFO - RU - 0x6cd
+2020-10-27 11:47:26,356 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:26,356 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:26,357 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:26,357 - INFO - RU - 0x6cc
+2020-10-27 11:47:26,948 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:26,949 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:26,949 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:26,949 - INFO - RU - 0x6cd
+2020-10-27 11:47:27,540 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:27,540 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:27,541 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:27,541 - INFO - RU - 0x6ce
+2020-10-27 11:47:28,132 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:28,133 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:28,133 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:28,133 - INFO - RU - 0x6cf
+2020-10-27 11:47:28,724 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:28,724 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:28,725 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:28,725 - INFO - RU - 0x6ce
+2020-10-27 11:47:29,316 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:29,316 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:29,317 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:29,317 - INFO - RU - 0x6cf
+2020-10-27 11:47:29,908 - INFO - RU - curr = 78.125
+2020-10-27 11:47:29,908 - INFO - RU - 
+Now the current is 78.125 mA
+
+2020-10-27 11:47:29,909 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:29,909 - INFO - RU - 0x6ce
+2020-10-27 11:47:30,500 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:30,501 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:30,501 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:30,501 - INFO - RU - 0x6cf
+2020-10-27 11:47:31,093 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:31,093 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:31,094 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:31,094 - INFO - RU - 0x6d0
+2020-10-27 11:47:31,688 - INFO - RU - curr = 80.56640625
+2020-10-27 11:47:31,688 - INFO - RU - 
+Now the current is 80.56640625 mA
+
+2020-10-27 11:47:31,689 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:31,689 - INFO - RU - 0x6cb
+2020-10-27 11:47:32,280 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:32,280 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:32,281 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:32,281 - INFO - RU - 0x6ca
+2020-10-27 11:47:32,873 - INFO - RU - curr = 78.125
+2020-10-27 11:47:32,873 - INFO - RU - 
+Now the current is 78.125 mA
+
+2020-10-27 11:47:32,873 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:32,873 - INFO - RU - 0x6c9
+2020-10-27 11:47:33,468 - INFO - RU - curr = 61.03515625
+2020-10-27 11:47:33,468 - INFO - RU - 
+Now the current is 61.03515625 mA
+
+2020-10-27 11:47:33,469 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:33,469 - INFO - RU - 0x6ca
+2020-10-27 11:47:34,061 - INFO - RU - curr = 73.2421875
+2020-10-27 11:47:34,061 - INFO - RU - 
+Now the current is 73.2421875 mA
+
+2020-10-27 11:47:34,062 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:34,062 - INFO - RU - 0x6c9
+2020-10-27 11:47:34,656 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:34,656 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:34,657 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:34,657 - INFO - RU - 0x6ca
+2020-10-27 11:47:35,249 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:35,249 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:35,249 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:35,250 - INFO - RU - 0x6cb
+2020-10-27 11:47:35,840 - INFO - RU - curr = 68.359375
+2020-10-27 11:47:35,840 - INFO - RU - 
+Now the current is 68.359375 mA
+
+2020-10-27 11:47:35,842 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:35,842 - INFO - RU - 0x6cc
+2020-10-27 11:47:36,433 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:36,433 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:36,433 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:36,433 - INFO - RU - 0x6cd
+2020-10-27 11:47:37,028 - INFO - RU - curr = 70.80078125
+2020-10-27 11:47:37,028 - INFO - RU - 
+Now the current is 70.80078125 mA
+
+2020-10-27 11:47:37,029 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:37,029 - INFO - RU - 0x6cc
+2020-10-27 11:47:37,621 - INFO - RU - curr = 65.91796875
+2020-10-27 11:47:37,621 - INFO - RU - 
+Now the current is 65.91796875 mA
+
+2020-10-27 11:47:37,622 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:37,622 - INFO - RU - 0x6cd
+2020-10-27 11:47:38,217 - INFO - RU - curr = 78.125
+2020-10-27 11:47:38,217 - INFO - RU - 
+Now the current is 78.125 mA
+
+2020-10-27 11:47:38,217 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:38,217 - INFO - RU - 0x6cc
+2020-10-27 11:47:38,812 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:38,813 - INFO - RU - 
+Now the current is 63.4765625 mA
+
+2020-10-27 11:47:38,814 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:38,814 - INFO - RU - 0x6cd
+2020-10-27 11:47:39,405 - INFO - RU - curr = 75.68359375
+2020-10-27 11:47:39,405 - INFO - RU - 
+Now the current is 75.68359375 mA
+
+2020-10-27 11:47:39,406 - INFO - RU - The new DAC value is as below!
+2020-10-27 11:47:39,406 - INFO - RU - 0x6cc
+2020-10-27 11:47:39,969 - INFO - RU - Hit the tune times limit!
+
+2020-10-27 11:47:39,969 - INFO - RU - PA Driver tune finished! Good job!
+2020-10-27 11:47:40,776 - INFO - RU - curr = 0.0
+2020-10-27 11:47:40,776 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:40,808 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:40,808 - INFO - RU - 0x60a
+2020-10-27 11:47:41,340 - INFO - RU - curr = 0.0
+2020-10-27 11:47:41,341 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:41,373 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:41,373 - INFO - RU - 0x614
+2020-10-27 11:47:41,904 - INFO - RU - curr = 0.0
+2020-10-27 11:47:41,904 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:41,936 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:41,936 - INFO - RU - 0x61e
+2020-10-27 11:47:42,469 - INFO - RU - curr = 0.0
+2020-10-27 11:47:42,469 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:42,501 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:42,501 - INFO - RU - 0x628
+2020-10-27 11:47:43,032 - INFO - RU - curr = 2.44140625
+2020-10-27 11:47:43,033 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:47:43,064 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:43,065 - INFO - RU - 0x632
+2020-10-27 11:47:43,597 - INFO - RU - curr = 0.0
+2020-10-27 11:47:43,597 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:43,628 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:43,629 - INFO - RU - 0x63c
+2020-10-27 11:47:44,161 - INFO - RU - curr = 2.44140625
+2020-10-27 11:47:44,161 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:47:44,192 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:44,192 - INFO - RU - 0x646
+2020-10-27 11:47:44,724 - INFO - RU - curr = 2.44140625
+2020-10-27 11:47:44,725 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:47:44,757 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:44,757 - INFO - RU - 0x650
+2020-10-27 11:47:45,288 - INFO - RU - curr = 7.32421875
+2020-10-27 11:47:45,288 - INFO - RU - 
+Now the current is 7 mA
+
+2020-10-27 11:47:45,320 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:45,321 - INFO - RU - 0x65a
+2020-10-27 11:47:45,853 - INFO - RU - curr = 4.8828125
+2020-10-27 11:47:45,853 - INFO - RU - 
+Now the current is 4 mA
+
+2020-10-27 11:47:45,885 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:45,885 - INFO - RU - 0x664
+2020-10-27 11:47:46,417 - INFO - RU - curr = 7.32421875
+2020-10-27 11:47:46,417 - INFO - RU - 
+Now the current is 7 mA
+
+2020-10-27 11:47:46,449 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:46,449 - INFO - RU - 0x66e
+2020-10-27 11:47:46,980 - INFO - RU - curr = 14.6484375
+2020-10-27 11:47:46,981 - INFO - RU - 
+Now the current is 14 mA
+
+2020-10-27 11:47:47,012 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:47,013 - INFO - RU - 0x678
+2020-10-27 11:47:47,545 - INFO - RU - curr = 19.53125
+2020-10-27 11:47:47,545 - INFO - RU - 
+Now the current is 19 mA
+
+2020-10-27 11:47:47,577 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:47,577 - INFO - RU - 0x682
+2020-10-27 11:47:48,121 - INFO - RU - curr = 26.85546875
+2020-10-27 11:47:48,121 - INFO - RU - 
+Now the current is 26 mA
+
+2020-10-27 11:47:48,153 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:48,153 - INFO - RU - 0x68c
+2020-10-27 11:47:48,684 - INFO - RU - curr = 36.62109375
+2020-10-27 11:47:48,685 - INFO - RU - 
+Now the current is 36 mA
+
+2020-10-27 11:47:48,716 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:48,717 - INFO - RU - 0x696
+2020-10-27 11:47:49,248 - INFO - RU - curr = 41.50390625
+2020-10-27 11:47:49,248 - INFO - RU - 
+Now the current is 41 mA
+
+2020-10-27 11:47:49,280 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:49,281 - INFO - RU - 0x6a0
+2020-10-27 11:47:49,813 - INFO - RU - curr = 56.15234375
+2020-10-27 11:47:49,813 - INFO - RU - 
+Now the current is 56 mA
+
+2020-10-27 11:47:49,845 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:49,845 - INFO - RU - 0x6aa
+2020-10-27 11:47:50,376 - INFO - RU - curr = 63.4765625
+2020-10-27 11:47:50,377 - INFO - RU - 
+Now the current is 63 mA
+
+2020-10-27 11:47:50,408 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:50,408 - INFO - RU - 0x6b4
+2020-10-27 11:47:50,941 - INFO - RU - curr = 85.44921875
+2020-10-27 11:47:50,941 - INFO - RU - 
+Now the current is 85 mA
+
+2020-10-27 11:47:50,973 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:50,973 - INFO - RU - 0x6be
+2020-10-27 11:47:51,504 - INFO - RU - curr = 102.5390625
+2020-10-27 11:47:51,505 - INFO - RU - 
+Now the current is 102 mA
+
+2020-10-27 11:47:51,537 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:51,537 - INFO - RU - 0x6c3
+2020-10-27 11:47:52,068 - INFO - RU - curr = 112.3046875
+2020-10-27 11:47:52,068 - INFO - RU - 
+Now the current is 112 mA
+
+2020-10-27 11:47:52,100 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:52,101 - INFO - RU - 0x6c8
+2020-10-27 11:47:52,633 - INFO - RU - curr = 124.51171875
+2020-10-27 11:47:52,633 - INFO - RU - 
+Now the current is 124 mA
+
+2020-10-27 11:47:52,664 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:52,665 - INFO - RU - 0x6cd
+2020-10-27 11:47:53,196 - INFO - RU - curr = 134.27734375
+2020-10-27 11:47:53,197 - INFO - RU - 
+Now the current is 134 mA
+
+2020-10-27 11:47:53,229 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:53,229 - INFO - RU - 0x6d2
+2020-10-27 11:47:53,760 - INFO - RU - curr = 148.92578125
+2020-10-27 11:47:53,761 - INFO - RU - 
+Now the current is 148 mA
+
+2020-10-27 11:47:53,792 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:53,793 - INFO - RU - 0x6d7
+2020-10-27 11:47:54,325 - INFO - RU - curr = 163.57421875
+2020-10-27 11:47:54,325 - INFO - RU - 
+Now the current is 163 mA
+
+2020-10-27 11:47:54,417 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:54,422 - INFO - RU - 0x6dc
+2020-10-27 11:47:54,953 - INFO - RU - curr = 175.78125
+2020-10-27 11:47:54,953 - INFO - RU - 
+Now the current is 175 mA
+
+2020-10-27 11:47:54,985 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:54,985 - INFO - RU - 0x6dd
+2020-10-27 11:47:55,516 - INFO - RU - curr = 185.546875
+2020-10-27 11:47:55,517 - INFO - RU - 
+Now the current is 185 mA
+
+2020-10-27 11:47:55,548 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:55,549 - INFO - RU - 0x6dc
+2020-10-27 11:47:56,080 - INFO - RU - curr = 183.10546875
+2020-10-27 11:47:56,081 - INFO - RU - 
+Now the current is 183 mA
+
+2020-10-27 11:47:56,112 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:56,113 - INFO - RU - 0x6db
+2020-10-27 11:47:56,645 - INFO - RU - curr = 185.546875
+2020-10-27 11:47:56,645 - INFO - RU - 
+Now the current is 185 mA
+
+2020-10-27 11:47:56,677 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:56,677 - INFO - RU - 0x6da
+2020-10-27 11:47:57,209 - INFO - RU - curr = 178.22265625
+2020-10-27 11:47:57,209 - INFO - RU - 
+Now the current is 178 mA
+
+2020-10-27 11:47:57,241 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:57,241 - INFO - RU - 0x6db
+2020-10-27 11:47:57,772 - INFO - RU - curr = 180.6640625
+2020-10-27 11:47:57,773 - INFO - RU - 
+Now the current is 180 mA
+
+2020-10-27 11:47:57,804 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:57,804 - INFO - RU - 0x6db
+2020-10-27 11:47:58,306 - INFO - RU - PA Final tune finished! Good job!
+2020-10-27 11:47:58,936 - INFO - RU - curr = 0.0
+2020-10-27 11:47:58,937 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:58,968 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:58,969 - INFO - RU - 0x55a
+2020-10-27 11:47:59,501 - INFO - RU - curr = 0.0
+2020-10-27 11:47:59,501 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:47:59,533 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:47:59,533 - INFO - RU - 0x564
+2020-10-27 11:48:00,065 - INFO - RU - curr = 0.0
+2020-10-27 11:48:00,065 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:00,097 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:00,097 - INFO - RU - 0x56e
+2020-10-27 11:48:00,628 - INFO - RU - curr = 0.0
+2020-10-27 11:48:00,629 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:00,661 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:00,661 - INFO - RU - 0x578
+2020-10-27 11:48:01,192 - INFO - RU - curr = 0.0
+2020-10-27 11:48:01,193 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:01,224 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:01,225 - INFO - RU - 0x582
+2020-10-27 11:48:01,757 - INFO - RU - curr = 0.0
+2020-10-27 11:48:01,757 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:01,789 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:01,789 - INFO - RU - 0x58c
+2020-10-27 11:48:02,320 - INFO - RU - curr = 0.0
+2020-10-27 11:48:02,320 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:02,352 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:02,352 - INFO - RU - 0x596
+2020-10-27 11:48:02,885 - INFO - RU - curr = 0.0
+2020-10-27 11:48:02,885 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:02,917 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:02,917 - INFO - RU - 0x5a0
+2020-10-27 11:48:03,448 - INFO - RU - curr = 0.0
+2020-10-27 11:48:03,448 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:03,480 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:03,480 - INFO - RU - 0x5aa
+2020-10-27 11:48:04,013 - INFO - RU - curr = 0.0
+2020-10-27 11:48:04,013 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:04,045 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:04,045 - INFO - RU - 0x5b4
+2020-10-27 11:48:04,573 - INFO - RU - curr = 0.0
+2020-10-27 11:48:04,573 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:04,605 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:04,605 - INFO - RU - 0x5be
+2020-10-27 11:48:05,133 - INFO - RU - curr = 0.0
+2020-10-27 11:48:05,133 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:05,165 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:05,165 - INFO - RU - 0x5c8
+2020-10-27 11:48:05,697 - INFO - RU - curr = 0.0
+2020-10-27 11:48:05,697 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:05,728 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:05,728 - INFO - RU - 0x5d2
+2020-10-27 11:48:06,260 - INFO - RU - curr = 0.0
+2020-10-27 11:48:06,261 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:06,292 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:06,293 - INFO - RU - 0x5dc
+2020-10-27 11:48:06,825 - INFO - RU - curr = 0.0
+2020-10-27 11:48:06,825 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:06,857 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:06,858 - INFO - RU - 0x5e6
+2020-10-27 11:48:07,388 - INFO - RU - curr = 2.44140625
+2020-10-27 11:48:07,388 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:48:07,420 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:07,420 - INFO - RU - 0x5f0
+2020-10-27 11:48:07,953 - INFO - RU - curr = 0.0
+2020-10-27 11:48:07,953 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:07,985 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:07,985 - INFO - RU - 0x5fa
+2020-10-27 11:48:08,512 - INFO - RU - curr = 2.44140625
+2020-10-27 11:48:08,513 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:48:08,545 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:08,545 - INFO - RU - 0x604
+2020-10-27 11:48:09,072 - INFO - RU - curr = 0.0
+2020-10-27 11:48:09,073 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:09,105 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:09,105 - INFO - RU - 0x60e
+2020-10-27 11:48:09,632 - INFO - RU - curr = 0.0
+2020-10-27 11:48:09,633 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:09,664 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:09,665 - INFO - RU - 0x618
+2020-10-27 11:48:10,196 - INFO - RU - curr = 0.0
+2020-10-27 11:48:10,197 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:10,228 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:10,229 - INFO - RU - 0x622
+2020-10-27 11:48:10,761 - INFO - RU - curr = 0.0
+2020-10-27 11:48:10,761 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:10,793 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:10,793 - INFO - RU - 0x62c
+2020-10-27 11:48:11,324 - INFO - RU - curr = 0.0
+2020-10-27 11:48:11,324 - INFO - RU - 
+Now the current is 0 mA
+
+2020-10-27 11:48:11,356 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:11,357 - INFO - RU - 0x636
+2020-10-27 11:48:11,888 - INFO - RU - curr = 2.44140625
+2020-10-27 11:48:11,889 - INFO - RU - 
+Now the current is 2 mA
+
+2020-10-27 11:48:11,921 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:11,921 - INFO - RU - 0x640
+2020-10-27 11:48:12,452 - INFO - RU - curr = 7.32421875
+2020-10-27 11:48:12,453 - INFO - RU - 
+Now the current is 7 mA
+
+2020-10-27 11:48:12,484 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:12,485 - INFO - RU - 0x64a
+2020-10-27 11:48:13,017 - INFO - RU - curr = 12.20703125
+2020-10-27 11:48:13,017 - INFO - RU - 
+Now the current is 12 mA
+
+2020-10-27 11:48:13,049 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:13,049 - INFO - RU - 0x654
+2020-10-27 11:48:13,580 - INFO - RU - curr = 14.6484375
+2020-10-27 11:48:13,580 - INFO - RU - 
+Now the current is 14 mA
+
+2020-10-27 11:48:13,628 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:13,628 - INFO - RU - 0x65e
+2020-10-27 11:48:14,161 - INFO - RU - curr = 17.08984375
+2020-10-27 11:48:14,161 - INFO - RU - 
+Now the current is 17 mA
+
+2020-10-27 11:48:14,193 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:14,193 - INFO - RU - 0x668
+2020-10-27 11:48:14,721 - INFO - RU - curr = 21.97265625
+2020-10-27 11:48:14,721 - INFO - RU - 
+Now the current is 21 mA
+
+2020-10-27 11:48:14,753 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:14,753 - INFO - RU - 0x672
+2020-10-27 11:48:15,285 - INFO - RU - curr = 29.296875
+2020-10-27 11:48:15,285 - INFO - RU - 
+Now the current is 29 mA
+
+2020-10-27 11:48:15,325 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:15,325 - INFO - RU - 0x67c
+2020-10-27 11:48:15,857 - INFO - RU - curr = 36.62109375
+2020-10-27 11:48:15,857 - INFO - RU - 
+Now the current is 36 mA
+
+2020-10-27 11:48:15,889 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:15,889 - INFO - RU - 0x686
+2020-10-27 11:48:16,421 - INFO - RU - curr = 48.828125
+2020-10-27 11:48:16,421 - INFO - RU - 
+Now the current is 48 mA
+
+2020-10-27 11:48:16,453 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:16,453 - INFO - RU - 0x690
+2020-10-27 11:48:16,984 - INFO - RU - curr = 58.59375
+2020-10-27 11:48:16,984 - INFO - RU - 
+Now the current is 58 mA
+
+2020-10-27 11:48:17,017 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:17,017 - INFO - RU - 0x69a
+2020-10-27 11:48:17,550 - INFO - RU - curr = 68.359375
+2020-10-27 11:48:17,550 - INFO - RU - 
+Now the current is 68 mA
+
+2020-10-27 11:48:17,580 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:17,580 - INFO - RU - 0x6a4
+2020-10-27 11:48:18,113 - INFO - RU - curr = 92.7734375
+2020-10-27 11:48:18,113 - INFO - RU - 
+Now the current is 92 mA
+
+2020-10-27 11:48:18,145 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:18,145 - INFO - RU - 0x6ae
+2020-10-27 11:48:18,677 - INFO - RU - curr = 104.98046875
+2020-10-27 11:48:18,677 - INFO - RU - 
+Now the current is 104 mA
+
+2020-10-27 11:48:18,708 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:18,709 - INFO - RU - 0x6b3
+2020-10-27 11:48:19,241 - INFO - RU - curr = 119.62890625
+2020-10-27 11:48:19,241 - INFO - RU - 
+Now the current is 119 mA
+
+2020-10-27 11:48:19,273 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:19,273 - INFO - RU - 0x6b8
+2020-10-27 11:48:19,804 - INFO - RU - curr = 131.8359375
+2020-10-27 11:48:19,804 - INFO - RU - 
+Now the current is 131 mA
+
+2020-10-27 11:48:19,836 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:19,837 - INFO - RU - 0x6bd
+2020-10-27 11:48:20,369 - INFO - RU - curr = 144.04296875
+2020-10-27 11:48:20,369 - INFO - RU - 
+Now the current is 144 mA
+
+2020-10-27 11:48:20,401 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:20,401 - INFO - RU - 0x6c2
+2020-10-27 11:48:20,933 - INFO - RU - curr = 153.80859375
+2020-10-27 11:48:20,933 - INFO - RU - 
+Now the current is 153 mA
+
+2020-10-27 11:48:20,964 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:20,965 - INFO - RU - 0x6c7
+2020-10-27 11:48:21,497 - INFO - RU - curr = 168.45703125
+2020-10-27 11:48:21,497 - INFO - RU - 
+Now the current is 168 mA
+
+2020-10-27 11:48:21,528 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:21,529 - INFO - RU - 0x6cc
+2020-10-27 11:48:22,061 - INFO - RU - curr = 180.6640625
+2020-10-27 11:48:22,061 - INFO - RU - 
+Now the current is 180 mA
+
+2020-10-27 11:48:22,093 - INFO - RU - 
+%%%%%%%%%New DAC value!!!!!!!
+2020-10-27 11:48:22,093 - INFO - RU - 0x6cc
+2020-10-27 11:48:22,594 - INFO - RU - PA Final tune finished! Good job!
+2020-10-27 11:48:22,653 - CRITICAL - calibration - The calc DAC value in main of driver of branch A is 0x6cc
+2020-10-27 11:48:22,653 - CRITICAL - calibration - The calc DAC value in peak of driver of branch  A is 0x5a0
+2020-10-27 11:48:22,653 - CRITICAL - calibration - The calc DAC value in main of final of branch  A is  0x6db
+2020-10-27 11:48:22,653 - CRITICAL - calibration - The calc DAC value in peak of final of branch  A is  0x348
