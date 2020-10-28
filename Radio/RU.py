@@ -17,6 +17,8 @@ import math
 from threading import Thread
 #from Lib import PS
 import logging
+import numpy as np
+
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
@@ -60,6 +62,8 @@ class RU:
         self.UL_MIN_FREQ = 3600  # MHz
         self.UL_MAX_FREQ = 3800  # MHz
         self.DL_CENT_FREQ = round((self.UL_MIN_FREQ + self.UL_MAX_FREQ) / 2)
+        self.DL_FREQ_COMP_STEP = 20
+        self.DL_FREQ_COMP_LIST = [freq for freq in np.arange(self.DL_MIN_FREQ+self.DL_FREQ_COMP_STEP/2, self.DL_MAX_FREQ, self.DL_FREQ_COMP_STEP)]
         self.logger = logging.getLogger('root')
         self._mycom = Com.Com(3, 115200, 0.5)
 
@@ -458,7 +462,7 @@ class RU:
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setTxAnal {branch} {gain}'
-        self.logger.info(f'branch {branch} tx alg dsa is set to {gain}')
+        #self.logger.info(f'branch {branch} tx alg dsa is set to {-gain}')
         self._mycom.send_cmd(cmd)
 
     def set_tx_dig_dsa_gain(self, branch, gain):

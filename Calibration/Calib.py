@@ -22,6 +22,7 @@ import time
 import math
 from datetime import datetime
 import log
+import Station
 
 
 # import submodule
@@ -42,11 +43,11 @@ class Calib(object):
         self.PS = PS.PS('TCPIP0::172.16.1.252::inst0::INSTR')
         self.SA = SA.SA('TCPIP0::172.16.1.66::inst0::INSTR')
         self.RU = RU.RU(com_id=3, baud_rate=115200, t=1)
-
+        self.Station = Station.Station()
     def __del__(self):
         print('Calibration stopped')
 
-    def tor_dsa_lin(self):
+    def tor_dsa_lin(self, normalized_zero = -7):
         self.logger.info('****************TOR DSA VLIN***********************************')
         tor_pm_list = []
         tor_dsa_list = []
@@ -60,16 +61,24 @@ class Calib(object):
             # torpm = RU.get_tor_pm('A')
             # print(f' branch A tor pm is  {torpm} dBfs')
             tor_pm_list.append(tor_pm)
+        tor_pm_norm = [ x -  max(tor_pm_list) for x in tor_pm_list]
+        #tor_pm_norm[:] = [x - normalized_zero for x in tor_pm_norm]
+        pos= round(min(range(len(tor_pm_norm)), key=lambda i: abs(tor_pm_norm[i] - (normalized_zero))))
+        tor_dsa_norm_gain = tor_dsa_list[pos]
+        self.logger.critical(f'Tor DSA gain {tor_dsa_norm_gain} will be normalized as zero and written to database ')
+        arp_power = self.SA.get_chp()
         plt.plot(tor_dsa_list, tor_pm_list)
         plt.xlabel('Tor alg DSA set: dB')
         plt.ylabel('Tor power meter: dBFs. average cnt = 10')
         plt.grid()
         # for x, y in zip(tor_dsa_list, tor_pm_list):
         # plt.text(x, y+0.001, '%.2f' % y, ha='center', va= 'bottom',fontsize=9)
-        plt.title("Tor DSA vs Tor PM")
+        plt.title(f"Tor DSA vs Tor PM @ ARP power = {arp_power}dBm")
         dt = datetime.now()
         filename = dt.strftime("Tor DSA vs Tor PM_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
+        plt.close()
+        return tor_dsa_norm_gain
 
     def next_gain_adjustment(self, last_coarse, last_fine, last_output, coarse_high, coarse_low, fine_high, fine_low,
                              coarse_step, fine_step, target, error):
@@ -150,10 +159,13 @@ class Calib(object):
             #     self.RU.set_tx_dig_dsa_gain(branch, new_tx_dig_dsa_gain)
             if new_tx_alg_dsa_gain != last_tx_alg_dsa_gain:
                 self.RU.set_tx_alg_dsa_gain(branch, new_tx_alg_dsa_gain)
-            time.sleep(1)
+            #time.sleep(1)
             #last_output = self.SA.get_chp()
-            last_output = self.SA.get_chp(aver=3)
+            last_output = self.SA.get_chp(aver=2)
+        last_tx_alg_dsa_gain = self.RU.get_tx_alg_dsa_gain(branch)
+        last_dpd_post_vca_gain = self.RU.get_dpd_post_vca_gain(branch)
         self.logger.info(f'branch {branch} output has reached target={target}dBm, now it is {last_output} dBm')
+        return last_tx_alg_dsa_gain, last_dpd_post_vca_gain
 
     def pa_driver_bias_calib(self, branch):
         # revise from Jim version
@@ -212,13 +224,57 @@ class Calib(object):
             if self.RU.set_carrier(type='tx', freq=freq, bandwidth=100):
                 self.RU.set_pa_on(branch=branch)
                 self.RU.set_txlow_on(branch=branch)
+                self.logger.critical(f'branch {branch} carrier setup @ freq = {freq} MHz')
+                return True
+            else:
+                return False
+        else:
+            return False
 
+    def tx_sweep_read_tor_pm(self, branch, arp_target, tor_target):
+        self.RU.set_off_all()
+        tor_pm_list = []
+        arp_pm_list = []
+        temp_previous = self.RU.read_temp_pa(branch)
+        self.logger.critical(f'Branch {branch} PA temperature is {temp_previous}° before tor freq calib')
+        for freq in self.RU.DL_FREQ_COMP_LIST:
+            self.SA.set_center(freq)
+            self.tx_carrier_setup(branch = branch, cbw=20, freq=freq)
+            tor_pm = self.RU.get_tor_pm(branch=branch, aver_cnt=10)
+            tor_pm_list.append(tor_pm)
+            arp_pm = self.SA.get_chp(aver=2)
+            arp_pm_list.append(arp_pm)
+            self.RU.set_off_all()
+            self.logger.critical(f' ARP power = {arp_pm} dBm while Tor PM = {tor_pm} dBFs')
+        temp_current = self.RU.read_temp_pa(branch)
+        self.logger.critical(f'Branch {branch} PA temperature is {temp_current}° after tor freq calib')
+        #tor_freq_comp_list = [tor_pm - tor_target for tor_pm in tor_pm_list] -[arp_pm - arp_target for arp_pm in arp_pm_list]
+        tor_freq_comp_list = [tor_target-tor_pm_list[i] -(arp_target-arp_pm_list[i]) for i in range(0, len(arp_pm_list))]
+        self.logger.critical(f'tor frequency compensation table = {tor_freq_comp_list }')
+        freq_list = self.RU.DL_FREQ_COMP_LIST
+        freq_list = [freq_list[i] - self.RU.DL_CENT_FREQ for i in range(0, len(freq_list))]
+        self.logger.critical(f'tor frequency list = {freq_list}')
+        plt.plot(freq_list, tor_freq_comp_list)
+        plt.xlabel('Frequency: MHz')
+        plt.ylabel('Tor gain: dB ')
+        #plt.grid()
+        plt.title(f"Tor gain frequency compensation @ ARP power = {arp_target}dBm")
+        dt = datetime.now()
+        filename = dt.strftime("Tor gain frequency compensation_%Y%m%d_%H%M%S.png")
+        plt.savefig(filename)
+        plt.close()
+
+        return tor_pm_list, arp_pm_list
 
 if __name__ == '__main__':
     RuCalib = Calib()
-
-    chp1 = RuCalib.SA.set_chp(center=RuCalib.RU.DL_CENT_FREQ, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
-                              rlev=-10, offs=41.7, scale= 5)
+    freq = RuCalib.RU.DL_CENT_FREQ
+    offs = -RuCalib.Station.get_tx_IL(freq)
+    chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
+                              rlev=-10, offs= offs, scale= 5)
+    backoff = 6
+    arp_target = float(RuCalib.RU.MAX_POWER_PER_ANT/100)-backoff
+    tor_target = -15-backoff
     # RU = RU.RU(com_id=3, baud_rate=115200, t=1)
     # active = True
     try:
@@ -256,7 +312,18 @@ if __name__ == '__main__':
             RuCalib.logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
 
             RuCalib.tx_carrier_setup(branch, cbw=20, freq=RuCalib.RU.DL_CENT_FREQ)
-            RuCalib.tx_power_adjustment(branch, target=41.2, error=0.2)
+            (tx_alg_dsa_gain_set, tx_dpd_post_vca_gain_set)=RuCalib.tx_power_adjustment(branch, target=40, error=0.2)
+
+            # start tor dsa lin
+            RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
+            tor_dsa_norm_gain = RuCalib.tor_dsa_lin( normalized_zero=-7)
+            RuCalib.RU.set_tor_alg_dsa_gain(branch, tor_dsa_norm_gain)
+
+            # start freq comp calib
+            (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
+            RuCalib.logger.critical(f'ARP Power is {arp_pm_list}')
+            RuCalib.logger.critical(f'Tor power is {tor_pm_list}')
+
         while True:
             # myRU.init_check()
             RuCalib.logger.info(f'total consumption is {round(RuCalib.PS.get_consumption())} W')
