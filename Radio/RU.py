@@ -20,6 +20,46 @@ import logging
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
+        self.TX_ALG_DSA_MAX_GAIN = 0
+        self.TX_ALG_DSA_MIN_GAIN = -39
+        self.TX_ALG_DSA_STEP = 1
+        self.TX_DIG_DSA_MAX_GAIN = 3
+        self.TX_DIG_DSA_MIN_GAIN = -20.875
+        self.TX_DIG_DSA_STEP = 0.125
+        self.TX_DPD_POST_VCA_MAX_GAIN = 3.0
+        self.TX_DPD_POST_VCA_MIN_GAIN = -20
+        self.TX_DPD_POST_VCA_STEP = 0.01
+        self.TOR_ALG_DSA_MAX_GAIN = 0
+        self.TOR_ALG_DSA_MIN_GAIN = -16
+        self.TOR_ALG_DSA_STEP = 1
+        self.RX_ALG_DSA_MAX_GAIN = 0
+        self.RX_ALG_DSA_MIN_GAIN = -28
+        self.RX_ALG_DSA_STEP = 1
+        self.RX_DDC_VCA_MAX_GAIN = 3
+        self.RX_DDC_VCA_MIN_GAIN = -20
+        self.RX_DDC_VCA_STEP = 0.01
+        self.TX_ALG_DSA_INIT = -25# dB
+        self.TX_DIG_DSA_INIT = 0
+        self.TX_DPD_POST_VCA_INIT = 0 #2.9966158390047792
+        self.TX_DPD_PRE_VCA_INIT = 2.9966158390047792
+        self.TOR_ALG_DSA_GAIN_INIT = -10
+        self.DRIVER_MAIN_INIT_VALUE = '0x600'
+        self.DRIVER_PEAK_INIT_VALUE = '0x470'
+        self.FINAL_MAIN_INIT_VALUE = '0x600'
+        self.FINAL_PEAK_INIT_VALUE = '0x550'
+        self.DRIVER_BIAS_TARGET = 70
+        self.FINAL_BIAS_TARGET = 180
+        self.NAME = 'ORU1226'
+        self.NUM_ANT_PORTS_DL = 4
+        self.NUM_ANT_PORTS_UL = 4
+        self.MAX_POWER_PER_ANT = 4600 #dBm
+        self.BAND_NUMBER = 'Band_N77.A'
+        self.DL_MIN_FREQ = 3600 #MHz
+        self.DL_MAX_FREQ = 3800 #MHz
+        self.DL_CENT_FREQ = round((self.DL_MIN_FREQ + self.DL_MAX_FREQ)/2)
+        self.UL_MIN_FREQ = 3600  # MHz
+        self.UL_MAX_FREQ = 3800  # MHz
+        self.DL_CENT_FREQ = round((self.UL_MIN_FREQ + self.UL_MAX_FREQ) / 2)
         self.logger = logging.getLogger('root')
         self._mycom = Com.Com(3, 115200, 0.5)
 
@@ -38,27 +78,7 @@ class RU:
             answer = self._mycom.send_read_cmd('')
             search_obj = re.search(terminator, answer, re.M | re.I)
         self.logger.info('RU connected successful')
-        self.TX_ALG_DSA_MAX_GAIN = 0
-        self.TX_ALG_DSA_MIN_GAIN = 30
-        self.TX_ALG_DSA_STEP = 1
-        self.TX_DPD_POST_VCA_MAX_GAIN = 3.0
-        self.TX_DPD_POST_VCA_MIN_GAIN = -3.0
-        self.TX_DPD_POST_VCA_STEP = 0.01
-        self.TOR_ALG_DSA_MAX_GAIN = 0
-        self.TOR_ALG_DSA_MIN_GAIN = -16
-        self.TOR_ALG_DSA_STEP = 1
-        self.RX_ALG_DSA_MAX_GAIN = 0
-        self.RX_ALG_DSA_MIN_GAIN = -28
-        self.RX_ALG_DSA_STEP = 1
-        self.RX_DDC_VCA_MAX_GAIN = 3
-        self.RX_DDC_VCA_MIN_GAIN = -3
-        self.RX_DDC_VCA_STEP = 0.01
-        self.DRIVER_MAIN_INIT_VALUE = '0x600'
-        self.DRIVER_PEAK_INIT_VALUE = '0x470'
-        self.FINAL_MAIN_INIT_VALUE = '0x600'
-        self.FINAL_PEAK_INIT_VALUE = '0x550'
-        self.DRIVER_BIAS_TARGET = 70
-        self.FINAL_BIAS_TARGET = 180
+
         self.set_init(branch_set = ['A','B','C','D'])
     #def write(self):
 
@@ -434,11 +454,11 @@ class RU:
         self.logger.info('**********************set tx alg dsa****************')
         branch = self.__branch_def_num(branch)
         if gain >0 or gain < -39:
-            self.logger.info(f'tx branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'tx branch {branch} alg dsa {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain))
         cmd = f'spi DSA setTxAnal {branch} {gain}'
-        #self.logger.info(cmd)
+        self.logger.info(f'branch {branch} tx alg dsa is set to {gain}')
         self._mycom.send_cmd(cmd)
 
     def set_tx_dig_dsa_gain(self, branch, gain):
@@ -447,7 +467,7 @@ class RU:
         branch = self.__branch_def_num(branch)
         self.logger.info('*****************set tx dig dsa *********************')
         if gain >3 or gain < -20.875:
-            self.logger.info(f'tx branch {branch} {str(gain)} is out of range')
+            self.logger.info(f'tx branch {branch} dig dsa {str(gain)} is out of range')
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain*100))
         cmd = f'spi DSA setTxDigt {branch} {gain}'
@@ -508,7 +528,7 @@ class RU:
         #         tmp = re.findall(search, tmp)[0].strip()[2:6]
         tmp = self.get_dpd_post_vca_gain_reg(branch)
         dpd_post_vca_gain = 20*math.log10(int(tmp, 16)/16384)
-        #self.logger.info(dpd_post_vca_gain)
+        self.logger.info(f' dpd post vca gain is set to{dpd_post_vca_gain} dB')
         return dpd_post_vca_gain
 
     def get_dpd_post_vca_gain_reg(self, branch):
@@ -527,7 +547,7 @@ class RU:
                 dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[2:6]
             else:
                 dpd_post_vca_gain_reg = re.findall(search, tmp)[0].strip()[6:10]
-        self.logger.info(f' branch {branch} dpd post vca gain reg = {dpd_post_vca_gain_reg}')
+        self.logger.debug(f' branch {branch} dpd post vca gain reg = {dpd_post_vca_gain_reg}')
         return  dpd_post_vca_gain_reg
 
     def get_dpd_pre_vca_gain_reg(self, branch):
@@ -623,7 +643,7 @@ class RU:
                 new = (previous << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1825 {new}'
-        #self.logger.info(f'branch {branch} dpd post vca gain reg is set to {new}')
+        self.logger.info(f'branch {branch} dpd post vca gain reg is set to {new}')
         self._mycom.send_cmd(cmd)
 
     def get_rx_alg_dsa_gain(self, branch):
@@ -1066,16 +1086,16 @@ class RU:
         # read torpm
 
         if True:
-
-
-                self.set_tx_alg_dsa_gain(branch, -25)
+            for branch in branch_set:
+                self.set_tx_alg_dsa_gain(branch, self.TX_ALG_DSA_INIT)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
                 self.logger.info(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
 
+                self.set_tx_dig_dsa_gain(branch, self.TX_DIG_DSA_INIT)
                 tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
                 self.logger.info(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
 
-                self.set_dpd_post_vca_gain(branch, 3)
+                self.set_dpd_post_vca_gain(branch, self.TX_DPD_POST_VCA_INIT)
                 tx_vca_dpd_post_gain = self.get_dpd_post_vca_gain(branch)
                 self.logger.info(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
 
@@ -1085,13 +1105,13 @@ class RU:
 
 
 
-                self.set_dpd_pre_vca_gain(branch, 3)
+                self.set_dpd_pre_vca_gain(branch, self.TX_DPD_PRE_VCA_INIT)
                 tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain(branch)
                 self.logger.info(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
 
 
-                self.set_tor_alg_dsa_gain(branch, -10)
+                self.set_tor_alg_dsa_gain(branch, self.TOR_ALG_DSA_GAIN_INIT)
                 tor_alg_dsa_gain = self.get_tor_alg_dsa_gain(branch)
                 self.logger.info(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
 

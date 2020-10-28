@@ -17,6 +17,7 @@ class SA:
         self._instr = rm.open_resource(address)
         self._instr.timeout = 10000
         self._instr.chunk_size = 102400
+        self._delay = 0.1
         self.name = self._instr.query('*IDN?')[:-1]
         self.set_init()
         self.logger.info(f'{self.name} has been connected successfully' )
@@ -218,6 +219,10 @@ class SA:
         cmd = f'CHP:FREQ:SPAN {target} MHz'
         self.write_value(cmd)
 
+    def set_chp_span_auto(self):
+        cmd = 'CHP:FREQ:SPAN:AUTO ON'
+        self.write_value(cmd)
+
     def set_chp_sweep_time(self, target):
         cmd = f'CHP:SWE:TIME {target} s'
         self.write_value(cmd)
@@ -351,17 +356,23 @@ class SA:
     # target unit dBm
     # set reference level
     def set_rlev(self, target):
-        cmd = f':DISP:WIND:TRAC:Y:RLEV {target} '
+        target = str(target)
+        cmd = f':DISP:WIND:TRAC:Y:RLEV {target}dBm '
         self.write_value(cmd)
 
         # target  unit db
         # set amplitude offset
 
+    def set_chp_rlev(self, target):
+        target = str(target)
+        cmd = f':DISP:CHP:VIEW:WIND:TRAC:Y:RLEV {target}dBm '
+        self.write_value(cmd)
+
+        # target  unit db
+        # set amplitude offset
     def set_rlev_offs(self, target):
         cmd = f'DISP:WIND:TRAC:Y:RLEV:OFFS {target}'
         self.write_value(cmd)
-
-        #
 
     def set_rbw(self, target):
         cmd = f':BAND {target} KHz'
@@ -412,9 +423,21 @@ class SA:
     def take_one_sweep(self):
         self.write_value('INIT;*WAI')
 
-    def get_chp(self):
+    def get_chp(self, aver = 1):
         cmd = 'FETCh:CHPower:CHPower?'
-        return self.read_value(cmd)[0]
+        if aver == 1:
+            self.take_one_sweep()
+            # need to add wait time if average mode
+            time.sleep(self._delay)
+            return self.read_value(cmd)[0]
+        else:
+            power = []
+            for i in range(round(aver)):
+                self.take_one_sweep()
+                # need to add wait time if average mode
+                time.sleep(self._delay)
+                power.append(self.read_value(cmd)[0])
+            return sum(power)/len(power)
 
     def set_cd(self, cd):
         cmd = f'MMEM:CDIR {cd}'
@@ -471,13 +494,14 @@ class SA:
         self.set_meas('CHP')
         self.set_center(center)
         #self.set_chp_span(span)
-        self.set_rlev(rlev)
+        self.set_chp_rlev(rlev)
         self.set_rlev_offs(offs)
-        #self.set_chp_scale(scale)
-        self.set_chp_scale_auto()
+        self.set_chp_scale(scale)
+        #self.set_chp_scale_auto()
         self.set_chp_sweep_time(sweep_time)
         self.set_chp_rbw(rbw)
         self.set_chp_int_bw(int_bw)
+        #self.set_chp_span_auto()
         self.set_data_form('ASC')
         self.set_cont(1)
         if sweep_count == 0:
@@ -488,6 +512,7 @@ class SA:
         self.take_one_sweep()
         # need to add wait time if average mode
         time.sleep(sweep_time*sweep_count)
+        self._delay = sweep_time*sweep_count
         self.set_chp_title('O-RU ACP Measurement')
         return self.get_chp()
 
