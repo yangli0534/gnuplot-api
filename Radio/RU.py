@@ -8,7 +8,7 @@
 import sys
 sys.path.append(r'..\Station')
 sys.path.append(r'..\Lib')
-
+sys.path.append(r'..\Radio')
 import Com
 import PS
 import time
@@ -18,12 +18,15 @@ from threading import Thread
 #from Lib import PS
 import logging
 import numpy as np
+import DB
+
 
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
         self.logger = logging.getLogger('root')
         self._mycom = Com.Com(com_id, baud_rate, t)
+        self._DB = DB.DB()
         self.TX_ALG_DSA_MAX_GAIN = 0
         self.TX_ALG_DSA_MIN_GAIN = -39
         self.TX_ALG_DSA_STEP = 1
@@ -75,14 +78,14 @@ class RU:
                                             self.UL_FREQ_COMP_STEP)]
 
         answer = self._mycom.send_read_cmd('')
-        terminator = 'root@ORU1226:~#'
+        self.__terminator = 'root@ORU1226:~#'
 
-        search_obj = re.search(terminator, answer, re.M | re.I)
+        search_obj = re.search(self.__terminator, answer, re.M | re.I)
         while (not search_obj):
             self.logger.info('RU Connecting...')
             time.sleep(1)
             answer = self._mycom.send_read_cmd('')
-            search_obj = re.search(terminator, answer, re.M | re.I)
+            search_obj = re.search(self.__terminator, answer, re.M | re.I)
         self.logger.info('RU connected successful')
 
         self.set_init(branch_set = ['A','B','C','D'])
@@ -1181,14 +1184,55 @@ class RU:
     def __del__(self):
         print('RU has been disconnected')
 
+    def db_read_single(self, key):
+        cmd = f'database read {key}'
+        tmp = self._mycom.send_read_cmd(cmd)
+        #print(tmp)
+        #search = f'{key}(.+?)\n'
+        search = r'.*\s+(\d+)'
+        #print(search)
+        tmp = re.search(search, tmp)
+        tmp = tmp.group(1)
+        return tmp
+
+    def db_read_table(self, key):
+        cmd = f'database read {key}'
+        tmp = self._mycom.send_read_cmd(cmd)
+        #print(tmp)
+        #print(tmp)
+        #search = re.compile(r'\[.*\]', re.DOTALL)
+        search = re.compile(r'\[-?(\d+),-?(\d+)]', re.DOTALL)
+        #search = r'.*\s+(\d+)'
+        #print(search)
+        tmp = search.findall(tmp)
+        #tmp = tmp.group(1)
+        return tmp
+
+    def db_write_single(self, key, value):
+        cmd = f'database write {key} -m {value}'
+        self._mycom.send_read_cmd(cmd)
+
+    def db_save(self):
+        cmd = f'database save hw'
+        self._mycom.send_read_cmd(cmd)
 
 if __name__ == '__main__':
-    self = RU(com_id = 3 , baud_rate = 115200 , t = 1)
-    myps = PS.PS('TCPIP0::172.16.1.57::inst0::INSTR')
+    RU = RU(com_id = 3 , baud_rate = 115200 , t = 1)
+    #myps = PS.PS('TCPIP0::172.16.1.57::inst0::INSTR')
     #active = True
     try:
-        while True:
-            self.set_init()
-            print(f'total consumption is {round(myps.get_consumption())} W')
+        tmp=RU.db_read_single('/rhb/rx_db/linkGain')
+        print(tmp)
+        tmp = RU.db_read_table('/rhb/rx_db/rx:1/tempTab')
+        for i in range(0,len(tmp)):
+            print(f'tmp = {tmp[i][0]}, compensation = {tmp[i][1]}')
+
+        RU.db_write_single('/rhb/rx_db/linkGain', 280)
+        RU.db_save()
+
+        tmp = RU.db_read_single('/rhb/rx_db/linkGain')
+        print(tmp)
+
+
     except KeyboardInterrupt:
         pass
