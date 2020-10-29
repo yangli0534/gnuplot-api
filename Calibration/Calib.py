@@ -13,10 +13,11 @@ sys.path.append(r'..\Lib')
 sys.path.append(r'..\Radio')
 sys.path.append(r'..\Common')
 
-import PS
+#import PS
 import SA
 import PM
 import RU
+import SG
 import matplotlib.pyplot as plt
 import time
 import math
@@ -39,11 +40,12 @@ class Calib(object):
         filename = dt.strftime("../../../Result/ORU1126 calibration and test log_%Y%m%d_%H%M%S.txt")
         # set up logging to file - see previous section for more details
         self.logger = log.setup_custom_logger('root', filename)
-
-        self.PS = PS.PS('TCPIP0::172.16.1.252::inst0::INSTR')
-        self.SA = SA.SA('TCPIP0::172.16.1.66::inst0::INSTR')
-        self.RU = RU.RU(com_id=3, baud_rate=115200, t=1)
         self.Station = Station.Station()
+        #self.PS = PS.PS(self.Station.get_instr_addr('PS'))
+        #self.SA = SA.SA(self.Station.get_instr_addr('PS'))
+        self.SG = SG.SG(self.Station.get_instr_addr('SG'))
+        self.RU = RU.RU(com_id=self.Station.get_instr_addr('RU'), baud_rate=115200, t=1)
+
     def __del__(self):
         print('Calibration stopped')
 
@@ -75,10 +77,49 @@ class Calib(object):
         # plt.text(x, y+0.001, '%.2f' % y, ha='center', va= 'bottom',fontsize=9)
         plt.title(f"Tor DSA vs Tor PM @ ARP power = {arp_power}dBm")
         dt = datetime.now()
-        filename = dt.strftime("Tor DSA vs Tor PM_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime(r"../../../Result/Tor DSA vs Tor PM_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
         return tor_dsa_norm_gain
+
+    def rx_dsa_vlin(self, branch, stim_amp, target):
+        self.logger.info('****************RX DSA VLIN***********************************')
+        rx_pm_list = []
+        rx_dsa_list = []
+        self.RU.set_rx_vca_gain(branch, self.RU.RX_DDC_VCA_GAIN_INIT)
+        for rx_dsa_set in range(self.RU.RX_ALG_DSA_MIN_GAIN, self.RU.RX_ALG_DSA_MAX_GAIN + 1,
+                                 self.RU.RX_ALG_DSA_STEP):
+            self.RU.set_rx_alg_dsa_gain(branch, rx_dsa_set)
+            rx_dsa_list.append(rx_dsa_set)
+            self.logger.info(f' Rx branch A dsa is set to {rx_dsa_set} dB')
+            rx_pm = self.RU.get_rx_pm(branch=branch, aver_cnt=10)
+            self.logger.info(f' branch A rx pm is  {rx_pm} dBfs')
+            rx_pm_list.append(rx_pm)
+        self.logger.critical(f'Rx DSA has been set to{rx_dsa_list}')
+        self.logger.critical(f'Rx PM = {rx_pm_list}')
+        #rx_pm_norm = [x - max(rx_pm_list) for x in rx_pm_list]
+        # tor_pm_norm[:] = [x - normalized_zero for x in tor_pm_norm]
+        #pos = round(min(range(len(rx_pm_norm)), key=lambda i: abs(rx_pm_norm[i] - (normalized_zero))))
+        #rx_dsa_norm_gain = rx_dsa_list[pos]
+        #self.logger.critical(f'Rx DSA gain {rx_dsa_norm_gain} will be normalized as zero and written to database ')
+        plt.plot(rx_dsa_list, rx_pm_list)
+        plt.xlabel('Rx alg DSA set: dB')
+        plt.ylabel('Rx power meter: dBFs. average cnt = 10')
+        plt.grid()
+        # for x, y in zip(tor_dsa_list, tor_pm_list):
+        # plt.text(x, y+0.001, '%.2f' % y, ha='center', va= 'bottom',fontsize=9)
+        plt.title(f"Rx DSA vs Rx PM ")
+        dt = datetime.now()
+        filename = dt.strftime(r"../../../Result/Rx DSA vs Rx PM_%Y%m%d_%H%M%S.png")
+        plt.savefig(filename)
+        plt.close()
+
+        gain_list = [rx_pm_list[i] - stim_amp for i in range(0, len(rx_pm_list))]
+        pos = round(min(range(len(gain_list)), key=lambda i: abs(gain_list[i] - target)))
+        dsa_set = rx_dsa_list[pos]
+        self.logger.critical(f'Rx DSA will be set to {dsa_set}')
+        return dsa_set
+        #return tor_dsa_norm_gain
 
     def next_gain_adjustment(self, last_coarse, last_fine, last_output, coarse_high, coarse_low, fine_high, fine_low,
                              coarse_step, fine_step, target, error):
@@ -167,6 +208,30 @@ class Calib(object):
         self.logger.info(f'branch {branch} output has reached target={target}dBm, now it is {last_output} dBm')
         return last_tx_alg_dsa_gain, last_dpd_post_vca_gain
 
+    def rx_gain_calib(self, branch, dsa_set, stim_amp):
+        target = self.RU.RX_GAIN_TARGET
+        error = 0.3
+        self.RU.set_rx_alg_dsa_gain(branch, dsa_set)
+        vca_gain_set = self.RU.get_rx_vca_gain(branch)
+        while True:
+            actual_gain = self.RU.get_rx_pm(branch, aver_cnt=5) - stim_amp
+            self.logger.critical(f'actual gain is {actual_gain}')
+            vca_gain_set = self.RU.get_rx_vca_gain(branch)
+            if abs(target - actual_gain) < error:
+                break
+            elif (target - actual_gain + vca_gain_set) < self.RU.RX_DDC_VCA_MAX_GAIN:
+                vca_gain_set = target - actual_gain + vca_gain_set
+                self.RU.set_rx_vca_gain(branch, vca_gain_set)
+            elif (target - actual_gain) > self.RU.RX_DDC_VCA_MAX_GAIN:
+                self.logger.critical(f'Rx branch {branch} dynamic range is not enough reach target')
+                break
+            self.logger.critical(f'vca will be set to {vca_gain_set}')
+        actual_gain = self.RU.get_rx_pm(branch, aver_cnt=5) - stim_amp
+        return vca_gain_set, actual_gain
+        #return False
+
+
+
     def pa_driver_bias_calib(self, branch):
         # revise from Jim version
         self.RU.reset_pa_driver()
@@ -231,6 +296,54 @@ class Calib(object):
         else:
             return False
 
+    def rx_carrier_setup(self, branch='A', freq=3700):
+        # cbw:carrier bandwidth MHz
+        # set carrier and pa on
+        # if self.RU.set_data_on(bandwidth=100):
+        freq = int(freq)
+        self.RU.set_off_all()
+        if self.RU.set_carrier(type='rx', freq=freq, bandwidth=100):
+            self.RU.set_rx_on()
+            return True
+        else:
+            self.logger.critical('rx carrier setup failed')
+            return False
+    def rx_freq_calib(self, stimuli, branch, dsa_set, vca_set):
+        self.RU.set_rx_alg_dsa_gain(branch, dsa_set)
+        self.RU.set_rx_vca_gain(branch, vca_set)
+        freq_ref = self.RU.UL_CENT_FREQ
+        gain_ref = self.RU.get_rx_pm(branch, aver_cnt=5) - stimuli
+        self.logger.critical(f'Reference gain = {gain_ref}dB at frequency {freq_ref} MHz')
+        IL_ref = self.Station.get_rx_IL(freq_ref)
+        temp_previous = self.RU.read_temp_pa(branch)
+        self.logger.info(f'reference temp = {temp_previous} degree before calibration')
+        rx_pm_list = []
+        freq_list = []
+        gain_list = []
+        self.logger.critical('#######START RX GAIN FREQ COMP##############')
+        for freq in self.RU.UL_FREQ_COMP_LIST:
+            self.SG.set_freq(freq)
+            self.rx_carrier_setup(branch, freq)
+            time.sleep(0.5)
+            rx_pm = self.RU.get_rx_pm(branch, aver_cnt = 5)
+            gain = rx_pm -(stimuli+self.Station.get_rx_IL(freq)-IL_ref)
+            gain_norm = gain -gain_ref
+            rx_pm_list.append(rx_pm)
+            freq_list.append(freq)
+            gain_list.append(gain_norm)
+            self.logger.info(f'Rx PM = {rx_pm} dBFs, gain = {gain}dB on freq = {freq} MHz')
+        temp_after = self.RU.read_temp_pa(branch)
+        self.logger.info(f'reference temp = {temp_after} degree after calibration')
+        plt.plot(freq_list, gain_list)
+        plt.xlabel('Frequency: MHz')
+        plt.ylabel('Gain Flatness ')
+        # plt.grid()
+        plt.title(f"Rx frequency compensation ")
+        dt = datetime.now()
+        filename = dt.strftime("../../../Result/Rx frequency compensation_%Y%m%d_%H%M%S.png")
+        plt.savefig(filename)
+        plt.close()
+        self.logger.critical('#######Finish RX GAIN FREQ COMP##############')
     def tx_sweep_read_tor_pm(self, branch, arp_target, tor_target):
         self.RU.set_off_all()
         tor_pm_list = []
@@ -260,7 +373,7 @@ class Calib(object):
         #plt.grid()
         plt.title(f"Tor gain frequency compensation @ ARP power = {arp_target}dBm")
         dt = datetime.now()
-        filename = dt.strftime("Tor gain frequency compensation_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime("../../../Result/Tor gain frequency compensation_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
 
@@ -269,66 +382,80 @@ class Calib(object):
 if __name__ == '__main__':
     RuCalib = Calib()
     freq = RuCalib.RU.DL_CENT_FREQ
+    ul_freq_center = RuCalib.RU.UL_CENT_FREQ
     offs = -RuCalib.Station.get_tx_IL(freq)
-    chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
-                              rlev=-10, offs= offs, scale= 5)
+    stimuli = -50
+    rx_cable_IL = RuCalib.Station.get_rx_IL(ul_freq_center)
+    #chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
+    #                          rlev=-10, offs= offs, scale= 5)
+    RuCalib.SG.load_waveform(waveform='LTE20', rf_freq=ul_freq_center, amp=stimuli-rx_cable_IL)
     backoff = 6
     arp_target = float(RuCalib.RU.MAX_POWER_PER_ANT/100)-backoff
     tor_target = -15-backoff
+
     # RU = RU.RU(com_id=3, baud_rate=115200, t=1)
     # active = True
     try:
 
         record = ()
         for branch in ['B']:
-            torpm = RuCalib.RU.get_tor_pm(branch)
-            RuCalib.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
+            # torpm = RuCalib.RU.get_tor_pm(branch)
+            # RuCalib.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
             adcpm = RuCalib.RU.get_ADC_pm(branch)
-            RuCalib.logger.debug(f'branch {branch} adc power  = {adcpm} dBm')
-            dpdpm = RuCalib.RU.get_DPD_pm(branch)
-            RuCalib.logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
+            RuCalib.logger.debug(f'branch {branch} adc power  = {adcpm} dBFS')
+            # dpdpm = RuCalib.RU.get_DPD_pm(branch)
+            # RuCalib.logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
+            ddcpm = RuCalib.RU.get_rx_pm(branch)
+            RuCalib.logger.debug(f'branch {branch} rx power  = {ddcpm} dBFS')
 
-            # pa bias calib
-            RuCalib.logger.critical(f'##############START　PA BIAS CALIBRATION BRANCH {branch} ##################')
-            #bias = RuCalib.calib_pa_bias(branch)
-            bias = [hex(1704), hex(747), hex(1654), hex(1354)]
-            RuCalib.logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {int(bias[0], 16)}')
-            RuCalib.logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {int(bias[1], 16)}')
-            RuCalib.logger.critical(f'The calc DAC value in main of driver of branch {branch} is {int(bias[2], 16)}')
-            RuCalib.logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {int(bias[3], 16)}')
-            RuCalib.logger.critical(f'##############　PA BIAS CALIBRATION BRANCH {branch} FINISHED ###############')
+            # # pa bias calib
+            # RuCalib.logger.critical(f'##############START　PA BIAS CALIBRATION BRANCH {branch} ##################')
+            # #bias = RuCalib.calib_pa_bias(branch)
+            # bias = [hex(1704), hex(747), hex(1654), hex(1354)]
+            # RuCalib.logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {int(bias[0], 16)}')
+            # RuCalib.logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {int(bias[1], 16)}')
+            # RuCalib.logger.critical(f'The calc DAC value in main of driver of branch {branch} is {int(bias[2], 16)}')
+            # RuCalib.logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {int(bias[3], 16)}')
+            # RuCalib.logger.critical(f'##############　PA BIAS CALIBRATION BRANCH {branch} FINISHED ###############')
+            #
+            # RuCalib.logger.critical(f'##############START　CONFIG PA BIAS  BRANCH {branch} ####################')
+            #
+            # RuCalib.RU.set_pa_bias(branch, bias)
+            # RuCalib.RU.read_pa_bias(branch)
+            # RuCalib.RU.set_pa_branch(branch)
+            # RuCalib.RU.set_pa_on(branch)
+            # driver_bias_curr = RuCalib.RU.pa_driver_bias_read_curr(branch)
+            # RuCalib.logger.info(f'pa driver bias current = {driver_bias_curr} mA')
+            # final_bias_curr = RuCalib.RU.pa_final_bias_read_curr(branch)
+            # RuCalib.logger.info(f'pa final bias current = {final_bias_curr} mA')
+            # RuCalib.RU.set_off_all()
+            # RuCalib.logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
+            #
+            # RuCalib.tx_carrier_setup(branch, cbw=20, freq=RuCalib.RU.DL_CENT_FREQ)
+            # (tx_alg_dsa_gain_set, tx_dpd_post_vca_gain_set)=RuCalib.tx_power_adjustment(branch, target=40, error=0.2)
+            #
+            # # start tor dsa lin
+            # RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
+            # tor_dsa_norm_gain = RuCalib.tor_dsa_lin( normalized_zero=-7)
+            # RuCalib.RU.set_tor_alg_dsa_gain(branch, tor_dsa_norm_gain)
+            #
+            # # start freq comp calib
+            # (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
+            # RuCalib.logger.critical(f'ARP Power is {arp_pm_list}')
+            # RuCalib.logger.critical(f'Tor power is {tor_pm_list}')
 
-            RuCalib.logger.critical(f'##############START　CONFIG PA BIAS  BRANCH {branch} ####################')
+            RuCalib.logger.info('##############START RX CALIB##################')
+            RuCalib.rx_carrier_setup(branch = branch, freq = ul_freq_center)
+            dsa_set = RuCalib.rx_dsa_vlin(branch, stimuli, RuCalib.RU.RX_GAIN_TARGET)
+            (rx_vca_set, actual_gain) = RuCalib.rx_gain_calib(branch, dsa_set, stimuli)
+            RuCalib.rx_freq_calib(stimuli, branch, dsa_set, rx_vca_set)
 
-            RuCalib.RU.set_pa_bias(branch, bias)
-            RuCalib.RU.read_pa_bias(branch)
-            RuCalib.RU.set_pa_branch(branch)
-            RuCalib.RU.set_pa_on(branch)
-            driver_bias_curr = RuCalib.RU.pa_driver_bias_read_curr(branch)
-            RuCalib.logger.info(f'pa driver bias current = {driver_bias_curr} mA')
-            final_bias_curr = RuCalib.RU.pa_final_bias_read_curr(branch)
-            RuCalib.logger.info(f'pa final bias current = {final_bias_curr} mA')
-            RuCalib.RU.set_off_all()
-            RuCalib.logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
-
-            RuCalib.tx_carrier_setup(branch, cbw=20, freq=RuCalib.RU.DL_CENT_FREQ)
-            (tx_alg_dsa_gain_set, tx_dpd_post_vca_gain_set)=RuCalib.tx_power_adjustment(branch, target=40, error=0.2)
-
-            # start tor dsa lin
-            RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
-            tor_dsa_norm_gain = RuCalib.tor_dsa_lin( normalized_zero=-7)
-            RuCalib.RU.set_tor_alg_dsa_gain(branch, tor_dsa_norm_gain)
-
-            # start freq comp calib
-            (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
-            RuCalib.logger.critical(f'ARP Power is {arp_pm_list}')
-            RuCalib.logger.critical(f'Tor power is {tor_pm_list}')
-
+            RuCalib.logger.critical(f'Rx actual gain = {actual_gain}')
         while True:
             # myRU.init_check()
-            RuCalib.logger.info(f'total consumption is {round(RuCalib.PS.get_consumption())} W')
-            chp = RuCalib.SA.get_chp()
-            RuCalib.logger.info(f' carrier power is {chp} dBm')
+            #RuCalib.logger.info(f'total consumption is {round(RuCalib.PS.get_consumption())} W')
+            #chp = RuCalib.SA.get_chp()
+            #RuCalib.logger.info(f' carrier power is {chp} dBm')
             temp = RuCalib.RU.read_temp_pa('A')
             RuCalib.logger.info(f'branch A PA temperature is {round(temp)}°')
             time.sleep(0.3)

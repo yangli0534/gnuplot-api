@@ -21,9 +21,13 @@ class PS:
 
         self.logger.info(f'{self.name} has been connected successfully' )
         if not self.get_status():
+            #self.logger.critical('PS is off and turn it on now')
             self.set_init()
             self.turn_on()
-            time.sleep(10)
+            time.sleep(20)
+        #else:
+            #self.logger.critical('PS is on already')
+
 
 
 

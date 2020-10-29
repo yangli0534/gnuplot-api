@@ -6,8 +6,8 @@
 
 """
 import sys
-sys.path.append(r'D:\code\visa_tutorials\Station')
-sys.path.append(r'D:\code\visa_tutorials\Lib')
+sys.path.append(r'..\Station')
+sys.path.append(r'..\Lib')
 
 import Com
 import PS
@@ -22,6 +22,8 @@ import numpy as np
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
+        self.logger = logging.getLogger('root')
+        self._mycom = Com.Com(com_id, baud_rate, t)
         self.TX_ALG_DSA_MAX_GAIN = 0
         self.TX_ALG_DSA_MIN_GAIN = -39
         self.TX_ALG_DSA_STEP = 1
@@ -37,13 +39,15 @@ class RU:
         self.RX_ALG_DSA_MAX_GAIN = 0
         self.RX_ALG_DSA_MIN_GAIN = -28
         self.RX_ALG_DSA_STEP = 1
-        self.RX_DDC_VCA_MAX_GAIN = 3
+        self.RX_DDC_VCA_MAX_GAIN = 4
         self.RX_DDC_VCA_MIN_GAIN = -20
         self.RX_DDC_VCA_STEP = 0.01
         self.TX_ALG_DSA_INIT = -25# dB
         self.TX_DIG_DSA_INIT = 0
         self.TX_DPD_POST_VCA_INIT = 0 #2.9966158390047792
         self.TX_DPD_PRE_VCA_INIT = 2.9966158390047792
+        self.RX_ALG_DSA_GAIN_INIT = -1
+        self.RX_DDC_VCA_GAIN_INIT = 0
         self.TOR_ALG_DSA_GAIN_INIT = -10
         self.DRIVER_MAIN_INIT_VALUE = '0x600'
         self.DRIVER_PEAK_INIT_VALUE = '0x470'
@@ -61,17 +65,15 @@ class RU:
         self.DL_CENT_FREQ = round((self.DL_MIN_FREQ + self.DL_MAX_FREQ)/2)
         self.UL_MIN_FREQ = 3600  # MHz
         self.UL_MAX_FREQ = 3800  # MHz
-        self.DL_CENT_FREQ = round((self.UL_MIN_FREQ + self.UL_MAX_FREQ) / 2)
+        self.UL_CENT_FREQ = round((self.UL_MIN_FREQ + self.UL_MAX_FREQ) / 2)
         self.DL_FREQ_COMP_STEP = 20
         self.DL_FREQ_COMP_LIST = [freq for freq in np.arange(self.DL_MIN_FREQ+self.DL_FREQ_COMP_STEP/2, self.DL_MAX_FREQ, self.DL_FREQ_COMP_STEP)]
-        self.logger = logging.getLogger('root')
-        self._mycom = Com.Com(3, 115200, 0.5)
+        self.RX_GAIN_TARGET = 27
+        self.UL_FREQ_COMP_STEP = 20
+        self.UL_FREQ_COMP_LIST = [freq for freq in
+                                  np.arange(self.UL_MIN_FREQ + self.UL_FREQ_COMP_STEP / 2, self.UL_MAX_FREQ,
+                                            self.UL_FREQ_COMP_STEP)]
 
-            # answer = mycom.receive_data()
-            # answer = answer.rstrip()
-            #self.logger.info(answer)
-            # self.logger.info([ord(c) for c in answer])
-            # self.logger.info([ord(c) for c in 'root@ORU4419:~#'])
         answer = self._mycom.send_read_cmd('')
         terminator = 'root@ORU1226:~#'
 
@@ -312,19 +314,43 @@ class RU:
         dpdpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
         return dpdpm
 
-    def get_DDC_pm(self, branch):
+    def get_rx_pm(self, branch, aver_cnt = 1):
+
+        aver_cnt = round(int(aver_cnt))
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga ddcpwr {branch}'
-        tmp= self._mycom.send_read_cmd(cmd)
-        dpdpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
-        return dpdpm
+        tmp = self._mycom.send_read_cmd(cmd)
+        ddcpm = float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+        ddcpm = 0
+        # there is sw bug in read  pm and 2rd read to workaround
+        if aver_cnt == 1:
+            tmp = self._mycom.send_read_cmd(cmd)
+            ddcpm = float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return ddcpm
+        else:
+            for i in range(aver_cnt):
+                tmp = self._mycom.send_read_cmd(cmd)
+                ddcpm = ddcpm + float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return float(ddcpm / aver_cnt)
 
-    def get_ADC_pm(self, branch):
+
+    def get_ADC_pm(self, branch, aver_cnt = 1):
+        aver_cnt = round(int(aver_cnt))
         branch = self.__branch_def_alp(branch)
         cmd = f'fpga adcpwr {branch}'
-        tmp= self._mycom.send_read_cmd(cmd)
-        adcpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
-        return adcpm
+        tmp = self._mycom.send_read_cmd(cmd)
+        adcpm = float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+        adcpm = 0
+        # there is sw bug in read  pm and 2rd read to workaround
+        if aver_cnt == 1:
+            tmp = self._mycom.send_read_cmd(cmd)
+            adcpm = float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return adcpm
+        else:
+            for i in range(aver_cnt):
+                tmp = self._mycom.send_read_cmd(cmd)
+                adcpm = adcpm + float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
+            return float(adcpm / aver_cnt)
 
     def set_pa_bias(self, branch, bias=[]):
         branch = self.__branch_def_alp(branch)
@@ -429,11 +455,13 @@ class RU:
         cmd = f'fpga paCtrl turnOffAll tx'
         self._mycom.send_cmd(cmd)
 
-    def set_rx_on(self, branch):
+    def set_rx_on(self, branch='A'):
         # branch = A|B|C|D
         self.logger.info('***********set rx on****************')
         branch = self.__branch_def_alp(branch)
-        cmd = f'fpga turnonrx {branch}'
+        cmd = 'fpga w 0x2403 0x300f'##override value
+        self._mycom.send_cmd(cmd)
+        cmd = 'fpga w 0x2401 0x7fff'#override EN
         self._mycom.send_cmd(cmd)
 
     def get_tx_alg_dsa_gain(self, branch):
@@ -715,15 +743,17 @@ class RU:
                 self.logger.info('!!!!!!!!!!!!!!!!!!!data sent failed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             return status
 
-    def set_carrier(self, type = 'tx', freq = 3700, bandwidth = 100):
+    def set_carrier(self, type = 'rx', freq = 3700, bandwidth = 100):
+        freq = round(int(freq))
         cmd = f'carriersetup {type} {freq} {bandwidth}'
         tmp = self._mycom.send_read_cmd(cmd)
         status = re.search('root@ORU1226:~#', tmp, re.M | re.I)!= None
         if status:
-            self.logger.info('******************carrier has been setup successfully******************')
+            self.logger.info(f'***********{type} carrier freq={freq} has been setup successfully*******')
         else:
             self.logger.info('!!!!!!!!!!!!!!!!carrier setup failed!!!!!!!!!!!!!!!!!!!!!!!')
         return status
+
 
     def get_dpd_status(self):
         self.logger.info('******************check dpd status******************')
@@ -1121,13 +1151,13 @@ class RU:
 
 
 
-                # self.set_rx_alg_dsa_gain(branch, -10)
-                # rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
-                # self.logger.info(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
-                # bug in ddc write which impact
-                # self.set_rx_vca_gain(branch, -2)
-                # rx_vca_gain = self.get_rx_vca_gain(branch)
-                # self.logger.info(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
+                self.set_rx_alg_dsa_gain(branch, self.RX_ALG_DSA_GAIN_INIT)
+                rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
+                self.logger.info(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
+                #bug in ddc write which impact
+                self.set_rx_vca_gain(branch, self.RX_DDC_VCA_GAIN_INIT)
+                rx_vca_gain = self.get_rx_vca_gain(branch)
+                self.logger.info(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
 
                 for branch in branch_set:
                     torpm = self.get_tor_pm(branch)

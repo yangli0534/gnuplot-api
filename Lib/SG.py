@@ -4,6 +4,15 @@ Created on Wed Jan  8 14:22:56 2020
 
 @author: Leon
 """
+
+import sys
+
+sys.path.append(r'..\Station')
+sys.path.append(r'..\Lib')
+sys.path.append(r'..\Radio')
+sys.path.append(r'..\Common')
+
+
 import pyvisa
 import time
 import datetime
@@ -14,8 +23,12 @@ import cmath
 from pathlib import Path
 import os
 
+import Station
+import logging
+
 class SG:
     def __init__(self, address):
+        self.logger = logging.getLogger('root')
         rm = pyvisa.ResourceManager()
         # instr = rm.open_resource('GPIB0::18::INSTR')
         self._instr = rm.open_resource(address)
@@ -187,13 +200,19 @@ class SG:
         self.set_sg(rf_freq, amp)
         #return tmp
 
-    def test_waveform(self, rf_freq=3000, amp=-30):
+    def load_waveform(self, waveform = 'LTE20', rf_freq=3000, amp=-30):
 
         # rf_freq MHz
         # amp dBm
         #sample_rate = 15360000
         #print(os.getcwd())
-        filename = "../waveform/NR-FR1-TM3.1_FDD_20MHz_fs30720000.txt"
+        waveform_file = {'LTE20':'../waveform/LTE_FDD_20MHz_TM3.1_fs30720000_NDLRB100.txt',
+                    'LTE5':'../waveform/LTE_FDD_5MHz_TM3.1_fs7680000_NDLRB25.txt',
+                    'NR20':'../waveform/NR-FR1-TM3.1_FDD_20MHz_fs30720000.txt',
+                    'NR100':'../waveform/NR-FR1-TM3.1_FDD_100MHz_fs122880000.txt'
+                    }
+        
+        filename = waveform_file[waveform]
         waveform = self.read_waveform(filename)
         sample_rate = waveform.pop(0)
         waveform_real = np.array(waveform[::2])
@@ -212,9 +231,10 @@ class SG:
         # return Markers
         # self.write_value('SOURce:FREQuency 3000000000')
         # self.write_value('POWer -30')
-
+        self.logger.info('loading waveform to SG')
         self.load_wv(IQData, filename[12:35], str(sample_rate), 'play', 'no_normscale', Markers)
         # self.write_value('OUTP:STAT ON')
+        self.logger.info(' finish loading waveform to SG')
         self.set_sg(rf_freq, amp)
 
     def load_wv(self, IQData, ArbFileName, sample_rate, play_flag, normscale_flag, markers):
@@ -355,13 +375,15 @@ class SG:
 
 if __name__ == '__main__':
     #mysg = SG('GPIB0::20::INSTR')
-    mysg = SG('TCPIP0::172.16.1.199::inst0::INSTR')
+    Station = Station.Station()
+    print(Station.get_instr_addr('SG'))
+    mysg = SG(Station.get_instr_addr('SG'))
     print(mysg.name)
     #mysg.set_sg(freq = 3720, amp = -50)
     #mysg.set_sg_list(3680, 3720, 10, 0.5, -5)
     #timer = threading.Timer(10, mysg.tmp)
     #print(mysg.gen_wv())
     #mysg.test_wv_mtone(sample_rate=125e6, bandwith=4.5e6, step = 0.5e6, rf_freq= 3000, amp = -20)
-    mysg.test_waveform(rf_freq = 3700, amp = -0)
+    mysg.load_waveform(waveform='LTE20', rf_freq = 3700, amp = -40)
     #mysg.set_close()
 
