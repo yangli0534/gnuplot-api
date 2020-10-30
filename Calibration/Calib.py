@@ -66,7 +66,8 @@ class Calib(object):
         tor_pm_norm = [ x -  max(tor_pm_list) for x in tor_pm_list]
         #tor_pm_norm[:] = [x - normalized_zero for x in tor_pm_norm]
         pos= round(min(range(len(tor_pm_norm)), key=lambda i: abs(tor_pm_norm[i] - (normalized_zero))))
-        tor_dsa_norm_gain = tor_dsa_list[pos]
+        #tor_dsa_norm_gain = tor_dsa_list[pos]
+        tor_dsa_norm_gain = normalized_zero
         self.logger.critical(f'Tor DSA gain {tor_dsa_norm_gain} will be normalized as zero and written to database ')
         arp_power = self.SA.get_chp()
         plt.plot(tor_dsa_list, tor_pm_list)
@@ -487,7 +488,7 @@ if __name__ == '__main__':
             # start tor dsa lin
             RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
             tor_dsa_norm_gain = RuCalib.tor_dsa_lin(branch,  normalized_zero=-7)
-            RuCalib.RU.set_tor_alg_dsa_gain(branch, -8)
+            RuCalib.RU.set_tor_alg_dsa_gain(branch, tor_dsa_norm_gain)
 
             # start freq comp calib
             (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
