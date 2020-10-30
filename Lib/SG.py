@@ -35,7 +35,7 @@ class SG:
         self._instr.timeout = 10000
         self._instr.chunk_size = 102400
         self.name = self._instr.query('*IDN?')[:-1]
-        self.set_init()
+        #self.set_init()
         print(f'{self.name} has been connected successfully')
 
 

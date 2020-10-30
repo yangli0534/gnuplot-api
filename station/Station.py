@@ -40,7 +40,7 @@ class Station(object):
         tx_freq = np.array(tx_freq)
         tx_freq = tx_freq.reshape(tx_freq.size)
         self.tx_freq_list = tx_freq.tolist()
-        tx_IL = np.array(tx_IL)+0.05
+        tx_IL = np.array(tx_IL)-0.05
         tx_IL = tx_IL.reshape(tx_IL.size)
         self.tx_IL_list = tx_IL.tolist()
 
@@ -49,7 +49,7 @@ class Station(object):
         rx_freq = np.array(rx_freq)
         rx_freq = rx_freq.reshape(rx_freq.size)
         self.rx_freq_list = rx_freq.tolist()
-        rx_IL = np.array(rx_IL)+0.05
+        rx_IL = np.array(rx_IL)-0.4
         rx_IL = rx_IL.reshape(rx_IL.size)
         self.rx_IL_list = rx_IL.tolist()
 

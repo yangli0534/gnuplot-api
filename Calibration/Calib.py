@@ -75,18 +75,19 @@ class Calib(object):
         plt.grid()
         # for x, y in zip(tor_dsa_list, tor_pm_list):
         # plt.text(x, y+0.001, '%.2f' % y, ha='center', va= 'bottom',fontsize=9)
-        plt.title(f"Tor DSA vs Tor PM @ ARP power = {arp_power}dBm")
+        plt.title(f"Tor DSA vs Tor PM Branch {branch}@ ARP power = {arp_power}dBm")
         dt = datetime.now()
-        filename = dt.strftime(r"../../../Result/Tor DSA vs Tor PM_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime(f"../../../Result/Tor DSA vs Tor PM Branch {branch}_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
         return tor_dsa_norm_gain
 
     def rx_dsa_vlin(self, branch, stim_amp, target):
         self.logger.info('****************RX DSA VLIN***********************************')
+        self.SG.set_freq(self.RU.UL_CENT_FREQ)
         rx_pm_list = []
         rx_dsa_list = []
-        self.RU.set_rx_vca_gain(branch, self.RU.RX_DDC_VCA_GAIN_INIT)
+        self.RU.set_rx_vca_gain(branch, self.RU.RX_DDC_VCA_GAIN_INIT[branch])
         for rx_dsa_set in range(self.RU.RX_ALG_DSA_MIN_GAIN, self.RU.RX_ALG_DSA_MAX_GAIN + 1,
                                  self.RU.RX_ALG_DSA_STEP):
             self.RU.set_rx_alg_dsa_gain(branch, rx_dsa_set)
@@ -108,9 +109,9 @@ class Calib(object):
         plt.grid()
         # for x, y in zip(tor_dsa_list, tor_pm_list):
         # plt.text(x, y+0.001, '%.2f' % y, ha='center', va= 'bottom',fontsize=9)
-        plt.title(f"Rx DSA vs Rx PM ")
+        plt.title(f"Rx DSA vs Rx PM -Branch {branch}")
         dt = datetime.now()
-        filename = dt.strftime(r"../../../Result/Rx DSA vs Rx PM_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime(f"../../../Result/Rx DSA vs Rx PM Branch {branch}_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
 
@@ -338,12 +339,31 @@ class Calib(object):
         plt.xlabel('Frequency: MHz')
         plt.ylabel('Gain Flatness ')
         # plt.grid()
-        plt.title(f"Rx frequency compensation ")
+        plt.title(f"Rx frequency compensation- branch {branch}")
         dt = datetime.now()
-        filename = dt.strftime("../../../Result/Rx frequency compensation_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime(f"../../../Result/Rx frequency compensation-Branch {branch} _%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
+        self.logger.critical('############save database#########################')
+        if abs (temp_after -temp_previous) < 2:
+            # write ref temp
+            #ref_temp_key = {'A':self.RU._DB.RX_40W_PWR_TEMPREF_A_KEY, 'B': self.RU._DB.RX_40W_PWR_TEMPREF_B_KEY, 'C'self.RU._DB.RX_40W_PWR_TEMPREF_C_KEY, 'D'self.RU._DB.RX_40W_PWR_TEMPREF_D_KEY}
+            self.RU.db_write_single(self.RU._DB.RX_TEMP_REF_KEY[branch], round((temp_after+temp_previous)/2*10))
+            # ref gain
+            self.RU.db_write_single(self.RU._DB.RX_REF_GAIN_KEY[branch], round(gain_ref*10))
+            # init dsa
+            self.RU.db_write_single(self.RU._DB.RX_ALG_DSA_INIT_KEY[branch], round(abs(dsa_set)*10))
+            # init ddc
+            self.RU.db_write_single(self.RU._DB.RX_DDC_VCA_INIT_KEY[branch], round(vca_set*10))
+            # freq com
+            freq_tab = [ round(-gain*10) for gain in gain_list]
+            self.logger.critical(f'freq tab = {freq_tab}')
+            self.RU.db_write_table(self.RU._DB.RX_FREQ_TAB_KEY[branch], freq_tab)
+            self.RU.db_save()
         self.logger.critical('#######Finish RX GAIN FREQ COMP##############')
+
+
+
     def tx_sweep_read_tor_pm(self, branch, arp_target, tor_target):
         self.RU.set_off_all()
         tor_pm_list = []
@@ -371,9 +391,9 @@ class Calib(object):
         plt.xlabel('Frequency: MHz')
         plt.ylabel('Tor gain: dB ')
         #plt.grid()
-        plt.title(f"Tor gain frequency compensation @ ARP power = {arp_target}dBm")
+        plt.title(f"Tor gain frequency compensation branch {branch}@ ARP power = {arp_target}dBm")
         dt = datetime.now()
-        filename = dt.strftime("../../../Result/Tor gain frequency compensation_%Y%m%d_%H%M%S.png")
+        filename = dt.strftime(f"../../../Result/Tor gain frequency compensation Branch {branch}_%Y%m%d_%H%M%S.png")
         plt.savefig(filename)
         plt.close()
 
@@ -388,7 +408,7 @@ if __name__ == '__main__':
     rx_cable_IL = RuCalib.Station.get_rx_IL(ul_freq_center)
     #chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
     #                          rlev=-10, offs= offs, scale= 5)
-    RuCalib.SG.load_waveform(waveform='LTE20', rf_freq=ul_freq_center, amp=stimuli-rx_cable_IL)
+    #RuCalib.SG.load_waveform(waveform='LTE20', rf_freq=ul_freq_center, amp=stimuli-rx_cable_IL)
     backoff = 6
     arp_target = float(RuCalib.RU.MAX_POWER_PER_ANT/100)-backoff
     tor_target = -15-backoff
@@ -398,7 +418,7 @@ if __name__ == '__main__':
     try:
 
         record = ()
-        for branch in ['B']:
+        for branch in ['D']:
             # torpm = RuCalib.RU.get_tor_pm(branch)
             # RuCalib.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
             adcpm = RuCalib.RU.get_ADC_pm(branch)
