@@ -508,7 +508,7 @@ class RU:
             sys.exit(sys.exit('stop running'))
         gain = str(round(-gain*100))
         cmd = f'spi DSA setTxDigt {branch} {gain}'
-        self.logger.info(cmd)
+        self.logger.debug(cmd)
         self._mycom.send_cmd(cmd)
 
     def get_tor_alg_dsa_gain(self, branch):
@@ -566,7 +566,7 @@ class RU:
         #         tmp = re.findall(search, tmp)[0].strip()[2:6]
         tmp = self.get_dpd_post_vca_gain_reg(branch)
         dpd_post_vca_gain = 20*math.log10(int(tmp, 16)/16384)
-        self.logger.info(f' dpd post vca gain is set to{dpd_post_vca_gain} dB')
+        self.logger.debug(f' dpd post vca gain is set to{dpd_post_vca_gain} dB')
         return dpd_post_vca_gain
 
     def get_dpd_post_vca_gain_reg(self, branch):
@@ -681,7 +681,7 @@ class RU:
                 new = (previous << 16 ) + tmp
             new = hex(new)
             cmd = f'fpga w 0x1825 {new}'
-        self.logger.info(f'branch {branch} dpd post vca gain reg is set to {new}')
+        self.logger.debug(f'branch {branch} dpd post vca gain reg is set to {new}')
         self._mycom.send_cmd(cmd)
 
     def get_rx_alg_dsa_gain(self, branch):
@@ -1074,7 +1074,7 @@ class RU:
         return dac_value, dac_value_low
 
     def set_pavdd_calib(self):
-        cmd = 'spi pavddcalibration'
+        cmd = 'spi pavddcalibration 4800'
         self._mycom.send_read_cmd(cmd)
 
     def set_init(self, branch_set = ['A', 'B','C','D']):
@@ -1104,7 +1104,7 @@ class RU:
         if True:
             for branch in branch_set:
                 temp = self.read_temp_pa(branch)
-                self.logger.info(f'branch {branch} PA temperature is {round(temp)}°')
+                self.logger.debug(f'branch {branch} PA temperature is {round(temp)}°')
 
         if True:
             for branch in branch_set:
@@ -1118,7 +1118,7 @@ class RU:
                 for stage in ['final', 'driver']:
                     for main_or_peak in ['main','peak']:
                         tmp = self.get_bias( branch, stage, main_or_peak)
-                        self.logger.info(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
+                        self.logger.debug(f'Branch {branch} PA {stage} {main_or_peak} bias is {tmp}')
 
         # check fb nco freq
         if True:
@@ -1132,17 +1132,18 @@ class RU:
 
         if True:
             for branch in branch_set:
-                self.set_tx_alg_dsa_gain(branch, self.TX_ALG_DSA_INIT[branch])
+                #self.set_tx_alg_dsa_gain(branch, self.TX_ALG_DSA_INIT[branch])
+                self.set_tx_alg_dsa_gain(branch, -17)
                 tx_alg_dsa_gain = self.get_tx_alg_dsa_gain(branch)
-                self.logger.info(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
+                self.logger.debug(f'Branch {branch} Tx analog dsa  gain is {tx_alg_dsa_gain} dB')
 
                 self.set_tx_dig_dsa_gain(branch, self.TX_DIG_DSA_INIT[branch])
                 tx_dig_dsa_gain = self.get_tx_dig_dsa_gain(branch)
-                self.logger.info(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
+                self.logger.debug(f'Branch {branch} Tx digital dsa  gain is {tx_dig_dsa_gain} dB')
 
                 self.set_dpd_post_vca_gain(branch, self.TX_DPD_POST_VCA_INIT)
                 tx_vca_dpd_post_gain = self.get_dpd_post_vca_gain(branch)
-                self.logger.info(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
+                self.logger.debug(f'Branch {branch} dpd post vca gain is {tx_vca_dpd_post_gain } dB')
 
 
                 #tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain_reg(branch)
@@ -1152,36 +1153,36 @@ class RU:
 
                 self.set_dpd_pre_vca_gain(branch, self.TX_DPD_PRE_VCA_INIT)
                 tx_vca_dpd_pre_gain = self.get_dpd_pre_vca_gain(branch)
-                self.logger.info(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
+                self.logger.debug(f'Branch {branch} dpd pre vca gain is {tx_vca_dpd_pre_gain}')
 
 
 
                 self.set_tor_alg_dsa_gain(branch, self.TOR_ALG_DSA_GAIN_INIT[branch])
                 tor_alg_dsa_gain = self.get_tor_alg_dsa_gain(branch)
-                self.logger.info(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
+                self.logger.debug(f'Branch {branch} tor dsa gain is {tor_alg_dsa_gain} dB')
 
 
 
                 self.set_rx_alg_dsa_gain(branch, self.RX_ALG_DSA_GAIN_INIT[branch])
                 rx_alg_dsa_gain = self.get_rx_alg_dsa_gain(branch)
-                self.logger.info(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
+                self.logger.debug(f'Branch {branch} rx dsa gain is {rx_alg_dsa_gain} dB')
                 #bug in ddc write which impact
                 self.set_rx_vca_gain(branch, self.RX_DDC_VCA_GAIN_INIT[branch])
                 rx_vca_gain = self.get_rx_vca_gain(branch)
-                self.logger.info(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
+                self.logger.debug(f'Branch {branch} rx vca gain is {rx_vca_gain} dB')
 
                 for branch in branch_set:
                     torpm = self.get_tor_pm(branch)
-                    self.logger.info(f'branch {branch} tor power  = {torpm} dBm')
+                    self.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
                     adcpm = self.get_ADC_pm(branch)
-                    self.logger.info(f'branch {branch} adc power  = {adcpm} dBm')
+                    self.logger.debug(f'branch {branch} adc power  = {adcpm} dBm')
                     dpdpm = self.get_DPD_pm(branch)
-                    self.logger.info(f'branch {branch} dpd power  = {dpdpm} dBm')
+                    self.logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
 
         if(self.set_dpd_init()):
-            self.logger.info('dpd init successfully')
+            self.logger.debug('dpd init successfully')
         else:
-            self.logger.info('dpd init failed')
+            self.logger.critical('dpd init failed')
 
         pavdd = self.get_pa_vdd('final')
         self.logger.info(f'final pa vdd = {pavdd}V')

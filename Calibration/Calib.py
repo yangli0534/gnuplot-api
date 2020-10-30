@@ -42,24 +42,24 @@ class Calib(object):
         self.logger = log.setup_custom_logger('root', filename)
         self.Station = Station.Station()
         #self.PS = PS.PS(self.Station.get_instr_addr('PS'))
-        #self.SA = SA.SA(self.Station.get_instr_addr('PS'))
+        self.SA = SA.SA(self.Station.get_instr_addr('SA'))
         self.SG = SG.SG(self.Station.get_instr_addr('SG'))
         self.RU = RU.RU(com_id=self.Station.get_instr_addr('RU'), baud_rate=115200, t=1)
 
     def __del__(self):
         print('Calibration stopped')
 
-    def tor_dsa_lin(self, normalized_zero = -7):
+    def tor_dsa_lin(self, branch, normalized_zero = -7):
         self.logger.info('****************TOR DSA VLIN***********************************')
         tor_pm_list = []
         tor_dsa_list = []
         for tor_dsa_set in range(self.RU.TOR_ALG_DSA_MIN_GAIN, self.RU.TOR_ALG_DSA_MAX_GAIN + 1,
                                  self.RU.TOR_ALG_DSA_STEP):
-            self.RU.set_tor_alg_dsa_gain('A', tor_dsa_set)
+            self.RU.set_tor_alg_dsa_gain(branch, tor_dsa_set)
             tor_dsa_list.append(tor_dsa_set)
             self.logger.info(f' branch A dsa is set to {tor_dsa_set} dB')
-            tor_pm = self.RU.get_tor_pm(branch='A', aver_cnt=10)
-            self.logger.info(f' branch A tor pm is  {tor_pm} dBfs')
+            tor_pm = self.RU.get_tor_pm(branch, aver_cnt=10)
+            self.logger.info(f' branch {branch} tor pm is  {tor_pm} dBfs')
             # torpm = RU.get_tor_pm('A')
             # print(f' branch A tor pm is  {torpm} dBfs')
             tor_pm_list.append(tor_pm)
@@ -207,6 +207,9 @@ class Calib(object):
         last_tx_alg_dsa_gain = self.RU.get_tx_alg_dsa_gain(branch)
         last_dpd_post_vca_gain = self.RU.get_dpd_post_vca_gain(branch)
         self.logger.info(f'branch {branch} output has reached target={target}dBm, now it is {last_output} dBm')
+
+        self.RU.db_write_single(self.RU._DB.TX_ALG_DSA_INIT_KEY[branch], round(-last_tx_alg_dsa_gain*10))
+
         return last_tx_alg_dsa_gain, last_dpd_post_vca_gain
 
     def rx_gain_calib(self, branch, dsa_set, stim_amp):
@@ -397,6 +400,14 @@ class Calib(object):
         plt.savefig(filename)
         plt.close()
 
+        # write tor init dsa
+        self.RU.db_write_single(self.RU._DB.TOR_ALG_DSA_INIT_KEY[branch], 70)
+        # write ref temp
+        self.RU.db_write_single(self.RU._DB.TOR_TEMP_REF_KEY[branch], round(temp_current*10))
+        # write freq tab
+        freq_tab = [round(gain * 10) for gain in tor_freq_comp_list]
+        self.RU.db_write_table(self.RU._DB.TOR_FREQ_TAB_KEY[branch], freq_tab)
+        self.RU.db.save()
         return tor_pm_list, arp_pm_list
 
 if __name__ == '__main__':
@@ -406,8 +417,8 @@ if __name__ == '__main__':
     offs = -RuCalib.Station.get_tx_IL(freq)
     stimuli = -50
     rx_cable_IL = RuCalib.Station.get_rx_IL(ul_freq_center)
-    #chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
-    #                          rlev=-10, offs= offs, scale= 5)
+    chp1 = RuCalib.SA.set_chp(center= freq, sweep_time=0.05, sweep_count=10, rbw=100, int_bw=18,
+                              rlev=-10, offs= offs, scale= 5)
     #RuCalib.SG.load_waveform(waveform='LTE20', rf_freq=ul_freq_center, amp=stimuli-rx_cable_IL)
     backoff = 6
     arp_target = float(RuCalib.RU.MAX_POWER_PER_ANT/100)-backoff
@@ -416,54 +427,73 @@ if __name__ == '__main__':
     # RU = RU.RU(com_id=3, baud_rate=115200, t=1)
     # active = True
     try:
+        case_choice = input('''Please select calibration case, you have to input exactly 'Rx' for RX case, 'Tx' for Tx case, otherwhile calibration will stop\n I choose ''')
+        if (case_choice == 'Rx'):
+            RuCalib.logger.info('Rx calibration will start\n')
+        elif(case_choice == 'Tx'):
+            RuCalib.logger.info('Tx calibration will start\n')
+        else:
+            RuCalib.logger.info('Calibration stop as no matched case\n')
+            sys.exit()
 
-        record = ()
-        for branch in ['D']:
-            # torpm = RuCalib.RU.get_tor_pm(branch)
-            # RuCalib.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
-            adcpm = RuCalib.RU.get_ADC_pm(branch)
-            RuCalib.logger.debug(f'branch {branch} adc power  = {adcpm} dBFS')
-            # dpdpm = RuCalib.RU.get_DPD_pm(branch)
-            # RuCalib.logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
-            ddcpm = RuCalib.RU.get_rx_pm(branch)
-            RuCalib.logger.debug(f'branch {branch} rx power  = {ddcpm} dBFS')
+        branch = input(
+            '''Please select branch: A, B, C,D  otherwhile calibration will stop\n I choose branch ''')
+        if (branch in ['A', 'B', 'C', 'D']):
+            RuCalib.logger.info('You have choose \n')
+        else:
+            RuCalib.logger.info('Calibration stop as no matched branch\n')
+            sys.exit()
+
+        RuCalib.logger.info('START CALIBRATION')
+
+        #for branch in ['D']:
+        if(case_choice == 'Tx'):
+            # # torpm = RuCalib.RU.get_tor_pm(branch)
+            # # RuCalib.logger.debug(f'branch {branch} tor power  = {torpm} dBm')
+            # adcpm = RuCalib.RU.get_ADC_pm(branch)
+            # RuCalib.logger.debug(f'branch {branch} adc power  = {adcpm} dBFS')
+            # # dpdpm = RuCalib.RU.get_DPD_pm(branch)
+            # # RuCalib.logger.debug(f'branch {branch} dpd power  = {dpdpm} dBm')
+            # ddcpm = RuCalib.RU.get_rx_pm(branch)
+            # RuCalib.logger.debug(f'branch {branch} rx power  = {ddcpm} dBFS')
 
             # # pa bias calib
-            # RuCalib.logger.critical(f'##############START　PA BIAS CALIBRATION BRANCH {branch} ##################')
-            # #bias = RuCalib.calib_pa_bias(branch)
-            # bias = [hex(1704), hex(747), hex(1654), hex(1354)]
-            # RuCalib.logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {int(bias[0], 16)}')
-            # RuCalib.logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {int(bias[1], 16)}')
-            # RuCalib.logger.critical(f'The calc DAC value in main of driver of branch {branch} is {int(bias[2], 16)}')
-            # RuCalib.logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {int(bias[3], 16)}')
-            # RuCalib.logger.critical(f'##############　PA BIAS CALIBRATION BRANCH {branch} FINISHED ###############')
-            #
-            # RuCalib.logger.critical(f'##############START　CONFIG PA BIAS  BRANCH {branch} ####################')
-            #
-            # RuCalib.RU.set_pa_bias(branch, bias)
-            # RuCalib.RU.read_pa_bias(branch)
-            # RuCalib.RU.set_pa_branch(branch)
-            # RuCalib.RU.set_pa_on(branch)
-            # driver_bias_curr = RuCalib.RU.pa_driver_bias_read_curr(branch)
-            # RuCalib.logger.info(f'pa driver bias current = {driver_bias_curr} mA')
-            # final_bias_curr = RuCalib.RU.pa_final_bias_read_curr(branch)
-            # RuCalib.logger.info(f'pa final bias current = {final_bias_curr} mA')
-            # RuCalib.RU.set_off_all()
-            # RuCalib.logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
-            #
-            # RuCalib.tx_carrier_setup(branch, cbw=20, freq=RuCalib.RU.DL_CENT_FREQ)
-            # (tx_alg_dsa_gain_set, tx_dpd_post_vca_gain_set)=RuCalib.tx_power_adjustment(branch, target=40, error=0.2)
-            #
-            # # start tor dsa lin
-            # RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
-            # tor_dsa_norm_gain = RuCalib.tor_dsa_lin( normalized_zero=-7)
-            # RuCalib.RU.set_tor_alg_dsa_gain(branch, tor_dsa_norm_gain)
-            #
-            # # start freq comp calib
-            # (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
-            # RuCalib.logger.critical(f'ARP Power is {arp_pm_list}')
-            # RuCalib.logger.critical(f'Tor power is {tor_pm_list}')
+            RuCalib.logger.critical(f'##############START　PA BIAS CALIBRATION BRANCH {branch} ##################')
+            #bias = RuCalib.calib_pa_bias(branch)
+            #bias = [hex(1704), hex(747), hex(1654), hex(1354)]
+            bias = ['0x684', '0x2e1', '0x5e9', '0x5c9']
+            RuCalib.logger.critical(f'The calc DAC value in main of final of branch  {branch} is  {int(bias[0], 16)}')
+            RuCalib.logger.critical(f'The calc DAC value in peak of final of branch  {branch} is  {int(bias[1], 16)}')
+            RuCalib.logger.critical(f'The calc DAC value in main of driver of branch {branch} is {int(bias[2], 16)}')
+            RuCalib.logger.critical(f'The calc DAC value in peak of driver of branch  {branch} is {int(bias[3], 16)}')
+            RuCalib.logger.critical(f'##############　PA BIAS CALIBRATION BRANCH {branch} FINISHED ###############')
 
+            RuCalib.logger.critical(f'##############START　CONFIG PA BIAS  BRANCH {branch} ####################')
+
+            RuCalib.RU.set_pa_bias(branch, bias)
+            RuCalib.RU.read_pa_bias(branch)
+            RuCalib.RU.set_pa_branch(branch)
+            RuCalib.RU.set_pa_on(branch)
+            driver_bias_curr = RuCalib.RU.pa_driver_bias_read_curr(branch)
+            RuCalib.logger.info(f'pa driver bias current = {driver_bias_curr} mA')
+            final_bias_curr = RuCalib.RU.pa_final_bias_read_curr(branch)
+            RuCalib.logger.info(f'pa final bias current = {final_bias_curr} mA')
+            RuCalib.RU.set_off_all()
+            RuCalib.logger.critical(f'###############FINISH　CONFIG PA BIAS  BRANCH {branch} ##################')
+
+            RuCalib.tx_carrier_setup(branch, cbw=20, freq=RuCalib.RU.DL_CENT_FREQ)
+            (tx_alg_dsa_gain_set, tx_dpd_post_vca_gain_set)=RuCalib.tx_power_adjustment(branch, target=40, error=0.2)
+
+            # start tor dsa lin
+            RuCalib.logger.critical('#################### START TOR DSA VLIN AND NORMALIZED##################')
+            tor_dsa_norm_gain = RuCalib.tor_dsa_lin(branch,  normalized_zero=-7)
+            RuCalib.RU.set_tor_alg_dsa_gain(branch, -8)
+
+            # start freq comp calib
+            (tor_pm_list, arp_pm_list) = RuCalib.tx_sweep_read_tor_pm(branch, arp_target, tor_target)
+            RuCalib.logger.critical(f'ARP Power is {arp_pm_list}')
+            RuCalib.logger.critical(f'Tor power is {tor_pm_list}')
+        elif(case_choice == 'Rx'):
             RuCalib.logger.info('##############START RX CALIB##################')
             RuCalib.rx_carrier_setup(branch = branch, freq = ul_freq_center)
             dsa_set = RuCalib.rx_dsa_vlin(branch, stimuli, RuCalib.RU.RX_GAIN_TARGET)
@@ -471,14 +501,16 @@ if __name__ == '__main__':
             RuCalib.rx_freq_calib(stimuli, branch, dsa_set, rx_vca_set)
 
             RuCalib.logger.critical(f'Rx actual gain = {actual_gain}')
-        while True:
+        else:
+            sys.exit()
+        #while True:
             # myRU.init_check()
             #RuCalib.logger.info(f'total consumption is {round(RuCalib.PS.get_consumption())} W')
             #chp = RuCalib.SA.get_chp()
             #RuCalib.logger.info(f' carrier power is {chp} dBm')
-            temp = RuCalib.RU.read_temp_pa('A')
-            RuCalib.logger.info(f'branch A PA temperature is {round(temp)}°')
-            time.sleep(0.3)
+            #temp = RuCalib.RU.read_temp_pa('A')
+            #RuCalib.logger.info(f'branch A PA temperature is {round(temp)}°')
+            #time.sleep(0.3)
             # if myRU.get_dpd_status():
             #     print('dpd is running')
             # else:

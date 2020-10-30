@@ -29,7 +29,7 @@ def setup_custom_logger(name, filename):
     file_handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
 
