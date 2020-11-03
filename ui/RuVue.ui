@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>RuVue</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Zillnk_logoSymbol_red_Program_iCON.ico</normaloff>Zillnk_logoSymbol_red_Program_iCON.ico</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
@@ -20,7 +24,7 @@
    <widget class="QPushButton" name="rbn_run">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>20</x>
       <y>120</y>
       <width>71</width>
       <height>21</height>
@@ -38,7 +42,7 @@
    <widget class="QPushButton" name="rbn_exit">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>110</x>
       <y>120</y>
       <width>81</width>
       <height>21</height>
@@ -70,7 +74,7 @@
     <property name="title">
      <string>Case</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -114,7 +118,7 @@
     <property name="title">
      <string>Channel</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -181,7 +185,25 @@
      </font>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rbn_plot">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>120</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+     </font>
+    </property>
+    <property name="text">
+     <string>Plot</string>
     </property>
    </widget>
   </widget>
