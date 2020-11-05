@@ -35,8 +35,10 @@ class Station(object):
     def __init__(self):
 
         self.logger = logging.getLogger('root')
-        tx_freq = pd.read_csv(r'../station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
-        tx_IL = pd.read_csv(r'../station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
+        #tx_freq = pd.read_csv(r'../station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
+        #tx_IL = pd.read_csv(r'../station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
+        tx_freq = pd.read_csv(r'./station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
+        tx_IL = pd.read_csv(r'./station/TX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
         tx_freq = np.array(tx_freq)
         tx_freq = tx_freq.reshape(tx_freq.size)
         self.tx_freq_list = tx_freq.tolist()
@@ -44,8 +46,10 @@ class Station(object):
         tx_IL = tx_IL.reshape(tx_IL.size)
         self.tx_IL_list = tx_IL.tolist()
 
-        rx_freq = pd.read_csv(r'../station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
-        rx_IL = pd.read_csv(r'../station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
+        #rx_freq = pd.read_csv(r'../station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
+        #rx_IL = pd.read_csv(r'../station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
+        rx_freq = pd.read_csv(r'./station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[0])
+        rx_IL = pd.read_csv(r'./station/RX_CABLE_IL.csv', skiprows=[1, 2], usecols=[1])
         rx_freq = np.array(rx_freq)
         rx_freq = rx_freq.reshape(rx_freq.size)
         self.rx_freq_list = rx_freq.tolist()
@@ -53,7 +57,8 @@ class Station(object):
         rx_IL = rx_IL.reshape(rx_IL.size)
         self.rx_IL_list = rx_IL.tolist()
 
-        instr = pd.read_csv(r'../station/STATION_CONFIG.csv', usecols=[0,1])
+        #instr = pd.read_csv(r'../station/STATION_CONFIG.csv', usecols=[0,1])
+        instr = pd.read_csv(r'./station/STATION_CONFIG.csv', usecols=[0, 1])
         self.__instr= dict(zip(list(instr.INSTR_ID), list(instr.INSTR_ADDR)))
         # instr_addr = pd.read_csv(r'../station/STATION_CONFIG.csv', usecols=[1])
         # instr_id = np.array(instr_id)

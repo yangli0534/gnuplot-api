@@ -13,18 +13,21 @@ sys.path.append(r'..\Lib')
 sys.path.append(r'..\Radio')
 sys.path.append(r'..\Common')
 
-#import PS
-import SA
-import PM
-import RU
-import SG
+
 import matplotlib.pyplot as plt
 import time
 import math
 from datetime import datetime
-import log
-import Station
+import numpy as np
 
+#from Lib.PS import PS
+from Lib.SA import SA
+from Lib.PM import PM
+from Radio.RU import RU
+#from Lib.SG import SG
+from Common.log import setup_custom_logger
+from station.Station import Station
+#from station.Com import Com
 
 # import submodule
 
@@ -39,12 +42,12 @@ class Calib(object):
         dt = datetime.now()
         filename = dt.strftime("../../../Result/ORU1126 calibration and test log_%Y%m%d_%H%M%S.txt")
         # set up logging to file - see previous section for more details
-        self.logger = log.setup_custom_logger('root', filename)
-        self.Station = Station.Station()
+        self.logger = setup_custom_logger('root', filename)
+        self.Station = Station()
         #self.PS = PS.PS(self.Station.get_instr_addr('PS'))
-        self.SA = SA.SA(self.Station.get_instr_addr('SA'))
-        self.SG = SG.SG(self.Station.get_instr_addr('SG'))
-        self.RU = RU.RU(com_id=self.Station.get_instr_addr('RU'), baud_rate=115200, t=1)
+        self.SA = SA(self.Station.get_instr_addr('SA'))
+        #self.SG = SG(self.Station.get_instr_addr('SG'))
+        self.RU = RU(com_id=self.Station.get_instr_addr('RU'), baud_rate=115200, t=1)
 
     def __del__(self):
         print('Calibration stopped')
@@ -85,7 +88,7 @@ class Calib(object):
 
     def rx_dsa_vlin(self, branch, stim_amp, target):
         self.logger.info('****************RX DSA VLIN***********************************')
-        self.SG.set_freq(self.RU.UL_CENT_FREQ)
+        #self.SG.set_freq(self.RU.UL_CENT_FREQ)
         rx_pm_list = []
         rx_dsa_list = []
         self.RU.set_rx_vca_gain(branch, self.RU.RX_DDC_VCA_GAIN_INIT[branch])
@@ -285,6 +288,37 @@ class Calib(object):
         bias = [final_main_bias_dac_calib, final_peak_bias_dac_calib, driver_main_bias_dac_calib,
                 driver_peak_bias_dac_calib]
         return bias
+    def save_bias_db(self, branch, temp, bias = []):
+        # read tempTab
+        tempTab_driver_main = self.RU.DRIVER_MAIN_TEMP_TAB[branch]
+        tempTab_driver_peak = self.RU.DRIVER_PEAK_TEMP_TAB[branch]
+        tempTab_final_main = self.RU.FINAL_MAIN_TEMP_TAB[branch]
+        tempTab_final_peak = self.RU.FINAL_PEAK_TEMP_TAB[branch]
+
+        offset_final_main_temp = np.interp(float(temp),  tempTab_final_main[:, 0],  tempTab_final_main[:, 1])
+        offset_final_peak_temp = np.interp(float(temp), tempTab_final_peak[:, 0], tempTab_final_peak[:, 1])
+        offset_driver_main_temp = np.interp(float(temp), tempTab_driver_main[:, 0], tempTab_driver_main[:, 1])
+        offset_driver_peak_temp = np.interp(float(temp), tempTab_driver_peak[:,0], tempTab_driver_peak[:,1] )
+        self.logger.info(f'Branch{branch} final main offset @temp {temp} = {offset_final_main_temp}')
+        self.logger.info(f'Branch{branch} final peak offset @temp {temp} = {offset_final_peak_temp}')
+        self.logger.info(f'Branch{branch} driver main offset @temp {temp} = {offset_driver_main_temp}')
+        self.logger.info(f'Branch{branch} driver peak offset @temp {temp} = {offset_driver_peak_temp}')
+
+        offset_final_main = int(bias[0], 16) - offset_final_main_temp
+        offset_final_peak = int(bias[1], 16) - offset_final_peak_temp
+        offset_driver_main = int(bias[2], 16) - offset_driver_main_temp
+        offset_driver_peak = int(bias[3], 16) -  offset_driver_peak_temp
+        self.logger.info(f'Branch{branch} final main offset = {offset_final_main}')
+        self.logger.info(f'Branch{branch} final peak offset = {offset_final_peak}')
+        self.logger.info(f'Branch{branch} driver main offset = {offset_driver_main}')
+        self.logger.info(f'Branch{branch} driver peak offset = {offset_driver_peak}')
+        self.RU.db_write_single(self.RU._DB.FINAL_BIAS_MAIN_OFFSET_KEY[branch], round(offset_final_main))
+        self.RU.db_write_single(self.RU._DB.FINAL_BIAS_PEAK_OFFSET_KEY[branch], round(offset_final_peak))
+        self.RU.db_write_single(self.RU._DB.DRIVER_BIAS_MAIN_OFFSET_KEY[branch], round(offset_driver_main))
+        self.RU.db_write_single(self.RU._DB.DRIVER_BIAS_PEAK_OFFSET_KEY[branch], round(offset_driver_peak))
+        self.RU.db_save()
+        #self.RU.set_off_all()
+        #sys.exit()
 
     def tx_carrier_setup(self, branch='A', cbw=20, freq=3700):
         # cbw:carrier bandwidth MHz
@@ -327,7 +361,7 @@ class Calib(object):
         gain_list = []
         self.logger.critical('#######START RX GAIN FREQ COMP##############')
         for freq in self.RU.UL_FREQ_COMP_LIST:
-            self.SG.set_freq(freq)
+            #self.SG.set_freq(freq)
             self.rx_carrier_setup(branch, freq)
             time.sleep(0.5)
             rx_pm = self.RU.get_rx_pm(branch, aver_cnt = 5)
@@ -401,6 +435,16 @@ class Calib(object):
         plt.savefig(filename)
         plt.close()
 
+        tx_flatness = arp_pm_list - np.mean(arp_pm_list)
+        plt.plot(freq_list, tx_flatness)
+        plt.xlabel('Frequency: MHz')
+        plt.ylabel('Tx_flatness: dB ')
+        # plt.grid()
+        plt.title(f"Tx_flatness branch {branch}")
+        dt = datetime.now()
+        filename = dt.strftime(f"../../../Result/Tx_flatness Branch {branch}_%Y%m%d_%H%M%S.png")
+        plt.savefig(filename)
+        plt.close()
         # write tor init dsa
         self.RU.db_write_single(self.RU._DB.TOR_ALG_DSA_INIT_KEY[branch], 70)
         # write ref temp
@@ -408,8 +452,30 @@ class Calib(object):
         # write freq tab
         freq_tab = [round(gain * 10) for gain in tor_freq_comp_list]
         self.RU.db_write_table(self.RU._DB.TOR_FREQ_TAB_KEY[branch], freq_tab)
-        self.RU.db.save()
+        self.RU.db_save()
         return tor_pm_list, arp_pm_list
+
+    def test_tor_gain_temp(self, branch):
+
+        temp_list = []
+        tor_pm_list = []
+        arp_pm_list = []
+        self.SA.set_center(self.RU.DL_CENT_FREQ)
+        self.tx_carrier_setup(branch, cbw=20, freq=self.RU.DL_CENT_FREQ)
+        self.tx_power_adjustment(branch, target=44, error=0.2)
+        for i in range(30):
+            tor_pm = self.RU.get_tor_pm(branch=branch, aver_cnt=10)
+            tor_pm_list.append(tor_pm)
+            arp_pm = self.SA.get_chp(aver=2)
+            arp_pm_list.append(arp_pm)
+            temp = self.RU.read_temp_pa(branch)
+            temp_list.append(temp)
+            tor_gain = tor_pm - arp_pm
+            time.sleep(10)
+            self.logger.info(f'temp = {temp}°, tx arp power = {arp_pm} dBm, tor pm = {tor_pm} dBFs, tor gain = {tor_gain}dB')
+        self.RU.set_off_all()
+
+        return temp_list, arp_pm_list, tor_pm_list
 
 if __name__ == '__main__':
     RuCalib = Calib()

@@ -10,24 +10,25 @@ sys.path.append(r'..\Station')
 sys.path.append(r'..\Lib')
 sys.path.append(r'..\Radio')
 
-import Com
-import PS
+
 import time
 import re
 import math
 from threading import Thread
-#from Lib import PS
+#from Lib.PS import PS
 import logging
 import numpy as np
-import DB
 
 
+from station.Com import Com
+from Lib.PS import PS
+from Radio.DB import DB
 
 class RU:
     def __init__(self, com_id, baud_rate, t):
         self.logger = logging.getLogger('root')
-        self._mycom = Com.Com(com_id, baud_rate, t)
-        self._DB = DB.DB()
+        self._mycom = Com(com_id, baud_rate, t)
+        self._DB = DB()
 
         answer = self._mycom.send_read_cmd('')
         self.__terminator = 'root@ORU1226:~#'
@@ -298,10 +299,14 @@ class RU:
             torpm= float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
             return torpm
         else:
+            tor_pm_list = []
             for i in range(aver_cnt):
                 tmp = self._mycom.send_read_cmd(cmd)
-                torpm = torpm + float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
-            return float(torpm/aver_cnt)
+                tor_pm_list.append(float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip()))
+
+            var = np.var(tor_pm_list)
+            self.logger.info(f'tor pm var = {var}dB')
+            return float(np.mean(tor_pm_list))
 
     def get_DUC_pm(self, branch):
         branch = self.__branch_def_alp(branch)
@@ -354,6 +359,8 @@ class RU:
                 tmp = self._mycom.send_read_cmd(cmd)
                 adcpm = adcpm + float(re.findall(r"dbfs is (.+?)\n", tmp)[0].strip())
             return float(adcpm / aver_cnt)
+
+
 
     def set_pa_bias(self, branch, bias=[]):
         branch = self.__branch_def_alp(branch)
@@ -730,6 +737,8 @@ class RU:
         self._mycom.send_cmd(cmd)
 
     def set_dpd_init(self):
+        cmd = 'dpd-smp.sh dpd'
+        tmp = self._mycom.send_read_cmd(cmd)
         time.sleep(1)
         cmd = f'dpd init'
         tmp = self._mycom.send_read_cmd(cmd)
@@ -1224,7 +1233,7 @@ class RU:
         return tmp2array
 
     def db_write_single(self, key, value):
-        cmd = f'database write {key} -m {value}'
+        cmd = f'database write {key} -m {str(round(value))}'
         self._mycom.send_read_cmd(cmd)
     def db_write_table(self, key, value):
         for i in range(0, len(value)):
@@ -1424,8 +1433,47 @@ class RU:
         self.TOR_TEMP_TAB = {'A':TOR_A_TEMP_TAB, 'B':TOR_B_TEMP_TAB, 'C':TOR_C_TEMP_TAB, 'D':TOR_D_TEMP_TAB}
 
 
+        DRIVER_A_MAIN_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_MAIN_TEMP_A_KEY)
+        DRIVER_A_MAIN_TEMP_TAB[:,0] = DRIVER_A_MAIN_TEMP_TAB[:,0]/10
+        DRIVER_B_MAIN_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_MAIN_TEMP_B_KEY)
+        DRIVER_B_MAIN_TEMP_TAB[:, 0] = DRIVER_B_MAIN_TEMP_TAB[:, 0] / 10
+        DRIVER_C_MAIN_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_MAIN_TEMP_C_KEY)
+        DRIVER_C_MAIN_TEMP_TAB[:, 0] = DRIVER_C_MAIN_TEMP_TAB[:, 0] / 10
+        DRIVER_D_MAIN_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_MAIN_TEMP_C_KEY)
+        DRIVER_D_MAIN_TEMP_TAB[:, 0] = DRIVER_D_MAIN_TEMP_TAB[:, 0] / 10
+        self.DRIVER_MAIN_TEMP_TAB = {'A':DRIVER_A_MAIN_TEMP_TAB, 'B':DRIVER_B_MAIN_TEMP_TAB, 'C':DRIVER_C_MAIN_TEMP_TAB, 'D':DRIVER_D_MAIN_TEMP_TAB}
 
+        DRIVER_A_PEAK_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_PEAK_TEMP_A_KEY)
+        DRIVER_A_PEAK_TEMP_TAB[:, 0] = DRIVER_A_PEAK_TEMP_TAB[:, 0] / 10
+        DRIVER_B_PEAK_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_PEAK_TEMP_B_KEY)
+        DRIVER_B_PEAK_TEMP_TAB[:, 0] = DRIVER_B_PEAK_TEMP_TAB[:, 0] / 10
+        DRIVER_C_PEAK_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_PEAK_TEMP_C_KEY)
+        DRIVER_C_PEAK_TEMP_TAB[:, 0] = DRIVER_C_PEAK_TEMP_TAB[:, 0] / 10
+        DRIVER_D_PEAK_TEMP_TAB = self.db_read_table(self._DB.DRIVER_40W_PABIAS_PEAK_TEMP_C_KEY)
+        DRIVER_D_PEAK_TEMP_TAB[:, 0] = DRIVER_D_PEAK_TEMP_TAB[:, 0] / 10
+        self.DRIVER_PEAK_TEMP_TAB = {'A': DRIVER_A_PEAK_TEMP_TAB, 'B': DRIVER_B_PEAK_TEMP_TAB,
+                                     'C': DRIVER_C_PEAK_TEMP_TAB, 'D': DRIVER_D_PEAK_TEMP_TAB}
 
+        FINAL_A_MAIN_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_MAIN_TEMP_TAB_KEY['A'])
+        FINAL_A_MAIN_TEMP_TAB[:,0] = FINAL_A_MAIN_TEMP_TAB[:,0]/10
+        FINAL_B_MAIN_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_MAIN_TEMP_TAB_KEY['B'])
+        FINAL_B_MAIN_TEMP_TAB[:, 0] = FINAL_B_MAIN_TEMP_TAB[:, 0] / 10
+        FINAL_C_MAIN_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_MAIN_TEMP_TAB_KEY['C'])
+        FINAL_C_MAIN_TEMP_TAB[:, 0] = FINAL_C_MAIN_TEMP_TAB[:, 0] / 10
+        FINAL_D_MAIN_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_MAIN_TEMP_TAB_KEY['D'])
+        FINAL_D_MAIN_TEMP_TAB[:, 0] = FINAL_D_MAIN_TEMP_TAB[:, 0] / 10
+        self.FINAL_MAIN_TEMP_TAB = {'A':FINAL_A_MAIN_TEMP_TAB, 'B':FINAL_B_MAIN_TEMP_TAB, 'C':FINAL_C_MAIN_TEMP_TAB, 'D':FINAL_D_MAIN_TEMP_TAB}
+
+        FINAL_A_PEAK_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_PEAK_TEMP_TAB_KEY['A'])
+        FINAL_A_PEAK_TEMP_TAB[:, 0] = FINAL_A_PEAK_TEMP_TAB[:, 0] / 10
+        FINAL_B_PEAK_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_PEAK_TEMP_TAB_KEY['B'])
+        FINAL_B_PEAK_TEMP_TAB[:, 0] = FINAL_B_PEAK_TEMP_TAB[:, 0] / 10
+        FINAL_C_PEAK_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_PEAK_TEMP_TAB_KEY['C'])
+        FINAL_C_PEAK_TEMP_TAB[:, 0] = FINAL_C_PEAK_TEMP_TAB[:, 0] / 10
+        FINAL_D_PEAK_TEMP_TAB = self.db_read_table(self._DB.FINAL_BIAS_PEAK_TEMP_TAB_KEY['D'])
+        FINAL_D_PEAK_TEMP_TAB[:, 0] = FINAL_D_PEAK_TEMP_TAB[:, 0] / 10
+        self.FINAL_PEAK_TEMP_TAB = {'A': FINAL_A_PEAK_TEMP_TAB, 'B': FINAL_B_PEAK_TEMP_TAB,
+                                     'C': FINAL_C_PEAK_TEMP_TAB, 'D': FINAL_D_PEAK_TEMP_TAB}
 
 
 
@@ -1444,7 +1492,7 @@ if __name__ == '__main__':
     RU.logger.setLevel(logging.DEBUG)
     RU.logger.addHandler(console_handler)
     
-    #myps = PS.PS('TCPIP0::172.16.1.57::inst0::INSTR')
+    #myps = PS('TCPIP0::172.16.1.57::inst0::INSTR')
     #active = True
     #RU.db_read_init()
     #RU.db_write_single(RU._DB.RX_40W_LINKGAIN_KEY, 270)
